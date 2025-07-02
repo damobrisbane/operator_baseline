@@ -93,9 +93,7 @@ get_packages() {
                 _log 1 _J_BUNDLE=\$\(_f_grpc_bundle $_PKG $_CH\)
                 _J_BUNDLE=$(_f_grpc_bundle $_PKG $_CH)
                 _J_CH=$(jq -s 'add' <<<"${_J_CH}${_J_BUNDLE}")
-                jq . <<<$_J_CH
               fi
-
               _J_PKG=$(jq ".channels += [${_J_CH}]" <<<$_J_PKG)
               _A_IN_SET[$_CH]=1
             fi
