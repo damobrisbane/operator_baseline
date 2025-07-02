@@ -1,6 +1,5 @@
 {
   "name": "odf-csi-addons-operator",
-  "defaultChannelName": "stable-4.16",
   "channels": [
     {
       "name": "stable-4.15",

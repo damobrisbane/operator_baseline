@@ -50,3 +50,30 @@ _map_csv_version() {
   # ie quay-operator.v3.13.6 >>> 3.13.6
   sed -E 's/^[v](.*)/\1/' <<<$(cut -d. -f2- <<<$1)
 }
+
+_f_map_image_tag() {
+  # reg.int.lan/baseline/20250701/redhat-operator-index:v4.16
+  # >>> 4.16
+
+  grep "v[[:digit:]]\+\.[[:digit:]]\+$" <<<$(cut -d: -f2 <<<$(basename $1))
+}
+
+_f_map_target_name() {
+  # reg.int.lan:5000/baseline/20250701/redhat-operator-index:v4.16
+  # >>> redhat-operator-index
+
+  cut -d : -f1 <<<$(basename $1)
+}
+
+_f_map_storage_config_url() {
+  # reg.int.lan:5000/baseline/20250701/redhat-operator-index:v4.16
+  # >>> reg.int.lan:5000
+  
+  cut -d/ -f1 <<<$1
+}
+
+_map_csv_version() {
+  # ie quay-operator.v3.13.6 >>> 3.13.6
+
+  sed -E 's/^[v](.*)/\1/' <<<$(cut -d. -f2- <<<$1)
+}

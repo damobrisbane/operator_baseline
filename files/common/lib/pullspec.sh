@@ -49,9 +49,17 @@ _fsv_filter() {
   
   local _FP_NDJSON=$1
 
-  _log 3 jq -rj "'[.name,.defaultChannelName,(.channels[].name)]|join(\"@\"),\" \"'" $_FP_NDJSON
+  #_log 3 jq -rj "'[.name,.defaultChannelName,(.channels[].name)]|join(\"@\"),\" \"'" $_FP_NDJSON
+  #jq -rj '[.name,.defaultChannelName,(.channels[].name)]|join("@")," "' $_FP_NDJSON
 
-  jq -rj '[.name,.defaultChannelName,(.channels[].name)]|join("@")," "' $_FP_NDJSON
+  _log 3 jq -rj "'[.name,(.channels[].name)]|join(\"@\"),\" \"'" $_FP_NDJSON
+  jq -rj '[.name,(.channels[].name)]|join("@")," "' $_FP_NDJSON
+}
+
+_fsv_filter_yaml() {
+  local _FP_YAML=$1
+
+  jq -sjc '.[]|.name,"@",(select(.channels != null)|[.channels[]|.name]|join("@"))," "' <<<$(yq '.oc_mirror_operators[0].packages[]' $_FP_YAML)
 
 }
 

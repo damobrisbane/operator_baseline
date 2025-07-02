@@ -1,0 +1,44 @@
+kind: ImageSetConfiguration
+apiVersion: mirror.openshift.io/v1alpha2
+archiveSize:
+storageConfig:
+  local:
+    path: /data2/oc-mirror-cache/tmp2
+  #registry:
+  #  imageURL: example.com/mirror/oc-mirror-metadata
+  #  skipTLS: false
+mirror:
+  operators:
+    - catalog: registry.redhat.io/redhat/redhat-operator-index:v4.16
+      targetName: redhat-operator-index-20250604
+      targetTag: v4.16
+      packages:
+        - name: cincinnati-operator
+          channels:
+            - name: v1
+              minVersion: 5.0.3
+        - name: advanced-cluster-management
+          channels:
+            - name: release-2.12
+              minVersion: "2.12.2"
+        - name: compliance-operator
+          channels: 
+            - name: stable
+              minVersion: "1.6.2"
+        - name: odf-operator
+          channels:
+            - name: stable-4.16
+              minVersion: "4.16.8-rhodf"
+        - name: openshift-gitops-operator
+          channels:
+            - name: gitops-1.13
+              minVersion: "1.13.3+0.1738142397.p"
+  #operators:
+  #- catalog: registry.redhat.io/redhat/redhat-operator-index:v4.16
+  #  packages:
+  #  - name: serverless-operator
+  #    channels:
+  #    - name: stable
+  #additionalImages:
+  #- name: registry.redhat.io/ubi9/ubi:latest
+  helm: {}

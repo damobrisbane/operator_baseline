@@ -1,26 +1,5 @@
 #!/bin/bash
 
-source $(dirname ${BASH_SOURCE})/lib/utility.sh
-source $(dirname ${BASH_SOURCE})/lib/grpc.sh
-source $(dirname ${BASH_SOURCE})/lib/filter.sh
-
-_BUNDLE=${BUNDLE:-}
-
-_FP_FILTER=${1:-}
-
-_L_PKGS=($(_list_pkgs))
-_L_FSV=$(_fsv_filter $_FP_FILTER)
-
-_L_PKGNAME=$(_pkgname_filter $_FP_FILTER)
-
-_L_FILTER=($(_right_join _L_PKGS _L_PKGNAME))
-
-
-_log 4 _L_PKGS: ${_L_PKGS[@]:0:3} ...
-_log 4 _L_PKGNAME_FILTER: ${_L_PKGNAME[@]}
-_log 4 _L_FSV: ${_L_FSV[@]}
-_log 4 _L_FILTER: ${_L_FILTER[@]}
-
 get_packages() {
 
   local -n _J0=$1
@@ -108,6 +87,5 @@ get_packages() {
 
 }
 
-get_packages J_PKGS
-
-jq . <<<$J_PKGS
+#get_packages J_PKGS
+#jq . <<<$J_PKGS

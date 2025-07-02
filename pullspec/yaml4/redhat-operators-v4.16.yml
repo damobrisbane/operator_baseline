@@ -1,0 +1,13 @@
+oc_mirror_operators:
+  - catalog: registry.redhat.io/redhat/redhat-operator-index:v4.16
+    packages:
+      - name: kubevirt-hyperconverged
+        channels:
+          - name: candidate
+            minVersion: '4.16.13'
+          - name: dev-preview
+            minVersion: '4.99.0-0.1723448771'
+      - name: odf-csi-addons-operator
+        channels:
+          - name: stable-4.16
+            minVersion: 4.16.11-rhodf
