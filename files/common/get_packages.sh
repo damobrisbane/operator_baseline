@@ -37,7 +37,7 @@ get_packages() {
       _DEF_CH=$(cut -d@ -f1 <<<${_A_FSV[$_PKG]})
       _L_CHNLS_PULLSPEC=( $(tr @ ' ' <<<$(cut -d@ -f2- <<<${_A_FSV[$_PKG]})) )
 
-      _log 1 _PKG: $_PKG _DEF_CH: $_DEF_CH _L_CHNLS_PULLSPEC: ${#_L_CHNLS_PULLSPEC[@]} ${_L_CHNLS_PULLSPEC[@]}
+      _log 3 _PKG: $_PKG _DEF_CH: $_DEF_CH _L_CHNLS_PULLSPEC: ${#_L_CHNLS_PULLSPEC[@]} ${_L_CHNLS_PULLSPEC[@]}
 
       _J_STOCK_PKG=$(grpcurl -plaintext -d "{\"name\":\"$_PKG\"}" localhost:50051 api.Registry/GetPackage)
 
@@ -80,7 +80,7 @@ get_packages() {
       _L_CHNLS=${_L_CHNLS_PULLSPEC[@]}
       _L_CHNLS+=( $_DEF_CH_NAME )
 
-      _log 1 _L_CHNLS: ${_L_CHNLS[@]}
+      _log 3 _L_CHNLS: ${_L_CHNLS[@]}
 
       for _STOCK_CH in ${_L_STOCK_CH[@]}; do
 
@@ -90,7 +90,7 @@ get_packages() {
             if [[ ( $_STOCK_CH == $_CH || $_STOCK_CH == $_DEF_CH_NAME ) && -z ${_A_IN_SET[$_CH]} ]]; then
               _J_CH=$(jq ".channels[]|select(.name==\"$_CH\")" <<<$_J_STOCK_PKG)
               if [[ -n $_BUNDLE ]]; then
-                _log 1 _J_BUNDLE=\$\(_f_grpc_bundle $_PKG $_CH\)
+                _log 3 _J_BUNDLE=\$\(_f_grpc_bundle $_PKG $_CH\)
                 _J_BUNDLE=$(_f_grpc_bundle $_PKG $_CH)
                 _J_CH=$(jq -s 'add' <<<"${_J_CH}${_J_BUNDLE}")
               fi
