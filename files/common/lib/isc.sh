@@ -2,7 +2,7 @@
 
 # Generate ImageSetConfiguration
 #
-# ./scripts/gent_isp.sh $CATALOG $FP_BASELINE
+# ./scripts/gen_isc.sh $CATALOG $FP_BASELINE
 #
 
 _DP_SCRIPT=$(dirname ${BASH_SOURCE[0]})
@@ -16,11 +16,8 @@ gen_isc() {
   export TARGET_NAME=$4
   export TARGET_TAG=$5
 
-  #jq . <<<$_J0_BASELINE_1998
-  #exit
   export PKG_CHANNELS=$(jq . <<<$_J0_BASELINE_1998)
 
   envsubst <<<$(cat $_FP_TMPL)
-  #jq . <<<$(envsubst <<<$(cat $_FP_TMPL))
 
 }

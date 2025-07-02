@@ -26,16 +26,10 @@ get_packages() {
   
   local _J0
 
-  #declare -A _A_FSV_1999
-  #_a_pkg_fsv _L_FSV _A_FSV_1999
-
   _log 3 \!_A_FSV_1998: ${!_A_FSV_1998[@]}
   _log 3 _A_FSV_1998: ${_A_FSV_1998[@]}
 
   for _PKG in ${!_A_FSV_1999[@]}; do
-
-      #_DEF_CH=$(cut -d@ -f1 <<<${_A_FSV_1999[$_PKG]})
-      #_L_CHNLS_PULLSPEC=( $(tr @ ' ' <<<$(cut -d@ -f2- <<<${_A_FSV_1999[$_PKG]})) )
 
       _L_CHNLS_PULLSPEC=( $(tr @ ' ' <<<${_A_FSV_1999[$_PKG]}))
 
