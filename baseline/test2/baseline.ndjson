@@ -1,0 +1,10 @@
+{
+  "name": "odf-csi-addons-operator",
+  "defaultChannelName": "stable-4.16",
+  "channels": [
+    {
+      "name": "stable-4.15",
+      "csvName": "odf-csi-addons-operator.v4.15.15-rhodf"
+    }
+  ]
+}
