@@ -48,5 +48,5 @@ _right_join() {
 
 _map_csv_version() {
   # ie quay-operator.v3.13.6 >>> 3.13.6
-  sed -E 's/^[v](.*)/\1/' <<<$(cut -d. -f2 <<<$1)
+  sed -E 's/^[v](.*)/\1/' <<<$(cut -d. -f2- <<<$1)
 }
