@@ -10,10 +10,6 @@ _f_grpc_bundle() {
 
   read channelName csvName bundlePath <<<$(grpcurl -plaintext -d "{\"pkgName\":\"${_OP}\",\"channelName\":\"${_CH}\"}" $_GRPC_URL api.Registry/GetBundleForChannel | jq -rj ".channelName,\" \",.csvName,\" \",.bundlePath")
 
-
-  echo csvName $csvName 1>&2
-  echo version $(_map_csv_version $csvName) 1>&2
-
   echo "{\"version\":\"$(_map_csv_version $csvName)\",\"bundlePath\":\"$bundlePath\"}"
 
 }
