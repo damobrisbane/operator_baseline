@@ -2,11 +2,18 @@
   "kind": "ImageSetConfiguration",
   "apiVersion": "mirror.openshift.io/v1alpha2",
   "archiveSize": null,
+  "storageConfig": {
+    "registry": {
+      "imageURL": "${STORAGE_CONFIG_URL}",
+      "skipTLS": false
+    }
+  },
   "mirror": {
     "operators": [
       {
         "catalog": "${CATALOG}",
-        "targetCatalog": "${TARGET_NAME}",
+        "targetName": "${TARGET_NAME}",
+        "targetTag": "${TARGET_TAG}",
         "packages": ${PKG_CHANNELS}
       }
     ]

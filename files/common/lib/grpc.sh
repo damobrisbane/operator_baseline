@@ -72,7 +72,8 @@ get_packages() {
 
       declare -A _A_IN_SET=()
 
-      local _J_PKG="{\"name\":\"$_PKG\",\"defaultChannelName\":\"$_DEF_CH_NAME\",\"channels\":[]}"
+      #local _J_PKG="{\"name\":\"$_PKG\",\"defaultChannelName\":\"$_DEF_CH_NAME\",\"channels\":[]}"
+      local _J_PKG="{\"name\":\"$_PKG\",\"channels\":[]}"
 
       unset _L_CHNLS
       _L_CHNLS=${_L_CHNLS_PULLSPEC[@]}
