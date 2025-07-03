@@ -60,7 +60,7 @@ _fsv_filter_yaml() {
 
   _log 3 jq -sjc '.[]|.name,"@",(select(.channels != null)|[.channels[]|.name]|join("@"))," "' \<\<\<\$\(yq '.oc_mirror_operators[0].packages[]' $_FP_YAML\)
 
-  jq -sjc '.[]|.name,"@",(select(.channels != null)|[.channels[]|.name]|join("@"))," "' <<<$(yq '.oc_mirror_operators[0].packages[]' $_FP_YAML)
+  jq -sjc '.[]|.name,"@",(select(.channels != null)|[.channels[]|.name]|join("@"))," "' <<<$(yq --output-format json '.oc_mirror_operators[0].packages[]' $_FP_YAML)
 
 }
 
