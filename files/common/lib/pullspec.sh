@@ -49,9 +49,9 @@ _fsv_filter() {
   
   local _FP_NDJSON=$1
 
-  _log 3 jq -rj "'[.name,(.channels[].name)]|join(\"@\"),\" \"'" $_FP_NDJSON
+  _log 3 jq -rj "[.name,(.channels[].name)]|join(\"@\"),\" \"" $_FP_NDJSON
 
-  jq -rj '[.name,(.channels[].name)]|join("@")," "' $_FP_NDJSON
+  jq -rj "[.name,(.channels[].name)]|join(\"@\"),\" \"" $_FP_NDJSON
 
 }
 
