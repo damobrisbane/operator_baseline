@@ -11,11 +11,10 @@ Other fields such as defaultChannelName or [channel] csvName can exist in the pu
 
 ## Requires
 
-sed
-[grpcurl](https://github.com/fullstorydev/grpcurl)
-jq
-[yq](https://github.com/mikefarah/yq)
-
+sed  
+[grpcurl](https://github.com/fullstorydev/grpcurl)  
+jq  
+[yq](https://github.com/mikefarah/yq)  
 podman or docker
 
 # WorkFlow
