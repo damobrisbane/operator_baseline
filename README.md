@@ -1,7 +1,7 @@
 
 # Operator Baseline/Appliance Tooling
 
-Shell script focused tooling for Openshift operator catalog mirroring. Useful for disconnected environments with a need to baseline operators on "minVersion" and consume the associated catalog indexes, independently of any upstream catalog updates.
+Shell script focused tooling for Openshift operator catalog mirroring. Useful for disconnected environments with a need to baseline operators on "minVersion" and consume the associated catalog indexes, independently of any upstream catalog updates. See [Creating the ImageSetConfiguration](https://docs.redhat.com/en/documentation/openshift_container_platform/4.16/html/disconnected_installation_mirroring/installing-mirroring-disconnected#oc-mirror-creating-image-set-config_installing-mirroring-disconnected).
 
 Given an input pullspecs, output catalog operators, channels and versions. May optionally include operator bundle image references, or output an ImageSetConfiguration (ISC). A "pullspec" is a list of operators/catalog packages, where the only requirement is the package name. 
 
