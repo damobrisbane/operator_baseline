@@ -38,6 +38,14 @@ d1() {
   date +%Y%m%d
 }
 
+_f_catname_version() {
+  # ie redhat-operators:v4.16 
+  # >>>
+  # redhat-operators v4.16
+
+  sed -E 's/(.*)-(v[[:alnum:]]+.[[:alnum:]]+).[[:alnum:]]+$/\1 \2/' <<<$1
+}
+
 _map_csv_version() {
   # ie quay-operator.v3.13.6 >>> 3.13.6
   sed -E 's/^[v](.*)/\1/' <<<$(cut -d. -f2- <<<$1)

@@ -111,41 +111,9 @@ generate_isc() {
   gen_isc _J0_BASELINE_1999 $_CATALOG_LOCATION $STORAGE_CONFIG_URL $TARGET_NAME $TARGET_TAG
 }
 
-######################################################################################################
-### CODE
-######################################################################################################
+_f_main() {
 
-# GLOBAL PARAMETERS
-
-_BUNDLE=${BUNDLE:-}
-_ALL_PKGS=${ALL_PKGS:-}
-_GEN_ISC=${GEN_ISC:-}
-_ISC_FORMATS=${ISC_FORMATS:-yaml}
-_YQ_BIN=${YQ_BIN:-/usr/local/bin/yq}       # https://github.com/mikefarah/yq
-_REPORT_LOCATION=${REPORT_LOCATION:-}
-
-# LOCAL PARAMETERS
-
-_D1=$1
-_CATALOG_LOCATION=$2
-_DP_PULLSPEC=${3:-}
-
-source $(dirname ${BASH_SOURCE})/lib/utility.sh
-source $(dirname ${BASH_SOURCE})/lib/grpc.sh
-source $(dirname ${BASH_SOURCE})/lib/pullspec.sh
-source $(dirname ${BASH_SOURCE})/lib/isc.sh
-
-# Run up idex image
-_L_PKGS_PULLSPEC=($(_grpc_list_pkgs))
-_log 2 _L_PKGS_PULLSPEC: ${_L_PKGS[@]:0:3} ...
-
-for _FP_PULLSPEC in $(find $_DP_PULLSPEC -type f); do
-
-  _FN_PULLSPEC=$(basename $_FP_PULLSPEC)
-  _CATALOG_NAME=${_FN_PULLSPEC%.*}
-  _EXT=${_FN_PULLSPEC##*.}
-
-  _container_run $
+  local _CATALOG_NAME=$1
 
   _log 1 Processing $_CATALOG_NAME
 
@@ -181,6 +149,47 @@ for _FP_PULLSPEC in $(find $_DP_PULLSPEC -type f); do
   else      
     jq . <<<$_J_BASELINE
   fi
+}
+
+######################################################################################################
+### CODE
+######################################################################################################
+
+# GLOBAL PARAMETERS
+
+_BUNDLE=${BUNDLE:-}
+_ALL_PKGS=${ALL_PKGS:-}
+_GEN_ISC=${GEN_ISC:-}
+_ISC_FORMATS=${ISC_FORMATS:-yaml}
+_YQ_BIN=${YQ_BIN:-/usr/local/bin/yq}       # https://github.com/mikefarah/yq
+_REPORT_LOCATION=${REPORT_LOCATION:-}
+
+# LOCAL PARAMETERS
+
+_D1=$1
+_CATALOG_LOCATION=$2
+_DP_PULLSPEC=${3:-}
+
+source $(dirname ${BASH_SOURCE})/lib/utility.sh
+source $(dirname ${BASH_SOURCE})/lib/grpc.sh
+source $(dirname ${BASH_SOURCE})/lib/pullspec.sh
+source $(dirname ${BASH_SOURCE})/lib/isc.sh
+
+# Run up idex image
+_L_PKGS_PULLSPEC=($(_grpc_list_pkgs))
+_log 2 _L_PKGS_PULLSPEC: ${_L_PKGS[@]:0:3} ...
+
+for _FP_PULLSPEC in $(find $_DP_PULLSPEC -type f); do
+
+  _FN_PULLSPEC=$(basename $_FP_PULLSPEC)
+  _CATALOG_NAME_VERSION=${_FN_PULLSPEC%.*}
+  _EXT=${_FN_PULLSPEC##*.}
+
+  read _CATALOG_NAME _TAG <<<$(_f_catname_version $_FN_PULLSPEC)
+
+  IMG=$_CATALOG_LOCATION/$_D1/$_CATALOG_NAME:$_TAG
+  docker image inspect $IMG|head
+
+  #_f_main $_CATALOG_NAME
 
 done
-
