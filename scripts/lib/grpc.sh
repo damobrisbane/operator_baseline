@@ -36,18 +36,18 @@ get_packages() {
   
   local _J0
 
-  _log 3 \!_A_FSV_PKG_CH_1998: ${!_A_FSV_PKG_CH_1998[@]}
-  _log 3 _A_FSV_PKG_CH_1998: ${_A_FSV_PKG_CH_1998[@]}
+  _log 4 \!_A_FSV_PKG_CH_1998: ${!_A_FSV_PKG_CH_1998[@]}
+  _log 4 _A_FSV_PKG_CH_1998: ${_A_FSV_PKG_CH_1998[@]}
 
   for _PKG in ${_L_FSV_1998[@]}; do
 
       _L_CHNLS_PULLSPEC=( $(tr @ ' ' <<<${_A_FSV_PKG_CH_1998[$_PKG]}))
 
-      _log 3 _PKG: $_PKG _DEF_CH: $_DEF_CH _L_CHNLS_PULLSPEC: ${#_L_CHNLS_PULLSPEC[@]} ${_L_CHNLS_PULLSPEC[@]}
+      _log 4 _PKG: $_PKG _DEF_CH: $_DEF_CH _L_CHNLS_PULLSPEC: ${#_L_CHNLS_PULLSPEC[@]} ${_L_CHNLS_PULLSPEC[@]}
 
       _J_STOCK_PKG=$(grpcurl -plaintext -d "{\"name\":\"$_PKG\"}" localhost:50051 api.Registry/GetPackage)
 
-      _log 4 _J_STOCK_PKG: $(jq -c . <<<$_J_STOCK_PKG)
+      _log 5 _J_STOCK_PKG: $(jq -c . <<<$_J_STOCK_PKG)
 
       # _J_STOCK_PKG:
       #
@@ -76,10 +76,10 @@ get_packages() {
       done
 
       local _L_STOCK_CH=( ${!_A_STOCK_CH_CSV[@]} )
-      _log 3 _A_STOCK_CH_CSV ${!_A_STOCK_CH_CSV[@]} ${_A_STOCK_CH_CSV[@]}
-      _log 2 _L_STOCK_CH ${#_L_STOCK_CH[@]} ${_L_STOCK_CH[@]}
-      _log 2 _L_CHNLS_PULLSPEC ${#_L_CHNLS_PULLSPEC[@]} ${_L_CHNLS_PULLSPEC[@]}
-      _log 2 _DEF_CH_NAME ${_DEF_CH_NAME}
+      _log 4 _A_STOCK_CH_CSV ${!_A_STOCK_CH_CSV[@]} ${_A_STOCK_CH_CSV[@]}
+      _log 3 _L_STOCK_CH ${#_L_STOCK_CH[@]} ${_L_STOCK_CH[@]}
+      _log 3 _L_CHNLS_PULLSPEC ${#_L_CHNLS_PULLSPEC[@]} ${_L_CHNLS_PULLSPEC[@]}
+      _log 3 _DEF_CH_NAME ${_DEF_CH_NAME}
 
       declare -A _A_IN_SET=()
 
@@ -93,7 +93,7 @@ get_packages() {
       #_L_CHNLS=${_L_CHNLS_PULLSPEC[@]}
       #_L_CHNLS+=( $_DEF_CH_NAME )
 
-      _log 3 _L_CHNLS: ${_L_CHNLS[@]}
+      _log 4 _L_CHNLS: ${_L_CHNLS[@]}
 
       for _STOCK_CH in ${_L_STOCK_CH[@]}; do
 

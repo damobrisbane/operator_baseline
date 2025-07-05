@@ -59,9 +59,9 @@ _f_output() {
 
     if [[ -n $_REPORT_LOCATION ]]; then
 
-      local _FP_RPT=${_RPT_LOC}/${_CATALOG_NAME}.isc-${_FMT}
+      local _FP_RPT=${_RPT_LOC}/isc-${_CATALOG_NAME}.${_FMT}
 
-      if [[ $_FMT == json ]]; then
+      if [[ ( $_FMT == json ) || ( $_FMT == ndjson ) ]]; then
         yq -o json . <<<$_J_ISC > ${_FP_RPT}
       else
         yq -p json . <<<$_J_ISC > ${_FP_RPT}
@@ -134,7 +134,7 @@ _f_main() {
     _L_FSV_PKG_CH=( ${_L_PKGS_PULLSPEC[@]} )
     _L_FSV_PKG=( ${_L_FSV_PKG_CH[@]} )
   else
-    if [[ $_EXT == ndjson ]]; then
+    if [[ ( $_EXT == json ) || ( $_EXT == ndjson ) ]]; then
       _L_FSV_PKG_CH=$(_fsv_pullspec $_FP_PULLSPEC)
     else
       _L_FSV_PKG_CH=$(_fsv_pullspec_yaml $_FP_PULLSPEC)
@@ -144,10 +144,11 @@ _f_main() {
 
   fi
 
-  _a_fsv_pkg_ch _A_FSV_PKG_CH
-
   _log 2 _L_FSV_PKG_CH: ${_L_FSV_PKG_CH[@]}
   _log 2 _L_FSV_PKG: ${_L_FSV_PKG[@]}
+
+  _a_fsv_pkg_ch _L_FSV_PKG_CH _A_FSV_PKG_CH 
+
   _log 2 _A_FSV_PKG_CH: ${!_A_FSV_PKG_CH[@]}
 
   [[ -n $_GEN_ISC ]] && unset _BUNDLE
@@ -175,7 +176,7 @@ _GEN_ISC=${GEN_ISC:-}
 _FORMATS=${FORMATS:-yaml}
 _YQ_BIN=${YQ_BIN:-/usr/local/bin/yq}       # https://github.com/mikefarah/yq
 _REPORT_LOCATION=${REPORT_LOCATION:-}
-_YAML_XPATH=${YAML_XPATH:-".oc_mirror_operators[0].packages[]"}
+#_YAML_XPATH=${YAML_XPATH:-".oc_mirror_operators[0].packages[]"}
 
 # LOCAL PARAMETERS
 
