@@ -69,7 +69,7 @@ main.sh 20250704 reg.dmz.lan/baseline pullspecs/test1
 
 where pullspecs/test1 contains the pullspec file _redhat-operators-v4.16.json_
 
-generate an ISC CatalogName of _reg.dmz.lan/baseline/20250704/redat-operators:v4.16
+generate an ISC CatalogName of _reg.dmz.lan/baseline/20250704/redat-operators:v4.16_
 
 
 ## TBD
