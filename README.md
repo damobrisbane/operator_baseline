@@ -32,7 +32,7 @@ _See also [pre-work.sh](./scripts/pre-work.sh)_
 
 ## Running
 
-  Run script on PULLSPEC_DIR, which expects _Pre-Work_ to have been completed
+Run script on PULLSPEC_DIR, which expects _Pre-Work_ to have been completed:
 
 ```     
 > D1=$(date +%Y%m%d)
