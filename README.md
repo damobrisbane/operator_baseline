@@ -16,19 +16,6 @@ yq: https://github.com/mikefarah/yq
 podman or docker
 ```
 
-# Execution
-
-```     
-> D1=$(date +%Y%m%d)
-> CATALOG_LOCATION=reg.dmz.lan/baseline/$D1
-> cls;GEN_ISC=1 ./files/common/main.sh $D1 $CATALOG_LOCATION $PULLSPEC_DIR
-```
-where PULLSPEC_DIR is the root folder containing spec files for operator mirroring specs (yaml or json)
-
-Where CATALOG_LOCATION is BOTH a grpc location and a destination registry location
-
-_See also [main.sh](./scripts/main.sh)_
-
 # WorkFlow
 
 ## Pre-work
@@ -45,7 +32,18 @@ _See also [pre-work.sh](./scripts/pre-work.sh)_
 
 ## Running
 
-  Run this script on PULLSPEC_DIR, which expects 1) to have been completed
+  Run script on PULLSPEC_DIR, which expects _Pre-Work_ to have been completed
+
+```     
+> D1=$(date +%Y%m%d)
+> CATALOG_LOCATION=reg.dmz.lan/baseline/$D1
+> cls;GEN_ISC=1 ./files/common/main.sh $D1 $CATALOG_LOCATION $PULLSPEC_DIR
+```
+where PULLSPEC_DIR is the root folder containing spec files for operator mirroring specs (yaml or json)
+
+Where CATALOG_LOCATION is BOTH a grpc location and a destination registry location
+
+_See also [main.sh](./scripts/main.sh)_
 
 ## Consuming
 
