@@ -72,9 +72,9 @@ And the script execution ( baseline.sh \<D1\> \<CATALOG_LOCATION\> \<PULLSEC_DIR
 baseline.sh 20250704 reg.dmz.lan/baseline pullspecs/test1
 ```
 
-where pullspecs/test1 folder contains the pullspec file _redhat-operator-index-v4.16.json_
+Where pullspecs/test1 folder contains the pullspec file _redhat-operator-index-v4.16.json_
 
-generate an ISC CatalogName of _reg.dmz.lan/baseline/20250704/redat-operator-indexo:v4.16_
+Generate an ISC CatalogName of _reg.dmz.lan/baseline/20250704/redat-operator-indexo:v4.16_
 
 The name of the pullspec file is implicitly used as catalog index name and tag in the code. ie _redhat-operator-index-v4.16_ becomes [catalog name] _redhat-operator-index_ and [tag] _v4.16_. This mapping needs to align with the image name shown in the _podman ps_ command, above.
 
