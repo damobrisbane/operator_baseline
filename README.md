@@ -51,7 +51,11 @@ _See also [main.sh](./scripts/main.sh)_
 
 ## Consuming
 
-Consume the baseline ImageSetConfiguration, where its _CatalogName_ should align with <CATALOG_LOCATION>[/<CATALOG_NAME>:<VERSION>] of the pre-work. CATLOG_NAME Should correspond to the pullspec file name, refer code "\_CATALOG_NAME=${_FN_PULLSPEC%.*}".
+Consume the baseline ImageSetConfiguration, where its _CatalogName_ should align with <CATALOG_LOCATION>[/<CATALOG_NAME>:<VERSION>] of the pre-work. CATLOG_NAME should correspond to the pullspec file name, refer code:
+
+```
+_CATALOG_NAME=${_FN_PULLSPEC%.*}
+```
 
 ## Container Images to script execution, to registry location mapping
 
