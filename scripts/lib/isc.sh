@@ -18,6 +18,6 @@ gen_isc() {
 
   export PKG_CHANNELS=$(jq . <<<$_J0_BASELINE_1998)
 
-  envsubst <<<$(cat $_FP_TMPL)
+  jq -c . <<<$(envsubst <<<$(cat $_FP_TMPL))
 
 }

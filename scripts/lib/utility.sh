@@ -29,21 +29,13 @@ _log() {
   esac;
 }
 
-_right_join() {
-  local -n L1=$1
-  local -n L2=$2
+_sleep() {
+  _log "Sleeping $DELAY secs.."
+  sleep $_DELAY
+}
 
-  local L3=()
-
-  for _m in ${L2[@]}; do
-    for _n in ${L1[@]}; do
-      if [[ $_m == $_n ]]; then
-        L3+=( $_m )
-      fi
-    done
-  done
-
-  echo -ne ${L2[@]}
+d1() {
+  date +%Y%m%d
 }
 
 _map_csv_version() {
@@ -77,3 +69,21 @@ _map_csv_version() {
 
   sed -E 's/^[v](.*)/\1/' <<<$(cut -d. -f2- <<<$1)
 }
+
+_right_join() {
+  # not currently used
+  local -n L1=$1
+  local -n L2=$2
+
+  local _L_JOIN=()
+
+  for _m in ${L2[@]}; do
+    for _n in ${L1[@]}; do
+      [[ $_m == $_n ]] && _L_JOIN+=( $_m )
+    done
+  done
+
+  echo -ne ${L2[@]}
+}
+
+

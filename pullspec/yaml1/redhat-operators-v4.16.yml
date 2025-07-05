@@ -9,7 +9,7 @@ oc_mirror_operators:
       - name: bare-metal-event-relay
       - name: cincinnati-operator
       - name: cluster-logging
-      - name: cluster-kube-descheduler
+      - name: cluster-kube-descheduler-operator
       - name: compliance-operator
       - name: devspaces
       - name: devworkspace-operator
