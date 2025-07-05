@@ -53,5 +53,5 @@ Consume the baseline ImageSetConfiguration, where its _CatalogName_ should align
 
 Versioning, see comment in [main.sh](./scripts/main.sh)
 
-Incorporate the _additionalImages_ in a pullspec [an generated ISC].
+Incorporate the _additionalImages_ in a pullspec [and a generated ISC].
 
