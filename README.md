@@ -30,7 +30,7 @@ podman or docker
 
    b) push the <CATALOG_LOCATION>[/<CATALOG_NAME>:<VERSION>] into target registry <sup>1</sup>
 
-<sup>1</sup> Future out of scope activity on the baselined catalog
+<sup>1</sup> Any future consumption activity on the catalog is out of scope for [operator_baseline](https://github.com/damobrisbane/operator_baseline).
 
 _See also [pre-work.sh](./scripts/pre-work.sh)_
 
