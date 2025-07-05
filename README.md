@@ -1,7 +1,7 @@
 
 # Operator Baseline/Appliance Tooling
 
-Shell script focused tooling for Openshift operator catalog mirroring. Useful for disconnected environments with a need to baseline operator versions and catalog indexes independently of upstream catalog updates.
+Shell script focused tooling for Openshift operator catalog mirroring. Useful for disconnected environments with a need to baseline operators on "minVersion" and consume the associated catalog indexes, independently of any upstream catalog updates.
 
 Given an input pullspecs, output catalog operators, channels and versions. May optionally include operator bundle image references, or output an ImageSetConfiguration (ISC). For an ISC, accept json or yaml for both input and output (see Global parameters). An input pullspec is configured as a folder path that potentially contains pullspecs for redhat, certified and community operators.
 
@@ -47,7 +47,11 @@ _See also [main.sh](./scripts/main.sh)_
 
 ## Consuming
 
-Consume the baseline ImageSetConfiguration, where its _CatalogName_ should align with <CATALOG_LOCATION>[/<CATALOG_NAME>:<VERSION>] of the pre-work. And CATLOG_NAME Should correspond to the pullspec file name, refer code "\_CATALOG_NAME=${_FN_PULLSPEC%.*}".
+Consume the baseline ImageSetConfiguration, where its _CatalogName_ should align with <CATALOG_LOCATION>[/<CATALOG_NAME>:<VERSION>] of the pre-work. CATLOG_NAME Should correspond to the pullspec file name, refer code "\_CATALOG_NAME=${_FN_PULLSPEC%.*}".
 
+## TBD
 
+Versioning, see comment in [main.sh](./scripts/main.sh)
+
+Incorporate the _additionalImages_ in a pullspec [an generated ISC].
 
