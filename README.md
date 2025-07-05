@@ -28,7 +28,9 @@ podman or docker
 
    a) pull and tag current upstream index for the new baseline <CATALOG_LOCATION>[/<CATALOG_NAME>:<VERSION>]
 
-   b) push the <CATALOG_LOCATION>[/<CATALOG_NAME>:<VERSION>] into target registry [future out of scope activity on the baselined catalog].
+   b) push the <CATALOG_LOCATION>[/<CATALOG_NAME>:<VERSION>] into target registry<sup>1</sup>
+
+<sup>1</sup> Future out of scope activity on the baselined catalog
 
 _See also [pre-work.sh](./scripts/pre-work.sh)_
 
