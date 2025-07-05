@@ -145,6 +145,8 @@ for _FP_PULLSPEC in $(find $_DP_PULLSPEC -type f); do
   _CATALOG_NAME=${_FN_PULLSPEC%.*}
   _EXT=${_FN_PULLSPEC##*.}
 
+  _container_run $
+
   _log 1 Processing $_CATALOG_NAME
 
   declare -A _A_FSV_PKG_CH

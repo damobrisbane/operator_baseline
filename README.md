@@ -51,9 +51,29 @@ _See also [main.sh](./scripts/main.sh)_
 
 Consume the baseline ImageSetConfiguration, where its _CatalogName_ should align with <CATALOG_LOCATION>[/<CATALOG_NAME>:<VERSION>] of the pre-work. CATLOG_NAME Should correspond to the pullspec file name, refer code "\_CATALOG_NAME=${_FN_PULLSPEC%.*}".
 
+## Container Images to script execution, to registry location mapping
+
+
+Given an image name:
+
+```
+> podman ps:
+> reg.dmz.lan/baseline/20250701/certified-operator-index   v4.16     c85077a313ec   9 hours ago     1.5GB
+```
+
+And the script execution ( main.sh <D1> <CATALOG_LOCATION> (PULLSEC_DIR> ):
+
+```
+main.sh 20250704 reg.dmz.lan/baseline pullspecs/test1
+```
+
+where pullspecs/test1 contains the pullspec file _redhat-operators-v4.16.json_
+
+generate an ISC CatalogName of _reg.dmz.lan/baseline/20250704/redat-operators:v4.16
+
+
 ## TBD
 
 Versioning, see comment in [main.sh](./scripts/main.sh)
 
 Incorporate the _additionalImages_ in a pullspec [and a generated ISC].
-
