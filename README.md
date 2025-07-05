@@ -3,11 +3,11 @@
 
 Shell script focused tooling for Openshift operator catalog mirroring. Useful for disconnected environments with a need to baseline operators on "minVersion" and consume the associated catalog indexes, independently of any upstream catalog updates.
 
-Given an input pullspecs, output catalog operators, channels and versions. May optionally include operator bundle image references, or output an ImageSetConfiguration (ISC). For an ISC, accept json or yaml for both input and output (see Global parameters). An input pullspec is configured as a folder path that potentially contains pullspecs for redhat, certified and community operators.
+Given an input pullspecs, output catalog operators, channels and versions. 
 
-A "pullspec" is a list of operators/catalog packages, where the only requirement is the package name. 
+May optionally include operator bundle image references, or output an ImageSetConfiguration (ISC). A "pullspec" is a list of operators/catalog packages, where the only requirement is the package name. 
 
-Optionally include a list of channels. The default channel will be determined from a grpc catalog query and included in the output, regardless of whether it was specified or not (hence an empty list of channels for a given package still produces a viable "defaultChannel" output. 
+For an ISC, accept json or yaml for both input and output (see Global parameters). An input pullspec is configured as a folder path that potentially contains pullspecs for redhat, certified and community operators. Optionally include a list of channels. The default channel will be determined from a grpc catalog query and included in the output, regardless of whether it was specified or not (hence an empty list of channels for a given package still produces a viable "defaultChannel" output. 
 
 Other fields such as defaultChannelName or [channel] csvName can exist in the pullspec for a package, but these fields will be ignored. This behaviour guarrantees accuracy ie of channel versions and default channels against a baselined index over any on-disk specs that may lag a new mirroring operation (ie see [Pre-Work](#Pre-Work)).
 
