@@ -61,7 +61,7 @@ Given an image name:
 > reg.dmz.lan/baseline/20250701/certified-operator-index   v4.16     c85077a313ec   9 hours ago     1.5GB
 ```
 
-And the script execution ( main.sh <D1> <CATALOG_LOCATION> (PULLSEC_DIR> ):
+And the script execution ( main.sh <D1> <CATALOG_LOCATION> <PULLSEC_DIR> ):
 
 ```
 main.sh 20250704 reg.dmz.lan/baseline pullspecs/test1
