@@ -1,5 +1,5 @@
 
-# Operator Baseline/Appliance Tooling
+# Operator Baseline/Front-End Catalog Loading
 
 Shell script focused tooling for Openshift operator catalog mirroring. Useful for disconnected environments with a need to baseline operators on "minVersion" and consume the associated catalog indexes, independently of any upstream catalog updates. See [Creating the image set configuration](https://docs.redhat.com/en/documentation/openshift_container_platform/4.18/html/disconnected_environments/mirroring-in-disconnected-environments#oc-mirror-building-image-set-config-v2_about-installing-oc-mirror-v2).
 
@@ -152,6 +152,6 @@ pullspec/MYNEWSPEC/20250705/redhat-operator-index.isc-json
 
 ## TBD
 
-Versioning, see comment in [baseline.sh](./scripts/baseline.sh)
+Versioning, see comment under _Limitations caveats_, in [baseline.sh](./scripts/baseline.sh)
 
 Incorporate the _additionalImages_ in a pullspec [and a generated ISC].
