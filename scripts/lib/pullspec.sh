@@ -18,11 +18,11 @@ _fsv_firsts() {
   done
 }
 
-_fsv_filter() {
+_fsv_pullspec() {
   #
   # <PKG>@<DEF_CHANNEL>{@<CHANNEL>},<PKG>@<DEF_CHANNEL>{@<CHANNEL>}, ..
   #
-  # Space delimited, @ field separated values
+  # Space delimited, @ field separated values, for shell script consumption
   #
   # ie
   #
@@ -73,24 +73,33 @@ _fsv_filter() {
 
 }
 
-_fsv_filter_yaml() {
+_fsv_pullspec_yaml() {
 
+  # Globals:
+  #
+  # _YAML_XPATH
+  #
+  
   local _FP_YAML=$1
 
-  _log 3 jq -sjc '.[]|.name,"@",(select(.channels != null)|[.channels[]|.name]|join("@"))," "' \<\<\<\$\(yq '.oc_mirror_operators[0].packages[]' $_FP_YAML\)
+  #_log 3 jq -sjc '.[]|.name,"@",(select(.channels != null)|[.channels[]|.name]|join("@"))," "' \<\<\<\$\(yq '.oc_mirror_operators[0].packages[]' $_FP_YAML\)
+  #jq -sjc '.[]|.name,"@",(select(.channels != null)|[.channels[]|.name]|join("@"))," "' <<<$(yq --output-format json '.oc_mirror_operators[0].packages[]' $_FP_YAML)
 
-  jq -sjc '.[]|.name,"@",(select(.channels != null)|[.channels[]|.name]|join("@"))," "' <<<$(yq --output-format json '.oc_mirror_operators[0].packages[]' $_FP_YAML)
+  # eg, _YAML_XPATH = '.oc_mirror_operators[0].packages[]'
 
+  _log 3 jq -sjc '.[]|.name,"@",(select(.channels != null)|[.channels[]|.name]|join("@"))," "' \<\<\<\$\(yq "$_YAML_XPATH" $_FP_YAML\)
+
+  jq -sjc '.[]|.name,"@",(select(.channels != null)|[.channels[]|.name]|join("@"))," "' <<<$(yq --output-format json "$_YAML_XPATH" $_FP_YAML)
 }
 
-_pkgname_filter() {
+_pkgname_pullspec() {
   local _FP_NDJSON=$1
   jq -rj '.name," "' $_FP_NDJSON
 }
 
 _a_fsv_pkg_ch() {
 
-  # _a_fsv _L_FILTER _L_FSV _A_FSV
+  # _a_fsv _L_PULLSPEC _L_FSV _A_FSV
   #
   local -n _A_FSV_1999=$1
 

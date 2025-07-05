@@ -5,17 +5,17 @@
 # D1=$(date +%Y%m%d)
 # CATALOG_LOCATION=reg.dmz.lan/baseline/$D1
 #
-# cls;GEN_ISC=1 ./files/common/main.sh $D1 $CATALOG_LOCATION $PULLSPEC_DIR
+# cls;GEN_ISC=1 ./files/common/baseline.sh $D1 $CATALOG_LOCATION $PULLSPEC_DIR
 #
 # where PULLSPEC_DIR is the root folder containing spec files for operator mirroring specs (yaml or json)
 #
-# Where CATALOG_LOCATION is BOTH a grpc location and a destination registry location
+# CATALOG_LOCATION does not include date part. ie actual catalog location becomes <CATALOG_LOCATION>/<D1>. This full catalog location becomes the first part of the image url used for the index container (for local gprc queries) and also makes up part of the _CatalogName_ of an ImageSetConfiguration.
 #
 #  <parameter>[default]
 #
 #  BUNDLE [not set]
 #  GEN_ISC [not set]
-#  ISC_FORMATS [json,yaml]
+#  FORMATS [json,yaml]
 #  YQ_BIN [/usr/local/bin/yq]
 #  REPORT_LOCATION [baseline] # [if not set, stdout] will create folder, <baseline>/<d1>/... generated imagesetconfigs go here...
 #
@@ -30,15 +30,20 @@
 # Internal processing logic is done in json via bash/jq, yaml may be used only on input, output.
 #
 
-
 ######################################################################################################
 ### FUNCTIONS
 ######################################################################################################
 
-_f_gen_isc_output() {
+_f_output() {
 
+  # Globals:
+  #
+  # _FORMATS
+  # _REPORT_LOCATION
+  #
+ 
   local _CATALOG_NAME=$1
-  local _RPT=$2
+  local _J_ISC=$2
 
   if [[ -n $_REPORT_LOCATION ]]; then
 
@@ -48,26 +53,26 @@ _f_gen_isc_output() {
 
   fi    
 
-  local _L_ISC_FORMATS=( $( tr , ' ' <<<$_ISC_FORMATS) )
+  local _L_FORMATS=( $( tr , ' ' <<<$_FORMATS) )
 
-  for _FMT in ${_L_ISC_FORMATS[@]}; do
+  for _FMT in ${_L_FORMATS[@]}; do
 
     if [[ -n $_REPORT_LOCATION ]]; then
 
       local _FP_RPT=${_RPT_LOC}/${_CATALOG_NAME}.isc-${_FMT}
 
       if [[ $_FMT == json ]]; then
-        yq -o json . <<<$_RPT > ${_FP_RPT}
+        yq -o json . <<<$_J_ISC > ${_FP_RPT}
       else
-        yq -p json . <<<$_RPT > ${_FP_RPT}
+        yq -p json . <<<$_J_ISC > ${_FP_RPT}
       fi
 
     else
 
       if [[ $_FMT == json ]]; then
-        yq -o json . <<<$_RPT
+        yq -o json . <<<$_J_ISC
       else
-        yq -p json . <<<$_RPT
+        yq -p json . <<<$_J_ISC
       fi
 
     fi
@@ -113,6 +118,11 @@ generate_isc() {
 
 _f_main() {
 
+  # Globals:
+  #
+  # _ALL_PKGS
+  #
+ 
   local _CATALOG_NAME=$1
 
   _log 1 Processing $_CATALOG_NAME
@@ -125,9 +135,9 @@ _f_main() {
     _L_FSV_PKG=( ${_L_FSV_PKG_CH[@]} )
   else
     if [[ $_EXT == ndjson ]]; then
-      _L_FSV_PKG_CH=$(_fsv_filter $_FP_PULLSPEC)
+      _L_FSV_PKG_CH=$(_fsv_pullspec $_FP_PULLSPEC)
     else
-      _L_FSV_PKG_CH=$(_fsv_filter_yaml $_FP_PULLSPEC)
+      _L_FSV_PKG_CH=$(_fsv_pullspec_yaml $_FP_PULLSPEC)
     fi
 
     _fsv_firsts _L_FSV_PKG_CH _L_FSV_PKG
@@ -145,9 +155,11 @@ _f_main() {
   _J_BASELINE=$(generate_baseline _A_FSV_PKG_CH _L_FSV_PKG $_D1 $_CATALOG_LOCATION $_CATALOG_NAME)
 
   if [[ -n $_GEN_ISC ]]; then
-    _f_gen_isc_output $_CATALOG_NAME $(generate_isc _J_BASELINE $_D1 $_CATALOG_NAME $_CATALOG_LOCATION)
+    local _J_ISC=$(generate_isc _J_BASELINE $_D1 $_CATALOG_NAME $_CATALOG_LOCATION)
+    _f_output $_CATALOG_NAME $_J_ISC
   else      
-    jq . <<<$_J_BASELINE
+    #jq . <<<$_J_BASELINE
+    _f_output $_CATALOG_NAME $_J_BASELINE
   fi
 }
 
@@ -160,9 +172,10 @@ _f_main() {
 _BUNDLE=${BUNDLE:-}
 _ALL_PKGS=${ALL_PKGS:-}
 _GEN_ISC=${GEN_ISC:-}
-_ISC_FORMATS=${ISC_FORMATS:-yaml}
+_FORMATS=${FORMATS:-yaml}
 _YQ_BIN=${YQ_BIN:-/usr/local/bin/yq}       # https://github.com/mikefarah/yq
 _REPORT_LOCATION=${REPORT_LOCATION:-}
+_YAML_XPATH=${YAML_XPATH:-".oc_mirror_operators[0].packages[]"}
 
 # LOCAL PARAMETERS
 
@@ -188,8 +201,7 @@ for _FP_PULLSPEC in $(find $_DP_PULLSPEC -type f); do
   read _CATALOG_NAME _TAG <<<$(_f_catname_version $_FN_PULLSPEC)
 
   IMG=$_CATALOG_LOCATION/$_D1/$_CATALOG_NAME:$_TAG
-  docker image inspect $IMG|head
 
-  #_f_main $_CATALOG_NAME
+  _f_main $_CATALOG_NAME
 
 done

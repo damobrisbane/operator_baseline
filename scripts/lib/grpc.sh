@@ -22,6 +22,13 @@ _grpc_list_pkgs() {
 
 get_packages() {
 
+  # Globals:
+  #
+  # _BUNDLE
+  # _ALL_PKGS
+  # _GEN_ISC [when NOT set, include defaultChannelName in output]
+  #
+ 
   # _L_FSV only required for preserving order on associatve array, _A_FSV
   #
   local -n _A_FSV_PKG_CH_1998=$1
@@ -76,8 +83,11 @@ get_packages() {
 
       declare -A _A_IN_SET=()
 
-      #local _J_PKG="{\"name\":\"$_PKG\",\"defaultChannelName\":\"$_DEF_CH_NAME\",\"channels\":[]}"
-      local _J_PKG="{\"name\":\"$_PKG\",\"channels\":[]}"
+      if [[ -n $_GEN_ISC ]]; then
+        local _J_PKG="{\"name\":\"$_PKG\",\"channels\":[]}"
+      else
+        local _J_PKG="{\"name\":\"$_PKG\",\"defaultChannelName\":\"$_DEF_CH_NAME\",\"channels\":[]}"
+      fi
 
       #unset _L_CHNLS
       #_L_CHNLS=${_L_CHNLS_PULLSPEC[@]}
