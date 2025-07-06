@@ -2,7 +2,7 @@
 
 # GLOBAL PARAMETERS
 #
-_POD_RUNNER=${POD_RUNNER:-/usr/bin/docker}
+_POD_RUNNER=${POD_RUNNER:-/usr/bin/podman}
 _L_CATALOGS=( $(tr , ' ' <<<${L_CATALOGS:-redhat,certified,community} ) )
 _TAG=${TAG:-v4.16}
 _PUSH=${PUSH:-}
