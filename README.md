@@ -9,6 +9,24 @@ For an ISC, accept json or yaml for both input and output (see Global parameters
 
 Other fields such as defaultChannelName or [channel] csvName can exist in the pullspec for a package, but these fields will be ignored. This behaviour guarrantees accuracy ie of channel versions and default channels against a baselined index over any on-disk specs that may lag a new mirroring operation (ie see [Pre-Work](#Pre-Work)).
 
+# WHY?
+
+```
+kind: ImageSetConfiguration
+apiVersion: mirror.openshift.io/v2alpha1
+archiveSize: null
+mirror:
+  operators:
+    - catalog: reg.dmz.lan/baseline/20250705/certified-operator-index:v4.16
+      targetCatalog: reg.dmz.lan/baseline/20250705/certified-operator-index:v4.16-cut
+      packages:
+        - name: 3scale-operator
+          channels:
+            - name: threescale-2.15
+              minVersion: 0.12.3
+        - name: advanced-cluster-manageme
+```
+
 ## Requires
 
 sed  

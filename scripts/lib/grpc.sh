@@ -36,8 +36,8 @@ get_packages() {
   
   local _J0
 
-  _log 4 \!_A_FSV_PKG_CH_1998: ${!_A_FSV_PKG_CH_1998[@]}
-  _log 4 _A_FSV_PKG_CH_1998: ${_A_FSV_PKG_CH_1998[@]}
+  _log 3 \!_A_FSV_PKG_CH_1998: ${!_A_FSV_PKG_CH_1998[@]}
+  _log 3 _A_FSV_PKG_CH_1998: ${_A_FSV_PKG_CH_1998[@]}
 
   for _PKG in ${_L_FSV_1998[@]}; do
 

@@ -38,7 +38,7 @@ d1() {
   date +%Y%m%d
 }
 
-_f_catname_version() {
+_f_indexname_tag() {
   # ie redhat-operators:v4.16 
   # >>>
   # redhat-operators v4.16
@@ -46,16 +46,21 @@ _f_catname_version() {
   sed -E 's/(.*)-(v[[:alnum:]]+.[[:alnum:]]+).[[:alnum:]]+$/\1 \2/' <<<$1
 }
 
-_map_csv_version() {
-  # ie quay-operator.v3.13.6 >>> 3.13.6
-  sed -E 's/^[v](.*)/\1/' <<<$(cut -d. -f2- <<<$1)
+_f_indexname_tag_ext() {
+
+  local _FP_PULLSPEC=$1
+
+  local _EXT=${_FN_PULLSPEC##*.}
+
+  read _INDEX_NAME _TAG <<<$(_f_indexname_tag $_FN_PULLSPEC)
+
+  echo -ne $_INDEX_NAME $_TAG $_EXT
+
 }
 
-_f_map_image_tag() {
-  # reg.int.lan/baseline/20250701/redhat-operator-index:v4.16
-  # >>> 4.16
-
-  grep "v[[:digit:]]\+\.[[:digit:]]\+$" <<<$(cut -d: -f2 <<<$(basename $1))
+map_csv_version() {
+  # ie quay-operator.v3.13.6 >>> 3.13.6
+  sed -E 's/^[v](.*)/\1/' <<<$(cut -d. -f2- <<<$1)
 }
 
 _f_map_target_name() {
