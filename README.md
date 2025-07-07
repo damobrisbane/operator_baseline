@@ -5,12 +5,10 @@ Shell script focused tooling for front-end loading of Openshift index catalogs a
 
 ```mermaid
 graph LR
-    Baseline --> Cut ---> ImageSetConfiguration --> OCMirror{"OC Mirror"}
-    Baseline --> ImageReg{"Image Reg/Org"}
-    ImageReg{"Image Reg/Org"} --> OCMirror
-    Baseline --> Cut ---> ImageSetConfiguration --> OCMirror{"OC Mirror"}
-    Baseline --> ImageReg{"Image Reg/Org"}
-    ImageReg{"Image Reg/Org"} --> OCMirror
+    Baseline(Baseline) --> Cut(Cut) ---> ISC(ImageSetConfiguration) --> OCMirror(OC Mirror)
+    Baseline -->|baseline catalog| ImageRegBaseline(Image Reg/Baseline)
+    ImageRegBaseline --> OCMirror
+    OCMirror --->|cut catalog/bundles| ImageRegOperators(Image Reg/Consumption)
 ```
 
 Syntax for [baseline](./scripts/baseline.sh) and [cut](./scripts/cut.sh) is similar and when cutting a new baseline they should share the same _pullspec_ folder over the scripts execution.
