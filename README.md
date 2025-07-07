@@ -8,6 +8,9 @@ graph LR
     Baseline --> Cut ---> ImageSetConfiguration --> OCMirror{"OC Mirror"}
     Baseline --> ImageReg{"Image Reg/Org"}
     ImageReg{"Image Reg/Org"} --> OCMirror
+    Baseline --> Cut ---> ImageSetConfiguration --> OCMirror{"OC Mirror"}
+    Baseline --> ImageReg{"Image Reg/Org"}
+    ImageReg{"Image Reg/Org"} --> OCMirror
 ```
 
 Syntax for [baseline](./scripts/baseline.sh) and [cut](./scripts/cut.sh) is similar and when cutting a new baseline they should share the same _pullspec_ folder over the scripts execution.
