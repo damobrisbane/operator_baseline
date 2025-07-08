@@ -1,0 +1,18 @@
+kind: ImageSetConfiguration
+apiVersion: mirror.openshift.io/v2alpha1
+archiveSize: null
+mirror:
+  operators:
+    - catalog: reg.dmz.lan/baseline/20250705/original/certified-operator-index:v4.16
+      targetCatalog: reg.dmz.lan/baseline/20250705/certified-operator-index:v4.16
+      packages:
+        - name: 3scale-operator
+          channels:
+            - name: threescale-2.15
+              minVersion: 0.12.3
+        - name: advanced-cluster-management
+          channels:
+            - name: release-2.12
+              minVersion: 2.12.3
+            - name: release-2.13
+              minVersion: 2.13.3
