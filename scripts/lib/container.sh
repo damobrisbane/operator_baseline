@@ -18,15 +18,14 @@ _f_pod_run() {
 
 }
 
-_f_pod_running() {
+_f_grpc_running() {
   
   local _CONTAINER_NAME=$1
+  local _GRPC_URL=$2
 
-  local _POD_RUNNER=${POD_RUNNER:-/usr/bin/podman}
+  IFS=$':' read _GRPC_HOST _GRPC_PORT <<<$_GRPC_URL
 
-  local _RESP=$($_POD_RUNNER ps -a --filter label=$_CONTAINER_NAME | grep -v CONTAINER | wc -l)
-
-  if [[ $_RESP -eq 1 ]]; then
+  if nc -z $_GPRC_HOST $_GRPC_PORT; then
     return 0
   else
     return 1

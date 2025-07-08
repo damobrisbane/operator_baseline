@@ -96,27 +96,27 @@ _f_run() {
   
   _IMG=$1
 
-  if _f_pod_running index; then
+  if _f_grpc_running index $_GRPC_URL; then
     if [[ -z $_SKIP_POD_RM ]]; then
       _f_pod_rm $(_f_pod_id index)
       AUTHFILE=${_AUTHFILE} _f_pod_run index $_IMG && sleep 4
+      echo "Waiting for pod $_IMG to start.." 
     fi
   else
-    _log 1 
-  
     AUTHFILE=${_AUTHFILE} _f_pod_run index $_IMG && sleep 4
+    echo "Waiting for pod $_IMG to start.." 
   fi
 
   local _COUNTER=-1
 
   while : ; do
-    if _f_pod_running index; then
+    if _f_grpc_running index $_GPRC_URL; then
       _DELAY=$(( $_COUNER + 1 ))
       DELAY=$_DELAY _sleep
       break
     else
       _COUNTER=$(( $_COUNTER + 1))
-      [[ $_COUNTER -eq 4 ]] && echo "No running pod (index) found. Are args correct, exiting.." && exit
+      [[ $_COUNTER -eq 10 ]] && echo "No running pod (index) found. Are args correct, exiting.." && exit
     fi
   done
   
@@ -202,6 +202,7 @@ _YQ_BIN=${YQ_BIN:-/usr/local/bin/yq}       # https://github.com/mikefarah/yq
 _TEMPLATE=${TEMPLATE:-isc-operator.json}
 _SKIP_POD_RM=${SKIP_POD_RM:-}
 _REPORT_LOCATION=${REPORT_LOCATION:-baseline}
+_GRPC_URL=${GRPC_URL:-localhost:50051}
 
 #_YAML_XPATH=${YAML_XPATH:-".oc_mirror_operators[0].packages[]"}
 
