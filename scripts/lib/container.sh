@@ -25,7 +25,7 @@ _f_grpc_running() {
 
   IFS=$':' read _GRPC_HOST _GRPC_PORT <<<$_GRPC_URL
 
-  if nc -z $_GPRC_HOST $_GRPC_PORT; then
+  if nc -z $_GRPC_HOST $_GRPC_PORT; then
     return 0
   else
     return 1
