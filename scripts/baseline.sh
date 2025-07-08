@@ -39,14 +39,14 @@ for _FP_PULLSPEC in $(find $_DP_PULLSPEC -type f); do
     echo "Image $_CATALOG already exists, not downloading again.."
   else
     echo "Downloading $_CATALOG_UPSTREAM.."
-    $_POD_RUNNER pull $_CATALOG_UPSTREAM 2>/dev/null 1>&2
+    $_POD_RUNNER pull $_CATALOG_UPSTREAM
   fi
 
   echo Tagging $_CATALOG
-  $_POD_RUNNER tag $_CATALOG_UPSTREAM $_CATALOG 2>/dev/null 1>&2
+  $_POD_RUNNER tag $_CATALOG_UPSTREAM $_CATALOG
 
   if [[ -n $_PUSH ]]; then
-    $_POD_RUNNER push $_CATALOG 2>/dev/null 1>&2
+    $_POD_RUNNER push --remove-signatures $_CATALOG
     echo Pushed $_CATALOG
   fi
 
