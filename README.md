@@ -37,11 +37,6 @@ The two scripts above would produce an ImageSetConfiguration such as:
 
 ![cut-gen_isc1](./images/cut-gen_isc1.png)
 
-_The name of a pullspec file is implicitly used as catalog index name and tag in the code. ie \_redhat-operator-index-v4.16\_ becomes [catalog name] \_redhat-operator-index\_ and [tag] \_v4.16\_. This catalog and tag names need to also align with the locally run index image that is used in grpc queries._
-
-_See also [cut.sh](./scripts/cut.sh)_
-
-
 ## Requires
 
 sed  
@@ -56,10 +51,17 @@ Useful for disconnected environments with a need to cut operators on "minVersion
 
 Given an input pullspecs, output catalog operators, channels and versions. May optionally include operator bundle image references, or output an ImageSetConfiguration (ISC). A "pullspec" is a list of operators/catalog packages, where the only requirement is the package name. 
 
-For an ISC, accept json or yaml for both input and output (eg [Global Parameters](./scripts/cut.sh) ). An input pullspec is configured as a folder path that potentially contains pullspecs for redhat, certified and community operators. Optionally include a list of channels. The default channel will be determined from a grpc catalog query and included in the output, regardless of whether it was specified or not (hence an empty list of channels for a given package still produces a viable "defaultChannel" output. 
+For an ISC, accept json or yaml for both input and output (eg [Global Parameters](./scripts/cut.sh) ). 
+
+# Pull Specs
+
+An input pullspec is configured as a folder path that potentially contains pullspecs for redhat, certified and community operators. Optionally include a list of channels. The default channel will be determined from a grpc catalog query and included in the output, regardless of whether it was specified or not (hence an empty list of channels for a given package still produces a viable "defaultChannel" output. 
 
 Other fields such as defaultChannelName or [channel] csvName can exist in the pullspec for a package, but these fields will be ignored. This behaviour guarrantees accuracy ie of channel versions and default channels against a cutd index over any on-disk specs that may lag a new mirroring operation (ie see [Pre-Work](#Pre-Work)).
 
+_The name of a pullspec file is implicitly used as catalog index name and tag in the code. ie \_redhat-operator-index-v4.16\_ becomes [catalog name] \_redhat-operator-index\_ and [tag] \_v4.16\_. The catalog and tag names need to also align with the locally run index image that is used in grpc queries._
+
+_See also [cut.sh](./scripts/cut.sh)_
 
 # WorkFlow
 

@@ -174,11 +174,12 @@ _f_main() {
   if [[ -n $_GEN_ISC ]]; then
 
     _CATALOG=$_REG_LOCATION/$_DATESTAMP/$_INDEX_NAME:$_TAG
-    _TARGET_CATALOG=$_REG_LOCATION/$_DATESTAMP/$_INDEX_NAME:$_TAG-cut
+    _TARGET_CATALOG=$_REG_LOCATION/$_DATESTAMP/$_INDEX_NAME
+    _TARGET_TAG=$_TAG-cut
 
-    _log 2 gen_isc _J_PKGS $_CATALOG $_TARGET_CATALOG $_TAG
+    _log 2 gen_isc _J_PKGS $_CATALOG $_TARGET_CATALOG $_TARGET_TAG
 
-    local _J_ISC=$(gen_isc _J_PKGS $_CATALOG $_TARGET_CATALOG $_TAG)
+    local _J_ISC=$(gen_isc _J_PKGS $_CATALOG $_TARGET_CATALOG $_TARGET_TAG)
 
     _f_output_isc _J_ISC $_DATESTAMP $_INDEX_NAME $_TAG
 
