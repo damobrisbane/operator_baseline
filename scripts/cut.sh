@@ -95,6 +95,7 @@ _f_output_api() {
 _f_run() {
   
   _IMG=$1
+  _GRPC_URL=$2
 
   if _f_grpc_running index $_GRPC_URL; then
     if [[ -z $_SKIP_POD_RM ]]; then
@@ -240,7 +241,7 @@ for _FP_PULLSPEC in $(find $_DP_PULLSPEC -type f); do
   _TARGET_CATALOG=$_REG_LOCATION/$_DATESTAMP/$_INDEX_NAME:$_TAG-cut
 
   # Run up index image
-  _f_run $_CATALOG
+  _f_run $_CATALOG $_GRPC_URL
 
   _L_PKGS_PULLSPEC=($(_grpc_list_pkgs))
   _log 2 _L_PKGS_PULLSPEC: ${_L_PKGS[@]:0:3} ...
