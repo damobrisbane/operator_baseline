@@ -108,17 +108,16 @@ _f_run() {
     echo "Waiting for pod $_IMG to start.." 
   fi
 
-  local _COUNTER=-1
+  local _COUNTER=0
 
   while : ; do
     if _f_grpc_running index $_GRPC_URL; then
-      _DELAY=$(( $_COUNTER + 1 ))
-      _sleep $_DELAY
+      _sleep $_COUNTER
       break
     else
-      _COUNTER=$(( $_COUNTER + 1))
       [[ $_COUNTER -eq 10 ]] && echo "No running pod (index) found. Are args correct, exiting.." && exit
     fi
+    COUNTER=$(( $_COUNTER + 1 ))
   done
   
 }
