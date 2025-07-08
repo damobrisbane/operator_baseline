@@ -112,12 +112,12 @@ _f_run() {
 
   while : ; do
     if _f_grpc_running index $_GRPC_URL; then
-      _sleep $_COUNTER
       break
     else
-      [[ $_COUNTER -eq 10 ]] && echo "No running pod (index) found. Are args correct, exiting.." && exit
+      [[ $_COUNTER -gt 10 ]] && echo "No running pod (index) found. Are args correct, exiting.." && exit
     fi
     COUNTER=$(( $_COUNTER + 1 ))
+    _sleep $_COUNTER
   done
   
 }
