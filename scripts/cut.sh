@@ -110,8 +110,8 @@ _f_run() {
   local _COUNTER=-1
 
   while : ; do
-    if _f_grpc_running index $_GPRC_URL; then
-      _DELAY=$(( $_COUNER + 1 ))
+    if _f_grpc_running index $_GRPC_URL; then
+      _DELAY=$(( $_COUNTER + 1 ))
       DELAY=$_DELAY _sleep
       break
     else
