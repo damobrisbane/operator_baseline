@@ -28,7 +28,9 @@ Tagging reg.dmz.lan/baseline/20250707/redhat-operator-index:v4.16
 
 > # cut.sh
 >
-> POD_RUNNER=/usr/bin/docker GEN_ISC=1 ./scripts/cut.sh $DATESTAMP $CATALOG_LOCATION pullspec/json1
+> REPORT_LOCATION=baseline
+>
+> REPORT_LOCATION=$REPORT_LOCATION POD_RUNNER=/usr/bin/docker GEN_ISC=1 ./scripts/cut.sh $DATESTAMP $CATALOG_LOCATION pullspec/json1
 > ...
 
 ```
