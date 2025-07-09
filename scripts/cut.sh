@@ -102,7 +102,7 @@ _f_run() {
       _f_pod_rm $(_f_pod_id index)
       AUTHFILE=${_AUTHFILE} _f_pod_run index $_IMG
       if [[ $? -ne 0 ]]; then
-        echo "No running pod (index) found. Are args correct, exiting.." && return 1
+        echo "No running pod (index) found. Are args correct, return 1.." && return 1
       else
         echo "Waiting for pod $_IMG to start.." 
         sleep 4
@@ -111,7 +111,7 @@ _f_run() {
   else
     AUTHFILE=${_AUTHFILE} _f_pod_run index $_IMG && sleep 4
     if [[ $? -ne 0 ]]; then
-      echo "No running pod (index) found. Are args correct, exiting.." && return 1
+      echo "No running pod (index) found. Are args correct, return 1.." && return 1
     else
       echo "Waiting for pod $_IMG to start.." 
       sleep 4
@@ -124,7 +124,7 @@ _f_run() {
     if _f_grpc_running index $_GRPC_URL; then
       break
     else
-      [[ $_COUNTER -gt 10 ]] && echo "No running pod (index) found. Are args correct, exiting.." && return 1
+      [[ $_COUNTER -gt 10 ]] && echo "No running pod (index) found. Are args correct, return 1.." && return 1
     fi
     _COUNTER=$(( $_COUNTER + 1 ))
     _sleep $_COUNTER
