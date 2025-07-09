@@ -100,12 +100,22 @@ _f_run() {
   if _f_grpc_running index $_GRPC_URL; then
     if [[ -z $_SKIP_POD_RM ]]; then
       _f_pod_rm $(_f_pod_id index)
-      AUTHFILE=${_AUTHFILE} _f_pod_run index $_IMG && sleep 4
-      echo "Waiting for pod $_IMG to start.." 
+      AUTHFILE=${_AUTHFILE} _f_pod_run index $_IMG
+      if [[ $? -ne 0 ]]; then
+        echo "No running pod (index) found. Are args correct, exiting.." && return 1
+      else
+        echo "Waiting for pod $_IMG to start.." 
+        sleep 4
+      fi
     fi
   else
     AUTHFILE=${_AUTHFILE} _f_pod_run index $_IMG && sleep 4
-    echo "Waiting for pod $_IMG to start.." 
+    if [[ $? -ne 0 ]]; then
+      echo "No running pod (index) found. Are args correct, exiting.." && return 1
+    else
+      echo "Waiting for pod $_IMG to start.." 
+      sleep 4
+    fi
   fi
 
   local _COUNTER=1
