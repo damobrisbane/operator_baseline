@@ -95,30 +95,41 @@ _f_output_api() {
 _f_run() {
   
   _IMG=$1
+  _GRPC_URL=$2
 
-  if _f_pod_running index; then
+  if _f_grpc_running index $_GRPC_URL; then
     if [[ -z $_SKIP_POD_RM ]]; then
       _f_pod_rm $(_f_pod_id index)
-      AUTHFILE=${_AUTHFILE} _f_pod_run index $_IMG && sleep 4
+      AUTHFILE=${_AUTHFILE} _f_pod_run index $_IMG
+      if [[ $? -ne 0 ]]; then
+        echo "No running pod (index) found. Are args correct, return 1.." && return 1
+      else
+        echo "Waiting for pod $_IMG to start.." 
+        sleep 4
+      fi
     fi
   else
-    _log 1 
-  
     AUTHFILE=${_AUTHFILE} _f_pod_run index $_IMG && sleep 4
+    if [[ $? -ne 0 ]]; then
+      echo "No running pod (index) found. Are args correct, return 1.." && return 1
+    else
+      echo "Waiting for pod $_IMG to start.." 
+      sleep 4
+    fi
   fi
 
-  local _COUNTER=-1
+  local _COUNTER=1
 
   while : ; do
-    if _f_pod_running index; then
-      _DELAY=$(( $_COUNER + 1 ))
-      DELAY=$_DELAY _sleep
+    if _f_grpc_running index $_GRPC_URL; then
       break
     else
-      _COUNTER=$(( $_COUNTER + 1))
-      [[ $_COUNTER -eq 4 ]] && echo "No running pod (index) found. Are args correct, exiting.." && exit
+      [[ $_COUNTER -gt 10 ]] && echo "No running pod (index) found. Are args correct, return 1.." && return 1
     fi
+    _COUNTER=$(( $_COUNTER + 1 ))
+    _sleep $_COUNTER
   done
+  return 0
   
 }
 
@@ -202,6 +213,7 @@ _YQ_BIN=${YQ_BIN:-/usr/local/bin/yq}       # https://github.com/mikefarah/yq
 _TEMPLATE=${TEMPLATE:-isc-operator.json}
 _SKIP_POD_RM=${SKIP_POD_RM:-}
 _REPORT_LOCATION=${REPORT_LOCATION:-baseline}
+_GRPC_URL=${GRPC_URL:-localhost:50051}
 
 #_YAML_XPATH=${YAML_XPATH:-".oc_mirror_operators[0].packages[]"}
 
@@ -239,11 +251,14 @@ for _FP_PULLSPEC in $(find $_DP_PULLSPEC -type f); do
   _TARGET_CATALOG=$_REG_LOCATION/$_DATESTAMP/$_INDEX_NAME:$_TAG-cut
 
   # Run up index image
-  _f_run $_CATALOG
+  _f_run $_CATALOG $_GRPC_URL
 
-  _L_PKGS_PULLSPEC=($(_grpc_list_pkgs))
-  _log 2 _L_PKGS_PULLSPEC: ${_L_PKGS[@]:0:3} ...
+  if [[ $? -eq 0 ]]; then
 
-  _f_main $_DATESTAMP $_INDEX_NAME $_TAG
+    _L_PKGS_PULLSPEC=($(_grpc_list_pkgs))
+    _log 2 _L_PKGS_PULLSPEC: ${_L_PKGS[@]:0:3} ...
 
+    _f_main $_DATESTAMP $_INDEX_NAME $_TAG
+
+  fi
 done

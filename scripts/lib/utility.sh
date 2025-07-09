@@ -30,7 +30,8 @@ _log() {
 }
 
 _sleep() {
-  _log "Sleeping $DELAY secs.."
+  local _DELAY=$1
+  _log 2 "Sleeping $_DELAY secs.."
   sleep $_DELAY
 }
 

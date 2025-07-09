@@ -42,6 +42,7 @@ The two scripts above would produce an ImageSetConfiguration such as:
 sed  
 [grpcurl](https://github.com/fullstorydev/grpcurl)  
 jq  
+nc
 [yq](https://github.com/mikefarah/yq)  
 podman or docker
 
