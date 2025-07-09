@@ -114,11 +114,12 @@ _f_run() {
     if _f_grpc_running index $_GRPC_URL; then
       break
     else
-      [[ $_COUNTER -gt 10 ]] && echo "No running pod (index) found. Are args correct, exiting.." && exit
+      [[ $_COUNTER -gt 10 ]] && echo "No running pod (index) found. Are args correct, exiting.." && return 1
     fi
     _COUNTER=$(( $_COUNTER + 1 ))
     _sleep $_COUNTER
   done
+  return 0
   
 }
 
@@ -242,9 +243,12 @@ for _FP_PULLSPEC in $(find $_DP_PULLSPEC -type f); do
   # Run up index image
   _f_run $_CATALOG $_GRPC_URL
 
-  _L_PKGS_PULLSPEC=($(_grpc_list_pkgs))
-  _log 2 _L_PKGS_PULLSPEC: ${_L_PKGS[@]:0:3} ...
+  if [[ $? -eq 0 ]]; then
 
-  _f_main $_DATESTAMP $_INDEX_NAME $_TAG
+    _L_PKGS_PULLSPEC=($(_grpc_list_pkgs))
+    _log 2 _L_PKGS_PULLSPEC: ${_L_PKGS[@]:0:3} ...
 
+    _f_main $_DATESTAMP $_INDEX_NAME $_TAG
+
+  fi
 done

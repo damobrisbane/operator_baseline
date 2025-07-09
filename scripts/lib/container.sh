@@ -16,6 +16,11 @@ _f_pod_run() {
     $_POD_RUNNER run -d -t --rm --label index= --name $_CONTAINER_NAME --net=host -p $_PORT:50051 -t $_IMG
   fi
 
+  if [[ $? -eq 0 ]]; then
+    return 0
+  else
+    return 1
+  fi
 }
 
 _f_grpc_running() {
