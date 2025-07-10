@@ -77,17 +77,17 @@ _f_output_api() {
   #
   # _REPORT_LOCATION
   #
-  #  _f_output_api _J_PKGS $_REG_LOCATION $_DATESTAMP $_INDEX_NAME $_TAG
+  #  _f_output_api _J_PKGS_CUT $_REG_LOCATION $_DATESTAMP $_INDEX_NAME $_TAG
   #
  
-  local -n _J_PKGS_1999=$1
+  local -n _J_PKGS_CUT_1999=$1
   local _DATESTAMP=$3
 
   local _RPT_LOC=${_REPORT_LOCATION}/${_DATESTAMP}
 
   [[ ! -d $_RPT_LOC ]] && mkdir -p $_RPT_LOC
 
-  yq -o json . <<<$_J_PKGS_1999
+  yq -o json . <<<$_J_PKGS_CUT_1999
 
 }
 
@@ -143,59 +143,37 @@ _f_main() {
   #
   # _ALL_PKGS
   #
- 
-  local _DATESTAMP=$1
-  local _INDEX_NAME=$2
-  local _TAG=$3
+  #
 
-  _log 1 Processing $_INDEX_NAME
+  _L_BASELINE_PKGS=( $(_grpc_list_pkgs) )
 
-  declare -A _A_FSV_PKG_CH
+  _log 2 _L_BASELINE_PKGS: ${_L_BASELINE_PKGS[@]:0:3} ...
 
-  _L_FSV_PKG=()
-  if [[ -n $_ALL_PKGS ]]; then
-    _L_FSV_PKG_CH=( ${_L_PKGS_PULLSPEC[@]} )
-    _L_FSV_PKG=( ${_L_FSV_PKG_CH[@]} )
-  else
-    if [[ ( $_EXT == json ) || ( $_EXT == ndjson ) ]]; then
-      _L_FSV_PKG_CH=$(_fsv_pullspec $_FP_PULLSPEC)
-    else
-      _L_FSV_PKG_CH=$(_fsv_pullspec_yaml $_FP_PULLSPEC)
-    fi
+  exit
 
-    _fsv_firsts _L_FSV_PKG_CH _L_FSV_PKG
 
-  fi
-
-  _log 2 _L_FSV_PKG_CH: ${_L_FSV_PKG_CH[@]}
-  _log 2 _L_FSV_PKG: ${_L_FSV_PKG[@]}
-
-  _a_fsv_pkg_ch _L_FSV_PKG_CH _A_FSV_PKG_CH 
+  _ALL_PKGS=$_ALL_PKGS _a_fsv_pkg_ch _L_FSV_PKG_CH _A_FSV_PKG_CH
 
   _log 2 _A_FSV_PKG_CH: ${!_A_FSV_PKG_CH[@]}
 
   [[ -n $_GEN_ISC ]] && unset _BUNDLE
 
-  #_J_BASELINE=$(generate_baseline _A_FSV_PKG_CH _L_FSV_PKG $_DATESTAMP $_REG_LOCATION $_INDEX_NAME)
+  _J_PKGS_CUT=$(_BUNDLE=$_BUNDLE _ALL_PKGS=$_ALL_PKGS get_packages _A_FSV_PKG_CH _L_FSV_PKG)
 
-  _J_PKGS=$(BUNDLE=$_BUNDLE get_packages _A_FSV_PKG_CH _L_FSV_PKG)
-
-  _log 2 _J_PKGS: $(jq -c . <<<$_J_PKGS)
+  _log 2 _J_PKGS_CUT: $(jq -c . <<<$_J_PKGS_CUT)
 
   if [[ -n $_GEN_ISC ]]; then
 
-    _CATALOG=$_REG_LOCATION/$_DATESTAMP/$_INDEX_NAME:$_TAG
-    _TARGET_CATALOG=$_REG_LOCATION/$_DATESTAMP/$_INDEX_NAME
-    _TARGET_TAG=$_TAG-cut
+    _log 2 gen_isc _J_PKGS_CUT $_CATALOG $_TARGET_CATALOG $_TARGET_TAG
 
-    _log 2 gen_isc _J_PKGS $_CATALOG $_TARGET_CATALOG $_TARGET_TAG
-
-    local _J_ISC=$(gen_isc _J_PKGS $_CATALOG $_TARGET_CATALOG $_TARGET_TAG)
+    local _J_ISC=$(gen_isc _J_PKGS_CUT $_CATALOG $_TARGET_CATALOG $_TARGET_TAG)
 
     _f_output_isc _J_ISC $_DATESTAMP $_INDEX_NAME $_TAG
 
   else      
-    _f_output_api _J_PKGS $_REG_LOCATION $_DATESTAMP $_INDEX_NAME $_TAG
+
+    _f_output_api _J_PKGS_CUT $_REG_LOCATION $_DATESTAMP $_INDEX_NAME $_TAG
+
   fi
 }
 
@@ -205,6 +183,7 @@ _f_main() {
 
 # GLOBAL PARAMETERS
 
+_POD_BIN=${POD_BIN:-/usr/bin/podman}
 _BUNDLE=${BUNDLE:-}
 _ALL_PKGS=${ALL_PKGS:-}
 _GEN_ISC=${GEN_ISC:-}
@@ -221,9 +200,7 @@ _GRPC_URL=${GRPC_URL:-localhost:50051}
 
 _DATESTAMP=$1
 _REG_LOCATION=$2
-_DP_PULLSPEC=${3:-}
-
-
+_PULLSPEC=${3:-}
 
 if [[ $1 == -h ]]; then
   echo "[DEBUG=<level>] [BUNDLE=] [ALL_PKGS=] [GEN_ISC=] [ISC_FORMATS=] [REPORT_LOCATION=] ./scripts/baseline.sh <DATE> <REG_LOCATION> <PULLSPEC FOLDER" && exit
@@ -235,28 +212,32 @@ source $(dirname ${BASH_SOURCE})/lib/container.sh
 source $(dirname ${BASH_SOURCE})/lib/pullspec.sh
 source $(dirname ${BASH_SOURCE})/lib/isc.sh
 
-for _FP_PULLSPEC in $(find $_DP_PULLSPEC -type f); do
+_L_SPECS_CUT=( $(_f_parse_input $_PULLSPEC) )
 
-  _FN_PULLSPEC=$(basename $_FP_PULLSPEC)
+_log 3 "_L_SPECS_CUT: (${#_L_SPECS_CUT[@]}) ${_L_SPECS_CUT[@]}"
 
-  _log 2 "read _INDEX_NAME _TAG _EXT <<<\$(_f_indexname_tag_ext $_FN_PULLSPEC)"
+for _J_SPEC_CUT in ${_L_SPECS_CUT[@]}; do
 
-  read _INDEX_NAME _TAG _EXT <<<$(_f_indexname_tag_ext $_FN_PULLSPEC)
+  declare -A A1
+  declare L1
 
-  # [n/a] catalog_upstream: registry.redhat.io/redhat/certified-operator-index:v4.16
-  # catalog: reg.dmz.lan/baseline/20250705/certified-operator-index:v4.16
-  # targetCatalog: reg.dmz.lan/baseline/20250705/certified-operator-index:v4.16-cut
+  _f_baseline_cut $_J_SPEC_CUT _CATALOG_BASELINE A1 L1
+
+  # catalog_upstream: registry.redhat.io/redhat/redhat-operator-index:v4.18 
+  # baselineCatalog: reg.dmz.lan/baseline/20250709/redhat-operator-index:v4.18
+  # targetCatalog: reg.dmz.lan/baseline/20250709/redhat-operator-index:v4.18-cut
  
-  _CATALOG=$_REG_LOCATION/$_DATESTAMP/$_INDEX_NAME:$_TAG
-  _TARGET_CATALOG=$_REG_LOCATION/$_DATESTAMP/$_INDEX_NAME:$_TAG-cut
+  _NAMETAG=$(basename $_CATALOG_BASELINE)
+
+  _CATALOG_TARGET=$_REG_LOCATION/$_DATESTAMP/${_NAMETAG}-cut
+
+  _log 2 "($DEBUGID:010) _CATALOG_BASELINE: $_CATALOG_BASELINE"
+  _log 2 "($DEBUGID:010) _CATALOG_TARGET: $_CATALOG_TARGET"
 
   # Run up index image
-  _f_run $_CATALOG $_GRPC_URL
+  _f_run $_CATALOG_BASELINE $_GRPC_URL
 
   if [[ $? -eq 0 ]]; then
-
-    _L_PKGS_PULLSPEC=($(_grpc_list_pkgs))
-    _log 2 _L_PKGS_PULLSPEC: ${_L_PKGS[@]:0:3} ...
 
     _f_main $_DATESTAMP $_INDEX_NAME $_TAG
 

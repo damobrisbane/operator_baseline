@@ -89,10 +89,6 @@ get_packages() {
         local _J_PKG="{\"name\":\"$_PKG\",\"defaultChannelName\":\"$_DEF_CH_NAME\",\"channels\":[]}"
       fi
 
-      #unset _L_CHNLS
-      #_L_CHNLS=${_L_CHNLS_PULLSPEC[@]}
-      #_L_CHNLS+=( $_DEF_CH_NAME )
-
       _log 4 _L_CHNLS: ${_L_CHNLS[@]}
 
       for _STOCK_CH in ${_L_STOCK_CH[@]}; do

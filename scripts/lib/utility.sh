@@ -43,8 +43,11 @@ _f_indexname_tag() {
   # ie redhat-operators:v4.16 
   # >>>
   # redhat-operators v4.16
+  local _SEP=${_SEP:-" "}
 
-  sed -E 's/(.*)-(v[[:alnum:]]+.[[:alnum:]]+).[[:alnum:]]+$/\1 \2/' <<<$1
+  #sed -E "s/(.*)-(v[[:alnum:]]+.[[:alnum:]]+).[[:alnum:]]+$/\1${_SEP}\2/" <<<$1
+  sed -E "s/(.*):(v[[:alnum:]\.]+$)/\1${_SEP}\2/" <<<$1
+
 }
 
 _f_indexname_tag_ext() {

@@ -18,7 +18,7 @@ _fsv_firsts() {
   done
 }
 
-_fsv_pullspec() {
+_fsv_pullspec_json() {
   #
   # <PKG>@{@<CHANNEL>} <PKG>@{@<CHANNEL>}, ..
   #
@@ -89,12 +89,28 @@ _fsv_pullspec_yaml() {
   _log 3 jq -sjc '.[]|.name,"@",(select(.channels != null)|[.channels[]|.name]|join("@"))," "' \<\<\<\$\($_YQ_BIN '.oc_mirror_operators[0].packages[]' $_FP_YAML\)
   jq -sjc '.[]|.name,"@",(select(.channels != null)|[.channels[]|.name]|join("@"))," "' <<<$($_YQ_BIN --output-format json '.oc_mirror_operators[0].packages[]' $_FP_YAML)
 
-  # eg, _YAML_XPATH = '.oc_mirror_operators[0].packages[]'
-
-  #_log 3 jq -sjc '.[]|.name,"@",(select(.channels != null)|[.channels[]|.name]|join("@"))," "' \<\<\<\$\(yq "$_YAML_XPATH" $_FP_YAML\)
-
-  #jq -sjc '.[]|.name,"@",(select(.channels != null)|[.channels[]|.name]|join("@"))," "' <<<$(yq --output-format json "$_YAML_XPATH" $_FP_YAML)
 }
+
+_fsv_pullspec() {
+
+  local _FP=$1
+
+  _FN_PULLSPEC=$(basename $_FP)
+
+  read _INDEX_NAME _TAG _EXT <<<$(_f_indexname_tag_ext $_FN_PULLSPEC)
+
+  if [[ ( $_EXT == json ) || ( $_EXT == ndjson ) ]]; then
+
+    _fsv_pullspec_json $_FP
+
+  else
+
+    _fsv_pullspec_yaml $_FP
+
+  fi
+
+}
+
 
 _pkgname_pullspec() {
   local _FP_NDJSON=$1
@@ -105,10 +121,31 @@ _a_fsv_pkg_ch() {
 
   # _a_fsv _L_PULLSPEC _L_FSV _A_FSV
   #
+
+  local _ALL_PKGS_1999=$_ALL_PKGS
+
+ _L_FSV_PKG=()
+
+  if [[ -n $_ALL_PKGS ]]; then
+    _L_FSV_PKG_CH=( ${_L_PKGS_PULLSPEC[@]} )
+    _L_FSV_PKG=( ${_L_FSV_PKG_CH[@]} )
+  else
+    if [[ ( $_EXT == json ) || ( $_EXT == ndjson ) ]]; then
+      _L_FSV_PKG_CH=$(_fsv_pullspec $_FP_PULLSPEC)
+    else
+      _L_FSV_PKG_CH=$(_fsv_pullspec_yaml $_FP_PULLSPEC)
+    fi
+
+    _fsv_firsts _L_FSV_PKG_CH _L_FSV_PKG
+
+  fi
+
+  _log 2 _L_FSV_PKG_CH: ${_L_FSV_PKG_CH[@]}
+  _log 2 _L_FSV_PKG: ${_L_FSV_PKG[@]}
+
   local -n _L_FSV_PKG_CH_1999=$1
   local -n _A_FSV_1999=$2
 
-  #for i in ${!_A_FSV_1999[@]}; do
   for _PKG_CH in ${_L_FSV_PKG_CH_1999[@]}; do
     # mcg-operator@stable-4.16@stable-4.15@stable-4.16
     
@@ -117,3 +154,30 @@ _a_fsv_pkg_ch() {
 
   done
 }
+
+_f_parse_input() {
+  if [[ -d $1 ]]; then
+    echo !arg
+  else  
+    jq -c -j '.," "' <<<$@
+  fi
+}
+
+_f_baseline_cut() {
+
+  local _J_SPEC=$1
+  local -n _CATALOG_BASELINE_1999=$2
+  local -n _A_PKGS_CUT_1999=$3
+  local -n _L_PKGS_CUT_1999=$4
+
+  _CATALOG_BASELINE_1999=$(jq -r '.catalog_baseline' <<<$_J_SPEC)
+
+  IFS=$'\n'
+  for k in $(jq -j '.packages_cut|to_entries[]|.key," ",(.value|join("@")),"\n"' <<<$_J_SPEC); do
+    IFS=$' ' read _PKG _CHNLS <<<$k
+    _A_PKGS_CUT_1999[$_PKG]=$_CHNLS
+    _L_PKGS_CUT_1999+=( $_PKG )
+  done
+
+}
+

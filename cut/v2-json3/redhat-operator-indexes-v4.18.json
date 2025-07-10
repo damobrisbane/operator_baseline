@@ -1,0 +1,11 @@
+{
+  "catalog": "registry.redhat.io/redhat/redhat-operator-index:v4.18",
+  "packages": {
+    "advanced-cluster-management": [
+      "stable"
+    ],
+    "xxxx": [],
+    "yyy": ["s1","s2"]
+  }
+}
+
