@@ -135,7 +135,7 @@ _f_run() {
 
 _f_main() {
   #
-  #  _f_main $_J_CUTSPEC $_DATESTAMP $_CATALOG_BASELINE $_CATALOG_TARGET
+  #  _f_main $_J_CUTSPEC $_DATESTAMP
   #
   #  _f_main {"catalog_baseline":"registry.redhat.io/redhat/redhat-operator-index:v4.18","packages_cut":{"advanced-cluster-management":["stable"],"xxxx":[],"yyy":["s1","s2"]}} 20250705
   #
@@ -152,37 +152,29 @@ _f_main() {
 
   _L_BASELINE_PKGS=( $(_grpc_list_pkgs) )
 
-  _log 3 "(cut.sh) _L_BASELINE_PKGS: ${_L_BASELINE_PKGS[@]:0:3} ..."
+  _log 3 _L_BASELINE_PKGS: ${_L_BASELINE_PKGS[@]:0:3} ...
 
   declare -A _A_FSV_CUT_PKG_CH
-  local _L_FSV_CUT_PKG=()
-  local _L_FSV_CUT_PKG_ERROR=()
+  local _L_FSV_CUT_PKG_CH=()
 
-  _ALL_PKGS=$_ALL_PKGS _a_fsv_cut_pkg_ch _L_BASELINE_PKGS _A_FSV_CUT_PKG_CH _L_FSV_CUT_PKG _L_FSV_CUT_PKG_ERROR $_J_CUTSPEC_1999 
+  _ALL_PKGS=$_ALL_PKGS _a_fsv_cut_pkg_ch _L_BASELINE_PKGS _A_FSV_CUT_PKG_CH _L_FSV_CUT_PKG_CH $_J_CUTSPEC_1999 
 
-  _log 2 "(cut.sh) _A_FSV_CUT_PKG_CH: ${#_A_FSV_CUT_PKG_CH[@]}"
-  _log 2 "(cut.sh) _A_FSV_CUT_PKG_CH: ${!_A_FSV_CUT_PKG_CH[@]}"
-  _log 2 "(cut.sh) _A_FSV_CUT_PKG_CH: ${_A_FSV_CUT_PKG_CH[@]}"
-
-  _log 2 "(cut.sh) _L_FSV_CUT_PKG: ${_L_FSV_CUT_PKG[@]}"
-
-  _log 1 "(cut.sh) _L_FSV_CUT_PKG_ERROR: ${_L_FSV_CUT_PKG_ERROR[@]}"
+  _log 2 _A_FSV_CUT_PKG_CH: ${!_A_FSV_CUT_PKG_CH[@]}
+  exit
 
   [[ -n $_GEN_ISC ]] && unset _BUNDLE
 
   _J_PKGS_CUT=$(_BUNDLE=$_BUNDLE _ALL_PKGS=$_ALL_PKGS get_packages _A_FSV_CUT_PKG_CH _L_FSV_CUT_PKG)
 
-  _log 2 "(cut.sh) _J_PKGS_CUT: $(jq -c . <<<$_J_PKGS_CUT)"
+  _log 2 _J_PKGS_CUT: $(jq -c . <<<$_J_PKGS_CUT)
 
   if [[ -n $_GEN_ISC ]]; then
 
-    _log 2 "(cut.sh) gen_isc _J_PKGS_CUT $_CATALOG_BASELINE $_CATALOG_TARGET"
+    _log 2 gen_isc _J_PKGS_CUT $_CATALOG $_TARGET_CATALOG $_TARGET_TAG
 
-    read _TARGET_INDEX_NAME _TARGET_TAG <<<$(_f_indexname_tag $_CATALOG_TARGET)
+    local _J_ISC=$(gen_isc _J_PKGS_CUT $_CATALOG $_TARGET_CATALOG $_TARGET_TAG)
 
-    local _J_ISC=$(gen_isc _J_PKGS_CUT $_DATESTAMP_1999 $_CATALOG_BASELINE $_CATALOG_TARGET $_TARGET_TAG)
-
-    _f_output_isc _J_ISC $_DATESTAMP_1999 $_TARGET_INDEX_NAME $_TARGET_TAG
+    _f_output_isc _J_ISC $_DATESTAMP_1999 $_INDEX_NAME $_TAG
 
   else      
 
@@ -226,11 +218,11 @@ source $(dirname ${BASH_SOURCE})/lib/container.sh
 source $(dirname ${BASH_SOURCE})/lib/cutspec.sh
 source $(dirname ${BASH_SOURCE})/lib/isc.sh
 
-_L_CUTSPEC=( $(_f_parse_input $_PULLSPEC) )
+_L_CUT=( $(_f_parse_input $_PULLSPEC) )
 
-_log 3 "(cut.sh) _L_CUTSPEC: (${#_L_CUTSPEC[@]}) ${_L_CUTSPEC[@]}"
+_log 3 "_L_CUT: (${#_L_CUT[@]}) ${_L_CUT[@]}"
 
-for _J_CUTSPEC in ${_L_CUTSPEC[@]}; do
+for _J_CUTSPEC in ${_L_CUT[@]}; do
 
   declare -A A1
   declare L1
@@ -245,15 +237,15 @@ for _J_CUTSPEC in ${_L_CUTSPEC[@]}; do
 
   _CATALOG_TARGET=$_REG_LOCATION/$_DATESTAMP/${_NAMETAG}-cut
 
-  _log 2 "(cut.sh) _CATALOG_BASELINE: $_CATALOG_BASELINE"
-  _log 2 "(cut.sh) _CATALOG_TARGET: $_CATALOG_TARGET"
+  _log 2 "($DEBUGID:010) _CATALOG_BASELINE: $_CATALOG_BASELINE"
+  _log 2 "($DEBUGID:010) _CATALOG_TARGET: $_CATALOG_TARGET"
 
   # Run up index image
   _f_run $_CATALOG_BASELINE $_GRPC_URL
 
   if [[ $? -eq 0 ]]; then
 
-    _f_main $_J_CUTSPEC $_DATESTAMP $_CATALOG_BASELINE $_CATALOG_TARGET
+    _f_main $_J_CUTSPEC $_DATESTAMP
 
   fi
 done

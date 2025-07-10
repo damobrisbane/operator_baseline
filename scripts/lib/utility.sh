@@ -31,7 +31,7 @@ _log() {
 
 _sleep() {
   local _DELAY=$1
-  _log 2 "Sleeping $_DELAY secs.."
+  _log 2 "(utility.sh) Sleeping $_DELAY secs.."
   sleep $_DELAY
 }
 
@@ -40,13 +40,17 @@ d1() {
 }
 
 _f_indexname_tag() {
-  # ie redhat-operators:v4.16 
-  # >>>
-  # redhat-operators v4.16
+  #
+  # ie reg.dmz.lan:5000/redhat-operators:v4.16; or
+  #    redhat-operators:v4.16-cut; or 
+  #    redhat-operators:v4.16 
+  #   >>>
+  #    redhat-operators v4.16
+  #
+
   local _SEP=${_SEP:-" "}
 
-  #sed -E "s/(.*)-(v[[:alnum:]]+.[[:alnum:]]+).[[:alnum:]]+$/\1${_SEP}\2/" <<<$1
-  sed -E "s/(.*):(v[[:alnum:]\.]+$)/\1${_SEP}\2/" <<<$1
+  sed -E "s/(.*):(v[[:alnum:]\.-]+$)/\1${_SEP}\2/" <<<$(basename $1)
 
 }
 

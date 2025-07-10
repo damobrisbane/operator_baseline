@@ -28,7 +28,7 @@ source $(dirname ${BASH_SOURCE})/lib/pullspec.sh
 
 _L_SPECS_CUT=( $(_f_parse_input $_PULLSPEC) )
 
-_log 3 "_L_SPECS_CUT: (${#_L_SPECS_CUT[@]}) ${_L_SPECS_CUT[@]}"
+_log 3 "(baseline.sh) _L_SPECS_CUT: (${#_L_SPECS_CUT[@]}) ${_L_SPECS_CUT[@]}"
 
 for _J_SPEC_CUT in ${_L_SPECS_CUT[@]}; do
 
@@ -44,8 +44,8 @@ for _J_SPEC_CUT in ${_L_SPECS_CUT[@]}; do
 
   _CATALOG_TARGET=$_REG_LOCATION/$_DATESTAMP/${_NAMETAG}-cut
 
-  _log 2 "($DEBUGID:010) _CATALOG_BASELINE: $_CATALOG_BASELINE"
-  _log 2 "($DEBUGID:010) _CATALOG_TARGET: $_CATALOG_TARGET"
+  _log 2 "(baseline.sh:010) _CATALOG_BASELINE: $_CATALOG_BASELINE"
+  _log 2 "(baseline.sh:010) _CATALOG_TARGET: $_CATALOG_TARGET"
 
   _f_image_exists $_CATALOG_BASELINE
 

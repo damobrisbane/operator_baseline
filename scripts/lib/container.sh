@@ -9,7 +9,7 @@ _f_pod_run() {
 
   local _PORT=50051
 
-  _log 2 "_f_pod_run ($_IMG)"
+  _log 2 "(container.sh) _f_pod_run ($_IMG)"
 
   if [[ $_POD_BIN =~ podman ]]; then
     $_POD_BIN run --authfile=$AUTHFILE -d -t --rm --label index= --name $_CONTAINER_NAME --net=host -p $_PORT:50051 $_IMG
@@ -31,7 +31,7 @@ _f_grpc_running() {
 
   IFS=$':' read _GRPC_HOST _GRPC_PORT <<<$_GRPC_URL
 
-  _log 3 "if nc -z $_GRPC_HOST $_GRPC_PORT; then"
+  _log 3 "(container.sh) if nc -z $_GRPC_HOST $_GRPC_PORT; then"
   if nc -z $_GRPC_HOST $_GRPC_PORT; then
     return 0
   else
