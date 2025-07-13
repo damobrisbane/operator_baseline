@@ -1,0 +1,36 @@
+{
+  "catalog_baseline": "registry.redhat.io/redhat/redhat-operator-index:v4.18",
+  "packages_cut": [
+    {
+      "name": "kubevirt-hyperconverged", 
+      "channels": [
+        {"name": "stable"},
+        {"name": "candidate"}
+       ]
+    },
+    { 
+      "name": "advanced-cluster-management",
+      "channels": [
+        {"name": "stable"}
+      ]
+    },
+    {
+      "name": "xxxx",
+      "channels": []
+    },
+    {
+      "name": "yyy",
+      "channels": [
+        {"name": "s1"},
+        {"name": "s2"}
+      ]
+    },
+    {
+      "name": "apicurio-registry-3",
+      "channels": [
+        {"name": "bogus_channel"}
+       ]
+    }
+  ]
+}
+

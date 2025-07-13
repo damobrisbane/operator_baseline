@@ -5,6 +5,9 @@ _log() {
   local _LVL=$1 && shift
 
   case $_LVL in
+      0)
+          [[ $DEBUG -gt 0 ]] && echo $@ 1>&2
+      ;;
       1)
           [[ $DEBUG -gt 0 ]] && echo $@ 1>&2
       ;;
@@ -39,7 +42,21 @@ d1() {
   date +%Y%m%d
 }
 
+_f_port_map() {
+  # 4.16 >> (6060+16) (50051+16),
+  # 4.17 >> (6060+17) (50051+17),
+  # 4.18 >> (6060+18) (50051+18),..
+  #
+
+  local _n_MINOR=$(cut -d. -f2 <<<$1)
+  printf '%s %s' $(( 6060 + $_n_MINOR )) $(( 50051 + $_n_MINOR ))
+  
+}
+
 _f_indexname_tag() {
+  #
+  # Globals:
+  #
   #
   # ie reg.dmz.lan:5000/redhat-operators:v4.16; or
   #    redhat-operators:v4.16-cut; or 
@@ -49,8 +66,19 @@ _f_indexname_tag() {
   #
 
   local _SEP=${_SEP:-" "}
+  local _INDEX_NAME
+  local _TAG
+  local _PPROF_PORT
+  local _GRPC_PORT
+  local _POD_LABEL
+  local _POD_NAME
 
-  sed -E "s/(.*):(v[[:alnum:]\.-]+$)/\1${_SEP}\2/" <<<$(basename $1)
+  read _INDEX_NAME _TAG <<< $(sed -E "s/(.*):(v[[:alnum:]\.-]+$)/\1${_SEP}\2/" <<<$(basename $1))
+  read _PPROF_PORT _GRPC_PORT <<< $(_f_port_map $_TAG)
+  _POD_LABEL="index=${_PPROF_PORT}_${_GRPC_PORT}"
+  _POD_NAME="index_${_PPROF_PORT}_${_GRPC_PORT}"
+ 
+  printf '%s %s %s %s %s %s' $_INDEX_NAME $_TAG $_POD_LABEL $_POD_NAME $_PPROF_PORT $_GRPC_PORT 
 
 }
 

@@ -41,6 +41,44 @@ _fsv_cut_json() {
   #    }
   #  }
   #
+  #{
+  #  "catalog_baseline": "registry.redhat.io/redhat/redhat-operator-index:v4.16",
+  #  "packages_cut": [
+  #    {
+  #      "name": "3scale-operator",
+  #      "defaultChannelName": "threescale-2.15",
+  #      "channels": [
+  #        {
+  #          "name": "threescale-mas",
+  #          "minVersion": "0.11.8-mas"
+  #        },
+  #        {
+  #          "name": "threescale-2.15",
+  #          "minVersion": "0.12.3"
+  #        },
+  #        {
+  #          "name": "threescale-2.13",
+  #          "minVersion": "0.10.5"
+  #        }
+  #      ]
+  #    },
+  #    {
+  #      "name": "advanced-cluster-management",
+  #      "defaultChannelName": "release-2.13",
+  #      "channels": [
+  #        {
+  #          "name": "release-2.12",
+  #          "minVersion": "2.12.3"
+  #        },
+  #        {
+  #          "name": "release-2.13",
+  #          "minVersion": "2.13.3"
+  #        }
+  #      ]
+  #    }
+  #  ]
+  #}
+  #
   #  >>>
   #
   #  kubevirt-hyperconverged@stable@candidate@dev-preview@stable odf-csi-addons-operator@stable-4.16@stable-4.15@stable-4.16
@@ -51,9 +89,11 @@ _fsv_cut_json() {
 
   local _J_CUTSPEC=$1
 
-  _log 3 "(cutspec.sh) jq -rj \".packages_cut|to_entries[]|.key,\"@\",(.value|join(\"@\")),\" \"\" <<< \$_J_CUTSPEC"
+  #_log 3 "(cutspec.sh) jq -rj \".packages_cut|to_entries[]|.key,\"@\",(.value|join(\"@\")),\" \"\" <<< \$_J_CUTSPEC"
+  #jq -rj ".packages_cut|to_entries[]|.key,\"@\",(.value|join(\"@\")),\" \"" <<< $_J_CUTSPEC
 
-  jq -rj ".packages_cut|to_entries[]|.key,\"@\",(.value|join(\"@\")),\" \"" <<< $_J_CUTSPEC
+  #for k in $(jq -j '.packages_cut[]|.name," ",([.channels[]?|.name]|join("@")),"\n"' <<<$_J_SPEC); do
+  jq -rj ".packages_cut[]|.name,\"@\",([.channels[]?|.name]|join(\"@\")),\" \"" <<< $_J_CUTSPEC
 }
 
 _fsv_cut_yaml() {
@@ -116,7 +156,7 @@ _fsv_validate() {
 
 _a_fsv_cut_pkg_ch() {
 
-  # _ALL_PKGS=$_ALL_PKGS _a_fsv_cut_pkg_ch _L_BASELINE_PKGS _A_FSV_CUT_PKG_CH _L_FSV_CUT_PKG _L_CUT_PKG_ERROR $_J_CUTSPEC_1999 
+  # _ALL_PKGS=$_ALL_PKGS _a_fsv_cut_pkg_ch _L_BASELINE_PKGS _A_FSV_CUT_PKG_CH _L_FSV_CUT_PKG _L_FSV_CUT_PKG_ERROR $_J_CUTSPEC_1999 
   #
 
   local -n _L_BASELINE_PKGS_1999=$1
@@ -125,37 +165,42 @@ _a_fsv_cut_pkg_ch() {
   local -n _L_FSV_CUT_PKG_ERROR_1999=$4
   local _J_CUTSPEC_1999=$5
 
+  _log 2 "(cutspec.sh:_a_fsv_cut_pkg_ch)"
+
   if [[ -n $_ALL_PKGS ]]; then
     _L_FSV_CUT_PKG_CH_1999=( ${_L_BASELINE_PKGS_1999[@]} )
   else
     _L_FSV_CUT_PKG_CH_1999=$(_fsv_cut_json $_J_CUTSPEC_1999)
   fi
 
-
   _fsv_validate _L_BASELINE_PKGS_1999 _L_FSV_CUT_PKG_CH_1999 _L_FSV_CUT_PKG_1999 _L_FSV_CUT_PKG_ERROR_1999
-
-  _log 2 "(cutspec.sh) _L_FSV_CUT_PKG_1999: ${_L_FSV_CUT_PKG_1999[@]}"
-  _log 2 "(cutspec.sh) _L_FSV_CUT_PKG_ERROR_1999: ${_L_FSV_CUT_PKG_ERROR_1999[@]}"
-
-  _log 2 "(cutspec.sh) _L_FSV_CUT_PKG_CH_1999: ${_L_FSV_CUT_PKG_CH_1999[@]}"
 
   for _CUT_PKG_CH in ${_L_FSV_CUT_PKG_CH_1999[@]}; do
     # mcg-operator@stable-4.16@stable-4.15@stable-4.16
     
-    IFS=$'@' read _PKG _L_CH <<<$_PKG_CH
+    IFS=$'@' read _PKG _L_CH <<<$_CUT_PKG_CH
 
-    if _in_set _PKG _L_BASELINE_PKGS_1999; then
+    if _in_set $_PKG _L_BASELINE_PKGS_1999; then
       _A_FSV_CUT_PKG_CH_1999[$_PKG]=$_L_CH
     else
       _L_CUT_PKG_ERROR_1999+=( $_PKG )
     fi        
   done
 
+  _log 3 "(cutspec.sh:_a_fsv_cut_pkg_ch) _A_FSV_CUT_PKG_CH_1999: ${!_A_FSV_CUT_PKG_CH_1999[@]}"
 }
 
 _f_parse_input() {
   if [[ -d $1 ]]; then
-    echo !arg
+    local _J=
+    for _FI in $(find $1 -type f); do
+      if jq . $_FI >/dev/null 2>&1; then
+        _J+=$(jq -c . $_FI)
+      else
+        echo "Unable to parse pullspec file $_FI"
+      fi
+    done        
+    jq -c <<<$_J
   else  
     jq -c -j '.," "' <<<$@
   fi
@@ -172,7 +217,11 @@ _f_baseline_cut() {
 
   oIFS=$IFS IFS=$'\n'
 
-  for k in $(jq -j '.packages_cut|to_entries[]|.key," ",(.value|join("@")),"\n"' <<<$_J_SPEC); do
+  _log 3 "(cutspec.sh:_f_baseline_cut) _J_SPEC: $_J_SPEC"
+  _log 3 "(cutspec.sh:_f_baseline_cut) for k in \$(jq -j '.packages_cut|to_entries[]|.key,\" \",(.value|join(\"@\")),\"\n\"' <<< \$_J_SPEC); do"
+
+  #for k in $(jq -j '.packages_cut|to_entries[]|.key," ",(.value|join("@")),"\n"' <<<$_J_SPEC); do
+  for k in $(jq -j '.packages_cut[]|.name," ",([.channels[]?|.name]|join("@")),"\n"' <<<$_J_SPEC); do
     IFS=$' ' read _PKG _CHNLS <<<$k
     _A_PKGS_CUT_1999[$_PKG]=$_CHNLS
     _L_PKGS_CUT_1999+=( $_PKG )

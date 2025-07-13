@@ -2,27 +2,49 @@
 
 _f_grpc_bundle() {
   #grpcurl -plaintext -d '{"name":"percona-xtradb-cluster-operator-certified","channelName":"stable"}' localhost:50051 api.Registry/GetBundleForChannel | jq .
-  local _OP=$1
-  local _CH=$2
-
-  local _GRPC_URL=${3:-localhost:50051}
+  local _GRPC_URL=$1
+  local _OP=$2
+  local _CH=$3
 
   read channelName csvName bundlePath <<<$(grpcurl -plaintext -d "{\"pkgName\":\"${_OP}\",\"channelName\":\"${_CH}\"}" $_GRPC_URL api.Registry/GetBundleForChannel | jq -rj ".channelName,\" \",.csvName,\" \",.bundlePath")
 
-  echo "{\"version\":\"$(_map_csv_version $csvName)\",\"bundlePath\":\"$bundlePath\"}"
+  _log 0 "{\"version\":\"$(_map_csv_version $csvName)\",\"bundlePath\":\"$bundlePath\"}"
 
 }
 
-_grpc_list_pkgs() {
+_f_grpc_running() {
+  #
+  # Globals:
+  #
+  # _GRPC_HOST
+  #
+ 
+  local _GRPC_URL=$1
 
-  local _GRPC_URL=${1:-localhost:50051}
+  read _GRPC_HOST _GRPC_PORT <<< $(tr : ' ' <<<$_GRPC_URL)
+
+  if grpcurl -plaintext $_GRPC_URL describe >/dev/null 2>&1; then
+    return 0
+  else
+    return 1
+  fi
+}
+
+_grpc_list_pkgs() {
+  #
+  # Globals:
+  #
+  # _GRPC_HOST
+  #
+ 
+  local _GRPC_URL=$1
 
   grpcurl -plaintext $_GRPC_URL api.Registry/ListPackages | jq -r -s -S '.|sort[].name'
 }
 
-get_packages() {
+_f_grpc_get_packages() {
   #
-  # _J_PKGS_CUT=$(_BUNDLE=$_BUNDLE _ALL_PKGS=$_ALL_PKGS get_packages _A_FSV_CUT_PKG_CH _L_FSV_CUT_PKG)
+  # _J_PKGS_CUT=$(_BUNDLE=$_BUNDLE _ALL_PKGS=$_ALL_PKGS _f_grpc_get_packages $_GRPC_URL _A_FSV_CUT_PKG_CH _L_FSV_CUT_PKG)
   #
   # Globals:
   #
@@ -34,23 +56,23 @@ get_packages() {
   # _L_FSV only required for preserving order on associatve array, _A_FSV
   #
 
-  local -n _A_FSV_CUT_PKG_CH_1999=$1
-  local -n _L_FSV_CUT_PKG_1999=$2
+  local _GRPC_URL=$1
+  local -n _A_FSV_CUT_PKG_CH_1999=$2
+  local -n _L_FSV_CUT_PKG_1999=$3
   
   local _J0
 
-  _log 3 "(grpc.sh) \!_A_FSV_CUT_PKG_CH_1999: ${!_A_FSV_CUT_PKG_CH_1999[@]}"
-  _log 3 "(grpc.sh) _A_FSV_CUT_PKG_CH_1999: ${_A_FSV_CUT_PKG_CH_1999[@]}"
+  _log 2 "(grpc.sh:_f_grpc_get_packages)"
 
   for _PKG in ${_L_FSV_CUT_PKG_1999[@]}; do
 
       _L_CHNLS_PULLSPEC=( $(tr @ ' ' <<<${_A_FSV_CUT_PKG_CH_1999[$_PKG]}))
 
-      _log 4 "(grpc.sh) _PKG: $_PKG _DEF_CH: $_DEF_CH _L_CHNLS_PULLSPEC: ${#_L_CHNLS_PULLSPEC[@]} ${_L_CHNLS_PULLSPEC[@]}"
+      _log 4 "(grpc.sh:_f_grpc_get_packages) _PKG: $_PKG _DEF_CH: $_DEF_CH _L_CHNLS_PULLSPEC: ${#_L_CHNLS_PULLSPEC[@]} ${_L_CHNLS_PULLSPEC[@]}"
 
-      _J_STOCK_PKG=$(grpcurl -plaintext -d "{\"name\":\"$_PKG\"}" localhost:50051 api.Registry/GetPackage)
+      _J_STOCK_PKG=$(grpcurl -plaintext -d "{\"name\":\"$_PKG\"}" $_GRPC_URL api.Registry/GetPackage)
 
-      _log 5 "(grpc.sh) _J_STOCK_PKG: $(jq -c . <<<$_J_STOCK_PKG)"
+      _log 5 "(grpc.sh:_f_grpc_get_packages) _J_STOCK_PKG: $(jq -c . <<<$_J_STOCK_PKG)"
 
       # _J_STOCK_PKG:
       #
@@ -79,10 +101,11 @@ get_packages() {
       done
 
       local _L_STOCK_CH=( ${!_A_STOCK_CH_CSV[@]} )
-      _log 4 "(grpc.sh) _A_STOCK_CH_CSV ${!_A_STOCK_CH_CSV[@]} ${_A_STOCK_CH_CSV[@]}"
-      _log 3 "(grpc.sh) _L_STOCK_CH ${#_L_STOCK_CH[@]} ${_L_STOCK_CH[@]}"
-      _log 3 "(grpc.sh) _L_CHNLS_PULLSPEC ${#_L_CHNLS_PULLSPEC[@]} ${_L_CHNLS_PULLSPEC[@]}"
-      _log 3 "(grpc.sh) _DEF_CH_NAME ${_DEF_CH_NAME}"
+
+      _log 4 "(grpc.sh:_f_grpc_get_packages) _A_STOCK_CH_CSV ${!_A_STOCK_CH_CSV[@]} ${_A_STOCK_CH_CSV[@]}"
+      _log 3 "(grpc.sh:_f_grpc_get_packages) _L_STOCK_CH ${#_L_STOCK_CH[@]} ${_L_STOCK_CH[@]}"
+      _log 3 "(grpc.sh:_f_grpc_get_packages) _L_CHNLS_PULLSPEC ${#_L_CHNLS_PULLSPEC[@]} ${_L_CHNLS_PULLSPEC[@]}"
+      _log 3 "(grpc.sh:_f_grpc_get_packages) _DEF_CH_NAME ${_DEF_CH_NAME}"
 
       declare -A _A_IN_SET=()
 
@@ -92,7 +115,7 @@ get_packages() {
         local _J_PKG="{\"name\":\"$_PKG\",\"defaultChannelName\":\"$_DEF_CH_NAME\",\"channels\":[]}"
       fi
 
-      _log 4 "(grpc.sh) _L_CHNLS: ${_L_CHNLS[@]}"
+      _log 4 "(grpc.sh:_f_grpc_get_packages) _L_CHNLS: ${_L_CHNLS[@]}"
 
       for _STOCK_CH in ${_L_STOCK_CH[@]}; do
 
@@ -112,7 +135,7 @@ get_packages() {
 
               if [[ -n $_BUNDLE ]]; then
 
-                _J_BUNDLE=$(_f_grpc_bundle $_PKG $_CH)
+                _J_BUNDLE=$(_f_grpc_bundle $_GRPC_URL $_PKG $_CH)
 
                 _J_CH_1999=$(jq ".channels[]|select(.name==\"$_CH\")" <<<$_J_STOCK_PKG)
 
