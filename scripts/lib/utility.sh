@@ -65,20 +65,36 @@ _f_indexname_tag() {
   #    redhat-operators v4.16
   #
 
+  local _IMG=$1
+
   local _SEP=${_SEP:-" "}
+  local _INDEX_LOCATION
   local _INDEX_NAME
   local _TAG
+
+  read _INDEX_LOCATION _TAG <<< $(sed -E "s/(.*):(v[[:alnum:]\.-]+$)/\1${_SEP}\2/" <<<$_IMG)
+
+  _INDEX_NAME=$(basename $_INDEX_LOCATION)
+  printf '%s %s %s' $_INDEX_LOCATION $_INDEX_NAME $_TAG
+}
+
+_f_run_metadata() {
+
+  local _IMG=$1
+
   local _PPROF_PORT
   local _GRPC_PORT
   local _POD_LABEL
   local _POD_NAME
 
-  read _INDEX_NAME _TAG <<< $(sed -E "s/(.*):(v[[:alnum:]\.-]+$)/\1${_SEP}\2/" <<<$(basename $1))
+  read _INDEX_LOCATION _INDEX_NAME _TAG <<<$(_f_indexname_tag $_IMG)
+
   read _PPROF_PORT _GRPC_PORT <<< $(_f_port_map $_TAG)
-  _POD_LABEL="index=${_PPROF_PORT}_${_GRPC_PORT}"
-  _POD_NAME="index_${_PPROF_PORT}_${_GRPC_PORT}"
+
+  _POD_LABEL="index=${_INDEX_NAME}_${_PPROF_PORT}_${_GRPC_PORT}"
+  _POD_NAME="${_INDEX_NAME}_${_PPROF_PORT}_${_GRPC_PORT}"
  
-  printf '%s %s %s %s %s %s' $_INDEX_NAME $_TAG $_POD_LABEL $_POD_NAME $_PPROF_PORT $_GRPC_PORT 
+  printf '%s %s %s %s' $_POD_LABEL $_POD_NAME $_PPROF_PORT $_GRPC_PORT 
 
 }
 

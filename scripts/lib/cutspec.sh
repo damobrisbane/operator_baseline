@@ -206,7 +206,7 @@ _f_parse_input() {
   fi
 }
 
-_f_baseline_cut() {
+_f_parse_cutspec() {
 
   local _J_SPEC=$1
   local -n _CATALOG_BASELINE_1999=$2
@@ -217,8 +217,8 @@ _f_baseline_cut() {
 
   oIFS=$IFS IFS=$'\n'
 
-  _log 3 "(cutspec.sh:_f_baseline_cut) _J_SPEC: $_J_SPEC"
-  _log 3 "(cutspec.sh:_f_baseline_cut) for k in \$(jq -j '.packages_cut|to_entries[]|.key,\" \",(.value|join(\"@\")),\"\n\"' <<< \$_J_SPEC); do"
+  _log 3 "(cutspec.sh:_f_parse_cutspec) _J_SPEC: $_J_SPEC"
+  _log 3 "(cutspec.sh:_f_parse_cutspec) for k in \$(jq -j '.packages_cut|to_entries[]|.key,\" \",(.value|join(\"@\")),\"\n\"' <<< \$_J_SPEC); do"
 
   #for k in $(jq -j '.packages_cut|to_entries[]|.key," ",(.value|join("@")),"\n"' <<<$_J_SPEC); do
   for k in $(jq -j '.packages_cut[]|.name," ",([.channels[]?|.name]|join("@")),"\n"' <<<$_J_SPEC); do

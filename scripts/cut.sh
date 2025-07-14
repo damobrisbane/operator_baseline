@@ -82,17 +82,17 @@ _f_output_api() {
   #
   # _REPORT_LOCATION
   #
-  #  _f_output_api _J_PKGS_CUT $_DATESTAMP_1999 $_TARGET_INDEX_NAME $_TARGET_TAG
+  #  _f_output_api _J_PKGS_CUT $_DATESTAMP_1999 $_INDEX_NAME $_TAG
   #
  
   local -n _J_PKGS_CUT_1999=$1
   local _DATESTAMP=$2
-  local TARGET_INDEX_NAME=$3
+  local INDEX_NAME=$3
   local TARGET_TAG=$4
 
   local _RPT_LOC=${_REPORT_LOCATION}/${_DATESTAMP}
 
-  local _FP_RPT=${_RPT_LOC}/pullspec-${_TARGET_INDEX_NAME}-${_TARGET_TAG}.json
+  local _FP_RPT=${_RPT_LOC}/pullspec-${_INDEX_NAME}-${_TAG}.json
 
   [[ ! -d $_RPT_LOC ]] && mkdir -p $_RPT_LOC
 
@@ -141,8 +141,11 @@ _f_main() {
 
   local _J_CUTSPEC_1999=$1
   local _DATESTAMP_1999=$2
+  local _CATALOG_BASELINE=$3
+  local _CATALOG_TARGET=$4
 
-  read _TARGET_INDEX_NAME _TARGET_TAG _POD_LABEL _POD_NAME _PPROF_PORT _GRPC_PORT <<<$(_f_indexname_tag $_CATALOG_TARGET)
+  read _INDEX_LOCATION _INDEX_NAME _TAG <<<$(_f_indexname_tag $_CATALOG_TARGET)
+  read _POD_LABEL _POD_NAME _PPROF_PORT _GRPC_PORT <<<$(_f_run_metadata $_CATALOG_TARGET)
 
   [[ -n $_GEN_ISC ]] && unset _BUNDLE
 
@@ -154,8 +157,6 @@ _f_main() {
   _log 2 "(cut.sh:f_main) if _f_run $_CATALOG_BASELINE $_POD_NAME $_POD_LABEL $_PPROF_PORT $_GRPC_PORT $_GRPC_URL; then"
 
   if _f_run $_CATALOG_BASELINE $_POD_NAME $_POD_LABEL $_PPROF_PORT $_GRPC_PORT $_GRPC_URL; then
-
-    _log 2 "(cut.sh:f_main) _L_BASELINE_PKGS=( $(_grpc_list_pkgs $_GRPC_URL) )"
 
     _L_BASELINE_PKGS=( $(_grpc_list_pkgs $_GRPC_URL) )
 
@@ -187,16 +188,16 @@ _f_main() {
 
       _log 1 "(cut.sh:f_main) gen_isc _J_PKGS_CUT $_CATALOG_BASELINE $_CATALOG_TARGET"
 
-      local _J_ISC=$(gen_isc _J_PKGS_CUT $_DATESTAMP_1999 $_CATALOG_BASELINE $_CATALOG_TARGET $_TARGET_TAG)
+      local _J_ISC=$(gen_isc _J_PKGS_CUT $_DATESTAMP_1999 $_CATALOG_BASELINE $_CATALOG_TARGET $_TAG)
 
-      _log 1 "(cut.sh:f_main) _f_output_isc _J_ISC $_DATESTAMP_1999 $_TARGET_INDEX_NAME $_TARGET_TAG"
+      _log 1 "(cut.sh:f_main) _f_output_isc _J_ISC $_DATESTAMP_1999 $_INDEX_NAME $_TAG"
 
-      _f_output_isc _J_ISC $_DATESTAMP_1999 $_TARGET_INDEX_NAME $_TARGET_TAG
+      _f_output_isc _J_ISC $_DATESTAMP_1999 $_INDEX_NAME $_TAG
 
     else      
 
-      _log 2 "(cut.sh:f_main) _f_output_api _J_PKGS_CUT $_DATESTAMP_1999 $_TARGET_INDEX_NAME $_TARGET_TAG"
-      _f_output_api _J_PKGS_CUT $_DATESTAMP_1999 $_TARGET_INDEX_NAME $_TARGET_TAG
+      _log 2 "(cut.sh:f_main) _f_output_api _J_PKGS_CUT $_DATESTAMP_1999 $_INDEX_NAME $_TAG"
+      _f_output_api _J_PKGS_CUT $_DATESTAMP_1999 $_INDEX_NAME $_TAG
 
     fi
 
@@ -217,6 +218,7 @@ _ALL_PKGS=${ALL_PKGS:-}
 _GEN_ISC=${GEN_ISC:-}
 _GEN_CUTSPEC=${GEN_CUTSPEC:-}
 _ISC_FORMATS=${ISC_FORMATS:-yaml}
+_TARGET_AS_BASELINE=${TARGET_AS_BASELINE:-}
 _YQ_BIN=${YQ_BIN:-/usr/local/bin/yq}       # https://github.com/mikefarah/yq
 _TEMPLATE=${TEMPLATE:-isc-operator.json}
 _SKIP_POD_RM=${SKIP_POD_RM:-}
@@ -256,20 +258,22 @@ for _J_CUTSPEC in ${_L_CUTSPEC[@]}; do
   declare -A A1
   declare L1
 
-  _f_baseline_cut $_J_CUTSPEC _CATALOG_BASELINE A1 L1
+  _f_parse_cutspec $_J_CUTSPEC _CATALOG_BASELINE A1 L1
 
-  # catalog_upstream: registry.redhat.io/redhat/redhat-operator-index:v4.18 
+  # catalog_baseline: registry.redhat.io/redhat/redhat-operator-index:v4.18 
   # baselineCatalog: reg.dmz.lan/baseline/20250709/redhat-operator-index:v4.18
   # targetCatalog: reg.dmz.lan/baseline/20250709/redhat-operator-index:v4.18-cut
- 
+
   _NAMETAG=$(basename $_CATALOG_BASELINE)
+
+  [[ -n $_TARGET_AS_BASELINE ]] && _CATALOG_BASELINE=$_REG_LOCATION/$_DATESTAMP/${_NAMETAG}
 
   _CATALOG_TARGET=$_REG_LOCATION/$_DATESTAMP/${_NAMETAG}-cut
 
   _log 2 "(cut.sh) _CATALOG_BASELINE: $_CATALOG_BASELINE"
   _log 2 "(cut.sh) _CATALOG_TARGET: $_CATALOG_TARGET"
 
-  _log 2 "(cut.sh) _f_main $_J_CUTSPEC $_DATESTAMP $_CATALOG_BASELINE $_CATALOG_TARGET"
+  _log 2 "(cut.sh) _f_main \$_J_CUTSPEC $_DATESTAMP $_CATALOG_BASELINE $_CATALOG_TARGET"
   _f_main $_J_CUTSPEC $_DATESTAMP $_CATALOG_BASELINE $_CATALOG_TARGET
 
 done

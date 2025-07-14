@@ -34,19 +34,19 @@ _f_pod_rm() {
   sleep 2
 }
 
-_f_image_exists() {
+_f_get_image() {
 
-  local _IMG=$1
+  local _INDEX_LOCATION=$1
+  local _TAG=$2
+  local _IMG=$3
 
-  IFS=$' ' read _INDEX_NAME _TAG <<<$(_f_indexname_tag $_IMG)
-
-  local _RESP=$($_PODMAN_BIN images | grep "${_INDEX_NAME}.*${_TAG}" | wc -l )
+  local _RESP=$($_PODMAN_BIN images --noheading | grep "${_INDEX_LOCATION}.*${_TAG}" | wc -l )
 
   if [[ $_RESP -eq 1 ]]; then
-    echo "Image $_CATALOG_BASELINE already exists, not downloading again.."
+    echo "Image $_IMG already exists, not downloading again.."
   else
-    echo "Downloading $_CATALOG_BASELINE.."
-    $_PODMAN_BIN pull $_CATALOG_BASELINE
+    echo "Downloading $_IMG.."
+    $_PODMAN_BIN pull $_IMG
   fi
 
 }

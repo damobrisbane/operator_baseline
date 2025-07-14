@@ -53,23 +53,27 @@ for _J_CUTSPEC in ${_L_CUTSPEC[@]}; do
   declare -A A1
   declare L1
 
-  _f_baseline_cut $_J_CUTSPEC _CATALOG_BASELINE A1 L1
+  _f_parse_cutspec $_J_CUTSPEC _CATALOG_UPSTREAM A1 L1
 
-  # catalog_upstream: registry.redhat.io/redhat/redhat-operator-index:v4.18 
-  # targetCatalog: reg.dmz.lan/baseline/20250709/redhat-operator-index:v4.18-cut
+  # catalog_baseline: registry.redhat.io/redhat/redhat-operator-index:v4.18 
+  # targetCatalog: reg.dmz.lan/baseline/20250709/redhat-operator-index:v4.18
+
+  _NAMETAG=$(basename $_CATALOG_UPSTREAM)
+  _CATALOG_TARGET=$_REG_LOCATION/$_DATESTAMP/${_NAMETAG}
+
+  read _INDEX_LOCATION _INDEX_NAME _TAG <<<$(_f_indexname_tag $_CATALOG_UPSTREAM)
  
-  _NAMETAG=$(basename $_CATALOG_BASELINE)
+  _CATALOG_BASELINE=$_REG_LOCATION/$_DATESTAMP/${_NAMETAG}
 
-  _CATALOG_TARGET=$_REG_LOCATION/$_DATESTAMP/${_NAMETAG}-cut
+  _log 2 "(baseline.sh) _CATALOG_BASELINE $_CATALOG_BASELINE"
+  _log 2 "(baseline.sh) _CATALOG_BASELINE: $_CATALOG_BASELINE"
 
-  _log 2 "(baseline.sh:010) _CATALOG_BASELINE: $_CATALOG_BASELINE"
-  _log 2 "(baseline.sh:010) _CATALOG_TARGET: $_CATALOG_TARGET"
+  _log 1 "(baseline.sh) _f_get_image $_INDEX_LOCATION $_TAG $_CATALOG_BASELINE"
+  _f_get_image $_INDEX_LOCATION $_TAG $_CATALOG_UPSTREAM
 
-  _f_image_exists $_CATALOG_BASELINE
+  _f_pod_tag $_CATALOG_UPSTREAM $_CATALOG_BASELINE
 
-  _f_pod_tag $_CATALOG_BASELINE $_CATALOG_TARGET
-
-  [[ -n $_PUSH ]] && _f_pod_push $_CATALOG_TARGET
+  [[ -n $_PUSH ]] && _f_pod_push $_CATALOG_BASELINE
 
 done
 

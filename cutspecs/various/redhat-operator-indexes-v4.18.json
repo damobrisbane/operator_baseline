@@ -1,5 +1,5 @@
 {
-  "catalog_baseline": "registry.redhat.io/redhat/redhat-operator-index:v4.18",
+  "catalog_upstream": "registry.redhat.io/redhat/redhat-operator-index:v4.18",
   "packages_cut": [
     {
       "name": "3scale-operator",
