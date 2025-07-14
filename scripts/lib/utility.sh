@@ -6,7 +6,7 @@ _log() {
 
   case $_LVL in
       0)
-          [[ $DEBUG -gt 0 ]] && echo $@ 1>&2
+          echo $@ 1>&2
       ;;
       1)
           [[ $DEBUG -gt 0 ]] && echo $@ 1>&2

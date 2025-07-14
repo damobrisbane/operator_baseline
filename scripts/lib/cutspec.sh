@@ -190,19 +190,43 @@ _a_fsv_cut_pkg_ch() {
   _log 3 "(cutspec.sh:_a_fsv_cut_pkg_ch) _A_FSV_CUT_PKG_CH_1999: ${!_A_FSV_CUT_PKG_CH_1999[@]}"
 }
 
-_f_parse_input() {
+_fsv_pullspec_yaml() {
+
+  # Globals:
+  #
+  # _YAML_XPATH
+  # _YQ_BIN
+  #
+  
+  local _FP_YAML=$1
+
+  _log 3 jq -sjc '.[]|.name,"@",(select(.channels != null)|[.channels[]|.name]|join("@"))," "' \<\<\<\$\($_YQ_BIN '.oc_mirror_operators[0].packages[]' $_FP_YAML\)
+
+  $_YQ_BIN --output-format json '.oc_mirror_operators[0]|{"catalog_baseline":.catalog,"packages_cut":.packages}' $_FP_YAML
+
+}
+
+_f_ndjson_cutspecs() {
   if [[ -d $1 ]]; then
     local _J=
     for _FI in $(find $1 -type f); do
-      if jq . $_FI >/dev/null 2>&1; then
-        _J+=$(jq -c . $_FI)
-      else
-        echo "Unable to parse pullspec file $_FI"
+
+      local _EXT=${_FI##*.}
+
+      if [[ ( $_EXT == json ) || ( $_EXT == ndjson ) ]]; then
+        if jq . $_FI >/dev/null 2>&1; then
+          _J+=$(jq -c . $_FI)
+        else
+          echo "Unable to parse pullspec file $_FI"
+          break
+        fi
+      else          
+        _J+=$(_fsv_pullspec_yaml $_FI)
       fi
     done        
     jq -c <<<$_J
-  else  
-    jq -c -j '.," "' <<<$@
+  else
+    jq -cj '.," "' <<<$@
   fi
 }
 

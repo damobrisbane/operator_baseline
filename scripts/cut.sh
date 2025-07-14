@@ -6,9 +6,9 @@
 #
 # REG_LOCATION=reg.dmz.lan/baseline/$DATESTAMP
 #
-# cls;GEN_ISC=1 ./files/common/baseline.sh $DATESTAMP $REG_LOCATION $PULLSPEC_DIR
+# cls;GEN_ISC=1 ./files/common/baseline.sh $DATESTAMP $REG_LOCATION $CUTSPEC_DIR
 #
-# where PULLSPEC_DIR is the root folder containing spec files for operator mirroring specs (yaml or json)
+# where CUTSPEC_DIR is the root folder containing spec files for operator mirroring specs (yaml or json)
 #
 # REG_LOCATION does not include date part. ie actual catalog location becomes <REG_LOCATION>/<DATESTAMP>. This full catalog location becomes the first part of the image url used for the index container (for local gprc queries) and also makes up part of the _CatalogName_ of an ImageSetConfiguration.
 #
@@ -24,7 +24,7 @@
 #
 # Limitations, caveats
 # 
-# PULLSPEC_DIR manifests expect one file == one catalog (unlike ImageSetConfiguration, which allows one file == multiple catalogs).
+# CUTSPEC_DIR manifests expect one file == one catalog (unlike ImageSetConfiguration, which allows one file == multiple catalogs).
 # 
 # Mapping of "csvName to Version" is naive. Needs deeper introspection to be accurate against the csv version naming in the wild wrt plus (+) and minus (-).
 # 
@@ -36,7 +36,7 @@
 ######################################################################################################
 
 _f_help_exit() {
-  echo -ne "\n[DEBUG=<level>] [BUNDLE=] [ALL_PKGS=] [GEN_ISC=] [ISC_FORMATS=] [REPORT_LOCATION=] ./scripts/baseline.sh <DATESTAMP> <REG_LOCATION> <PULLSPEC FOLDER>||<STDIN>\n\n"
+  echo -ne "\n[DEBUG=<level>] [BUNDLE=] [ALL_PKGS=] [GEN_ISC=] [ISC_FORMATS=] [REPORT_LOCATION=] ./scripts/baseline.sh <DATESTAMP> <REG_LOCATION> <CUTSPEC FOLDER>||<STDIN>\n\n"
   exit
 }
 
@@ -233,7 +233,7 @@ DEBUG=${DEBUG:-0}
 
 _DATESTAMP=$1
 _REG_LOCATION=$2
-_PULLSPEC=${3:-}
+_CUTSPEC=${3:-}
 
 if [[ $1 == -h ]]; then
   f_help && exit
@@ -245,15 +245,15 @@ source $(dirname ${BASH_SOURCE})/lib/container.sh
 source $(dirname ${BASH_SOURCE})/lib/cutspec.sh
 source $(dirname ${BASH_SOURCE})/lib/isc.sh
 
-_L_CUTSPEC=( $(_f_parse_input $_PULLSPEC) )
+_NDJSON_CUTSPEC=( $(_f_ndjson_cutspecs $_CUTSPEC) )
 
-if [[ ${#_L_CUTSPEC[@]} -eq 0 ]]; then
+if [[ ${#_NDJSON_CUTSPEC[@]} -eq 0 ]]; then
   echo -ne "\nNo cut specification has been generated, exiting..\n" && _f_help_exit
 fi
 
-_log 3 "(cut.sh) _L_CUTSPEC: (${#_L_CUTSPEC[@]}) ${_L_CUTSPEC[@]}"
+_log 3 "(cut.sh) _NDJSON_CUTSPEC: (${#_NDJSON_CUTSPEC[@]}) ${_NDJSON_CUTSPEC[@]}"
 
-for _J_CUTSPEC in ${_L_CUTSPEC[@]}; do
+for _J_CUTSPEC in ${_NDJSON_CUTSPEC[@]}; do
 
   declare -A A1
   declare L1
