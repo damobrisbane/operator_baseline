@@ -131,7 +131,7 @@ _f_grpc_get_packages() {
 
           if [[ -z ${_A_IN_SET[$_CH]} ]]; then
 
-            if [[ ( $_STOCK_CH == $_CH || $_STOCK_CH == $_DEF_CH_NAME ) && -z ${_A_IN_SET[$_CH]} ]]; then
+            if [[ ( $_CH == $_STOCK_CH || $_CH == $_DEF_CH_NAME ) && -z ${_A_IN_SET[$_CH]} ]]; then
 
               if [[ -n $_BUNDLE ]]; then
 
