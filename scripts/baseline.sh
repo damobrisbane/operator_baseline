@@ -20,7 +20,7 @@
 # GLOBAL PARAMETERS
 #
 _PODMAN_BIN=${PODMAN_BIN:-/usr/bin/podman}
-_PUSH=${PUSH:-}
+_SKIP_PUSH=${SKIP_PUSH:-}
 _AUTHFILE=${AUTHFILE:-}
 
 # LOCAL PARAMETERS
@@ -73,7 +73,7 @@ for _J_CUTSPEC in ${_L_CUTSPEC[@]}; do
 
   _f_pod_tag $_CATALOG_UPSTREAM $_CATALOG_BASELINE
 
-  [[ -n $_PUSH ]] && _f_pod_push $_CATALOG_BASELINE
+  [[ -z $_SKIP_PUSH ]] && _f_pod_push $_CATALOG_BASELINE
 
 done
 

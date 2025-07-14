@@ -22,8 +22,11 @@ gen_isc() {
   local -n _J_PKGS_CUT_1998=$1
   local _DATESTAMP=$2
   export CATALOG=$3
-  export TARGET_CATALOG=$4
+  local _TARGET_CATALOG=$4
   export TARGET_TAG=$5      # ISC v1 only
+
+  read _INDEX_LOCATION _INDEX_NAME _TAG <<<$(_f_indexname_tag $_TARGET_CATALOG)
+  export TARGET_CATALOG=${_INDEX_LOCATION}
 
   export STORAGE_CONFIG_URL=$(_f_map_storage_config_url $TARGET_CATALOG)/metadata/$_DATESTAMP/$(_f_map_target_name $TARGET_CATALOG):$TARGET_TAG
 

@@ -1,0 +1,50 @@
+{
+  "catalog_baseline": "reg.dmz.lan/baseline/20250709/redhat-operator-index:v4.16",
+  "packages_cut": [
+    {
+      "name": "openshift-cert-manager-operator",
+      "channels": [
+        {
+          "name": "stable-v1",
+          "minVersion": "1.16.0"
+        }
+      ]
+    },
+    {
+      "name": "kubevirt-hyperconverged",
+      "channels": [
+        {
+          "name": "stable",
+          "minVersion": "4.16.7"
+        }
+      ]
+    },
+    {
+      "name": "local-storage-operator",
+      "channels": [
+        {
+          "name": "stable",
+          "minVersion": "4.16.0-202504120704"
+        }
+      ]
+    },
+    {
+      "name": "odf-operator",
+      "channels": [
+        {
+          "name": "stable-4.16",
+          "minVersion": "4.16.10-rhodf"
+        }
+      ]
+    },
+    {
+      "name": "serverless-operator",
+      "channels": [
+        {
+          "name": "stable",
+          "minVersion": "1.35.1"
+        }
+      ]
+    }
+  ]
+}
