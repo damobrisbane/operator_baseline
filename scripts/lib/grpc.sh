@@ -6,9 +6,9 @@ _f_grpc_bundle() {
   local _OP=$2
   local _CH=$3
 
-  read channelName csvName bundlePath <<<$(grpcurl -plaintext -d "{\"pkgName\":\"${_OP}\",\"channelName\":\"${_CH}\"}" $_GRPC_URL api.Registry/GetBundleForChannel | jq -rj ".channelName,\" \",.csvName,\" \",.bundlePath")
+  read channelName csvName bundlePath version <<<$(grpcurl -plaintext -d "{\"pkgName\":\"${_OP}\",\"channelName\":\"${_CH}\"}" $_GRPC_URL api.Registry/GetBundleForChannel | jq -rj ".channelName,\" \",.csvName,\" \",.bundlePath,\" \",.version")
 
-  _log 0 "{\"version\":\"$(_map_csv_version $csvName)\",\"bundlePath\":\"$bundlePath\"}"
+  printf '%s' "{\"version\":\"${version}\",\"bundlePath\":\"${bundlePath}\"}"
 
 }
 
@@ -133,23 +133,30 @@ _f_grpc_get_packages() {
 
             if [[ ( $_CH == $_STOCK_CH || $_CH == $_DEF_CH_NAME ) && -z ${_A_IN_SET[$_CH]} ]]; then
 
-              if [[ -n $_BUNDLE ]]; then
+              #if [[ -n $_BUNDLE ]]; then
+
+                #_J_BUNDLE=$(_f_grpc_bundle $_GRPC_URL $_PKG $_CH)
+                #_J_CH_1999=$(jq ".channels[]|select(.name==\"$_CH\")" <<<$_J_STOCK_PKG)
+                #_J_CH=$(jq -s 'add' <<<"${_J_CH_1999}${_J_BUNDLE}")
 
                 _J_BUNDLE=$(_f_grpc_bundle $_GRPC_URL $_PKG $_CH)
+                local _VERSION=$(jq -r .version <<<$_J_BUNDLE)
 
-                _J_CH_1999=$(jq ".channels[]|select(.name==\"$_CH\")" <<<$_J_STOCK_PKG)
+                #_J_CH_1999=$(jq ".channels[]|select(.name==\"$_CH\")" <<<$_J_STOCK_PKG)
 
-                _J_CH=$(jq -s 'add' <<<"${_J_CH_1999}${_J_BUNDLE}")
+                #_J_CH=$(jq -s 'add' <<<"${_J_CH_1999}${_J_BUNDLE}")
 
-              else
+
+              #else
 
                 _S_CH_CSV=$(jq -rj ".channels[]|(select(.name==\"$_CH\")|.name,\" \",.csvName)" <<<$_J_STOCK_PKG)                
 
                 read name csvName <<<$_S_CH_CSV
                 
-                _J_CH="{\"name\":\"$name\",\"minVersion\":\"$(_map_csv_version $csvName)\"}"
+                #_J_CH="{\"name\":\"$name\",\"minVersion\":\"$(_map_csv_version $csvName)\"}"
+                _J_CH="{\"name\":\"$name\",\"minVersion\":\"${_VERSION}\"}"
 
-              fi
+              #fi
 
               _J_PKG=$(jq ".channels += [${_J_CH}]" <<<$_J_PKG)
               _A_IN_SET[$_CH]=1
