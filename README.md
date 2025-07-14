@@ -11,9 +11,16 @@ graph LR
     OCMirror --->|cut catalog/bundles| ImageRegOperators(Image Reg/Consumption)
 ```
 
-[![demo1]](./doc/demo1.mpg)
+## Baseline and Cut New ImageSetConfiguration (ISC)
 
-[![demo2]](./doc/demo2.mpg)
+[![demo1]](https://github.com/user-attachments/assets/75e712bc-a85f-480e-a88a-ca5aec020dc9)
+
+## Compare All packages ISC RedHat operators v4.16, v4.18
+
+[![demo2]](https://github.com/user-attachments/assets/2b82e992-4b7f-4f10-b0e5-a5c87a745e05)
+
+
+
 
 _baseline.sh_ is a convenience script for tagging and pushing an image that will serve as a baselined/datestamped copy [TARGET_CATALOG] of some cut generated ImageSetConfiguration.
 
