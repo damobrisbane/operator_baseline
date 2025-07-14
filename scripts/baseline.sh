@@ -35,6 +35,7 @@ _f_help_exit() {
 _PODMAN_BIN=${PODMAN_BIN:-/usr/bin/podman}
 _SKIP_PUSH=${SKIP_PUSH:-}
 _AUTHFILE=${AUTHFILE:-}
+_YQ_BIN=${YQ_BIN:-/usr/local/bin/yq}       # https://github.com/mikefarah/yq
 
 # LOCAL PARAMETERS
 #
