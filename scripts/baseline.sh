@@ -36,7 +36,7 @@ fi
 
 _DATESTAMP=${_ARGS[0]}
 _REG_LOCATION=${_ARGS[1]}
-_PULLSPEC=${_ARGS[2]:-}
+_CUTSPEC=${_ARGS[2]:-}
 
 DEBUGID=$(dirname ${BASH_SOURCE})
 
@@ -44,11 +44,15 @@ source $(dirname ${BASH_SOURCE})/lib/utility.sh
 source $(dirname ${BASH_SOURCE})/lib/container.sh
 source $(dirname ${BASH_SOURCE})/lib/cutspec.sh
 
-_L_CUTSPEC=( $(_f_parse_input $_PULLSPEC) )
+_NDJSON_CUTSPEC=( $(_f_ndjson_cutspecs $_CUTSPEC) )
 
-_log 3 "(baseline.sh) _L_CUTSPEC: (${#_L_CUTSPEC[@]}) ${_L_CUTSPEC[@]}"
+if [[ ${#_NDJSON_CUTSPEC[@]} -eq 0 ]]; then
+  echo -ne "\nNo cut specification has been generated, exiting..\n" && _f_help_exit
+fi
 
-for _J_CUTSPEC in ${_L_CUTSPEC[@]}; do
+_log 3 "(baseline.sh) _NDJSON_CUTSPEC: (${#_NDJSON_CUTSPEC[@]}) ${_NDJSON_CUTSPEC[@]}"
+
+for _J_CUTSPEC in ${_NDJSON_CUTSPEC[@]}; do
 
   declare -A A1
   declare L1
