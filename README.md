@@ -11,6 +11,10 @@ graph LR
     OCMirror --->|cut catalog/bundles| ImageRegOperators(Image Reg/Consumption)
 ```
 
+[![demo1](./doc/demo1.mpg)]
+
+[![demo2](./doc/demo2.mpg)]
+
 _baseline.sh_ is a convenience script for tagging and pushing an image that will serve as a baselined/datestamped copy [TARGET_CATALOG] of some cut generated ImageSetConfiguration.
 
 
