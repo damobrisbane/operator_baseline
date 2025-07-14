@@ -36,7 +36,7 @@
 ######################################################################################################
 
 _f_help_exit() {
-  echo -ne "\n[DEBUG=<level>] [BUNDLE=] [ALL_PKGS=] [GEN_ISC=] [ISC_FORMATS=] [REPORT_LOCATION=] ./scripts/baseline.sh <DATESTAMP> <REG_LOCATION> <CUTSPEC FOLDER>||<STDIN>\n\n"
+  echo -ne "\n[DEBUG=<level>] [BUNDLE=] [ALL_PKGS=] [GEN_ISC=] [ISC_FORMATS=] [REPORT_LOCATION=] ./scripts/cut.sh <DATESTAMP> <REG_LOCATION> <CUTSPEC FOLDER>||<STDIN>\n\n"
   exit
 }
 
