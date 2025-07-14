@@ -151,4 +151,16 @@ _right_join() {
   echo -ne ${L2[@]}
 }
 
+_demo_prompt() {
+  if [[ -n $_NOREAD ]]; then
+    echo -ne "$@\n"
+  else
+    echo -ne "\n$@ "
+    read 
+    echo
+    eval $@
+    echo
+  fi
+}
+
 

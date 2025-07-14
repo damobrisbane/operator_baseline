@@ -1,62 +1,50 @@
 #!/bin/bash
 
-f1() {
-  if [[ -n $_NOREAD ]]; then
-    echo -ne "$@\n"
-  else
-    echo -ne "\n$@ "
-    read 
-    echo
-    eval $@
-    echo
-  fi
-}
+_NOREAD=1 _demo_prompt '> # There is a selection of example cut specs'
 
-_NOREAD=1 f1 '> # There is a selection of example cut specs'
+_demo_prompt find cutspecs -type f
 
-f1 find cutspecs -type f
+_NOREAD=1 _demo_prompt '> # Pull and tag images for a baseline'
 
-_NOREAD=1 f1 '> # Pull and tag images for a baseline'
+_NOREAD=1 _demo_prompt '> # First, check current images'
 
-_NOREAD=1 f1 '> # First, check current images'
+_demo_prompt 'podman images'
 
-f1 'podman images'
+_NOREAD=1 _demo_prompt '> # Can see we already have index images. Good idea to tag them though'
 
-_NOREAD=1 f1 '> # Can see we already have index images. Good idea to tag them though'
+_NOREAD=1 _demo_prompt '> # We can use baseline.sh and the minimal_specs for this, ie'
 
-_NOREAD=1 f1 '> # We can use baseline.sh and the minimal_specs for this, ie'
+_demo_prompt 'cat cutspecs/minimal_specs/*'
 
-f1 'cat cutspecs/minimal_specs/*'
+_NOREAD=1 _demo_prompt '> # In these cases, "catalog_baseline" will serve for the upstream indexes'
 
-_NOREAD=1 f1 '> # In these cases, "catalog_baseline" will serve for the upstream indexes'
+_NOREAD=1 _demo_prompt '> # Run ./scripts/baseline.sh. We will specify a DATESTAMP of "20250709" and REGISTRY_LOCATION of "reg.dmz.lan/baseline" and run baseline.sh with the cutspec directory as the last argument'
 
-_NOREAD=1 f1 '> # Run ./scripts/baseline.sh. We will specify a DATESTAMP of "20250709" and REGISTRY_LOCATION of "reg.dmz.lan/baseline" and run baseline.sh with the cutspec directory as the last argument'
+_demo_prompt ./scripts/baseline.sh 20250709 reg.dmz.lan/baseline cutspecs/minimal_specs 
 
-f1 ./scripts/baseline.sh 20250709 reg.dmz.lan/baseline cutspecs/minimal_specs 
+_NOREAD=1 _demo_prompt '> # Run podman ps again, not the (DATESTAMP/REGISTRY LOCATION) tagged "baseline" indexes'
 
-_NOREAD=1 f1 '> # Run podman ps again, not the (DATESTAMP/REGISTRY LOCATION) tagged "baseline" indexes'
+_demo_prompt 'podman images --noheading | sort'
 
-f1 'podman images --noheading | sort'
+_NOREAD=1 _demo_prompt '\n*******************\nNow lets run through some cut scenarios, using the cutspecs we listed before'
 
-_NOREAD=1 f1 '\n*******************\nNow lets run through some cut scenarios, using the cutspecs we listed before'
+_NOREAD=1 _demo_prompt '> # Test Cut Specs with real and bogus data'
 
-_NOREAD=1 f1 '> # Test Cut Specs with real and bogus data'
+_demo_prompt 'cat cutspecs/real_and_bogus*|jq'
 
-f1 'cat cutspecs/real_and_bogus*|jq'
-
-_NOREAD=1 f1 '> # Run cut.sh on the above folder and generate an ImageSetConfiguration, using same DATESTAMP and REGISTRY_LOCATION used in the baseline'
+_NOREAD=1 _demo_prompt '> # Run cut.sh on the above folder and generate an ImageSetConfiguration, using same DATESTAMP and REGISTRY_LOCATION used in the baseline'
 
 GEN_ISC=1 ./scripts/cut.sh 20250709 reg.dmz.lan/baseline cutspecs/real_and_bogus
 
 exit
 
-_NOREAD=1 f1 '> # Minimal Cut Specs'
+_NOREAD=1 _demo_prompt '> # Minimal Cut Specs'
 
-f1 'cat cutspecs/minimal_specs/json0/*|jq'
+_demo_prompt 'cat cutspecs/minimal_specs/json0/*|jq'
 
 exit
 
-_NOREAD=1 f1 '> # Test Cut with real and bogus data'
+_NOREAD=1 _demo_prompt '> # Test Cut with real and bogus data'
 
 
 

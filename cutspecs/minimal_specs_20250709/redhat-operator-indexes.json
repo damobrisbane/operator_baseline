@@ -1,0 +1,9 @@
+{
+  "catalog_baseline": "reg.dmz.lan/baseline/20250709/redhat-operator-index:v4.16",
+  "packages_cut": []
+}
+{
+  "catalog_baseline": "reg.dmz.lan/baseline/20250709/redhat-operator-index:v4.18",
+  "packages_cut": []
+}
+
