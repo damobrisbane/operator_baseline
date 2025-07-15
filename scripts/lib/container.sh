@@ -1,78 +1,126 @@
 #!/bin/bash
 
-_f_pod_run() {
+# Globals:
+#
+# _AUTHFILE
+# _PODMAN_BIN
+#
+# 2>/dev/null indicates TLDR
+# 2>&1 doubles down
+#
 
-  local _CONTAINER_NAME=$1
-  local _IMG=$2
 
-  local _POD_RUNNER=${POD_RUNNER:-/usr/bin/podman}
-  local _PORT=50051
-
-  _log 2 "_f_pod_run ($_IMG)"
-
-  if [[ $_POD_RUNNER =~ podman ]]; then
-    $_POD_RUNNER run --authfile=$AUTHFILE -d -t --rm --label index= --name $_CONTAINER_NAME --net=host -p $_PORT:50051 $_IMG
-  else
-    $_POD_RUNNER run -d -t --rm --label index= --name $_CONTAINER_NAME --net=host -p $_PORT:50051 -t $_IMG
-  fi
-
-  if [[ $? -eq 0 ]]; then
-    return 0
-  else
-    return 1
-  fi
-}
-
-_f_grpc_running() {
+_f_pod_exists() {
   
-  local _CONTAINER_NAME=$1
-  local _GRPC_URL=$2
+  local _POD_LABEL=$1
 
-  IFS=$':' read _GRPC_HOST _GRPC_PORT <<<$_GRPC_URL
+  local _L=( $($_PODMAN_BIN ps -q --filter label=$_POD_LABEL 2>/dev/null ))
 
-  _log 3 "if nc -z $_GRPC_HOST $_GRPC_PORT; then"
-  if nc -z $_GRPC_HOST $_GRPC_PORT; then
-    return 0
-  else
+  if [[ ${#_L[@]} -eq 0 ]]; then
     return 1
+  else
+    return 0
   fi
-}
-
-_f_pod_id() {
-  
-  local _CONTAINER_NAME=$1
-  local _POD_RUNNER=${POD_RUNNER:-/usr/bin/podman}
-
-
-  echo $($_POD_RUNNER ps -a --filter label=$_CONTAINER_NAME | grep -v CONTAINER | tr -s ' ' | cut -d' ' -f1)
-
 }
 
 _f_pod_rm() {
 
-  local _CONTAINER_NAME=$1
+  local _POD_LABEL=$1
 
-  local _POD_RUNNER=${POD_RUNNER:-/usr/bin/podman}
-
-  $_POD_RUNNER rm -f $_CONTAINER_NAME >/dev/null 2>&1
-
+  if _f_pod_exists $_POD_LABEL; then
+    _log 2 "(container.sh:_f_pod_rm) $_PODMAN_BIN rm -f --filter label=$_POD_LABEL"
+    $_PODMAN_BIN rm -f --filter label=$_POD_LABEL >/dev/null 2>&1
+  fi
   sleep 2
 }
 
-_f_image_exists() {
+_f_get_image() {
 
-  local _DATESTAMP=$1
-  local _INDEX_NAME=$2
-  local _TAG=$3
+  local _INDEX_LOCATION=$1
+  local _TAG=$2
+  local _IMG=$3
 
-  local _POD_RUNNER=${POD_RUNNER:-/usr/bin/podman}
-
-  local _RESP=$($_POD_RUNNER images | grep "$_DATESTAMP.*$_INDEX_NAME.*$_TAG" | wc -l )
+  local _RESP=$($_PODMAN_BIN images --noheading | grep "${_INDEX_LOCATION}.*${_TAG}" | wc -l )
 
   if [[ $_RESP -eq 1 ]]; then
-    return 0
+    echo "Image $_IMG already exists, not downloading again.."
   else
-    return 1
+    echo "Downloading $_IMG.."
+    $_PODMAN_BIN pull $_IMG
   fi
 
 }
+
+_f_pod_tag() {
+
+  local _CATALOG_BASELINE=$1
+  local _CATALOG_TARGET=$2
+
+  echo Tagging $_CATALOG_BASELINE $_CATALOG_TARGET
+  $_PODMAN_BIN tag $_CATALOG_BASELINE $_CATALOG_TARGET
+}
+
+_f_pod_push() {
+
+  local _CATALOG_TARGET=$1
+
+  $_PODMAN_BIN push --remove-signatures $_CATALOG_TARGET
+
+  echo Pushed $_CATALOG_TARGET
+}
+
+_f_pod_run() {
+  #
+  # _f_pod_run $_IMG $_POD_NAME $_POD_LABEL $_PPROF_PORT $_GRPC_PORT
+  #
+
+  local _IMG=$1
+  local _POD_NAME=$2
+  local _POD_LABEL=$3
+  local _PPROF_PORT=$4
+  local _GRPC_PORT=$5
+  
+  _log 1 "(container.sh:_f_pod_run) $_PODMAN_BIN run -d -t --rm --label $_POD_LABEL --name $_POD_NAME -p $_PPROF_PORT:6060 -p $_GRPC_PORT:50051 $_IMG"
+  $_PODMAN_BIN run -d -t --rm --label $_POD_LABEL --name $_POD_NAME -p $_PPROF_PORT:6060 -p $_GRPC_PORT:50051 $_IMG >/dev/null 2>&1
+
+}
+
+_f_run() {
+  #
+  # Globals:
+  #
+  # _SKIP_POD_RM
+  #
+  # _f_run $_CATALOG_BASELINE $_POD_NAME $_POD_LABEL $_PPROF_PORT $_GRPC_PORT; then
+  #
+
+  IFS=$' ' read _IMG _POD_NAME _POD_LABEL _PPROF_PORT _GRPC_PORT _GRPC_URL <<<$@
+
+  if [[ -z $_SKIP_POD_RM ]]; then
+    _f_pod_rm $_POD_LABEL
+    _f_pod_run $_IMG $_POD_NAME $_POD_LABEL $_PPROF_PORT $_GRPC_PORT
+  else
+    if ! _f_pod_exists $_POD_LABEL; then
+      _f_pod_run $_IMG $_POD_NAME $_POD_LABEL $_PPROF_PORT $_GRPC_PORT
+    fi
+
+  fi
+
+  local _COUNTER=1
+
+  while : ; do
+    if _f_grpc_running $_GRPC_URL; then
+      return 0
+    else
+      if [[ $_COUNTER -gt 10 ]]; then
+        _log 0 "(cut.sh:_f_run) No running pod (index) found. Are args correct, return 1.."
+        return 1
+      fi
+    fi
+    _COUNTER=$(( $_COUNTER + 1 ))
+    _sleep $_COUNTER
+  done
+
+}
+
+

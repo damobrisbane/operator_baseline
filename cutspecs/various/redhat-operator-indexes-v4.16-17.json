@@ -1,0 +1,53 @@
+{
+  "catalog_baseline": "registry.redhat.io/redhat/redhat-operator-index:v4.16",
+  "packages_cut": [
+    {
+      "name": "3scale-operator",
+      "channels": [
+        {
+          "name": "threescale-mas",
+          "minVersion": "0.11.8-mas"
+        },
+        {
+          "name": "threescale-2.15",
+          "minVersion": "0.12.3"
+        },
+        {
+          "name": "threescale-2.13",
+          "minVersion": "0.10.5"
+        }
+      ]
+    },
+    {
+      "name": "advanced-cluster-management",
+      "channels": [
+      ]
+    }
+  ]
+}
+{
+  "catalog_baseline": "registry.redhat.io/redhat/redhat-operator-index:v4.17",
+  "packages_cut": [
+    {
+      "name": "3scale-operator",
+      "defaultChannelName": "threescale-2.15",
+      "channels": [
+        {
+          "name": "threescale-2.15",
+          "minVersion": "0.12.3"
+        }
+      ]
+    },
+    {
+      "name": "advanced-cluster-management",
+      "defaultChannelName": "release-2.13",
+      "channels": [
+        {
+          "name": "release-2.13",
+          "minVersion": "2.13.3"
+        }
+      ]
+    }
+  ]
+}
+

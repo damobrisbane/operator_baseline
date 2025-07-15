@@ -1,0 +1,34 @@
+{
+  "catalog_upstream": "registry.redhat.io/redhat/redhat-operator-index:v4.18",
+  "packages_cut": [
+    {
+      "name": "3scale-operator",
+      "channels": [
+      ]
+    },
+    {
+      "name": "advanced-cluster-management",
+      "defaultChannelName": "release-2.13",
+      "channels": [
+      ]
+    },
+    {
+      "name": "amq-broker-rhel8",
+      "defaultChannelName": "7.12.x",
+      "channels": [
+        {
+          "name": "7.12.x",
+          "minVersion": "7.12.4-opr-1-0.1747217191.p"
+        },
+        {
+          "name": "7.10.x",
+          "minVersion": "7.10.7-opr-1"
+        },
+        {
+          "name": "7.11.x",
+          "minVersion": "7.11.8-opr-1"
+        }
+      ]
+    }
+  ]
+}
