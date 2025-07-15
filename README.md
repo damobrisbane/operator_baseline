@@ -89,6 +89,8 @@ mirror:
 ...
 ```
 
+Note only ACM has more than one channel, the rest - unspecified - are all defaults [isc-redhat-operator-index-v4.16-cut.yaml](./isc-redhat-operator-index-v4.16-cut.yaml).
+
 _See also [cut.sh](./scripts/cut.sh)_
 
 
