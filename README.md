@@ -32,8 +32,6 @@ _baseline.sh_ is a convenience script for tagging and pushing an image that will
 > REPORT_LOCATION=$REPORT_LOCATION POD_RUNNER=/usr/bin/docker GEN_ISC=1 ./scripts/cut.sh $DATESTAMP $CATALOG_LOCATION pullspec/json1
 > ...
 
-```
-
 _See also [cut.sh](./scripts/cut.sh)_
 
 ## Requires
