@@ -113,6 +113,8 @@ mirror:
         - name: advanced-cluster-management
           channels:
 
+...
+
 ```      
 
 ## Ex. 2) ALL_PKGS, Minimal Spec
