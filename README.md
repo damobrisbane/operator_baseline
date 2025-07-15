@@ -35,6 +35,10 @@ find
 
 Refer examples in the _cutspecs_ folder. Opinionated ndjson, yaml formats. Will always return the default channel (and _minVersion_) whether specified or not.
 
+## OC Mirror v2
+
+Run with an appropriate TEMPLATE=<v2 template>. In the [templates dir](./scripts/tempate).
+
 ## Baseline
 
 _baseline.sh_ is a convenience script for tagging and pushing an image that will serve as a baselined/datestamped copy [TARGET_CATALOG] of some cut generated ImageSetConfiguration.
