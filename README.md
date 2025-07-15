@@ -22,12 +22,12 @@ graph LR
 
 ## Requires
 
-sed  
+podman
 [grpcurl](https://github.com/fullstorydev/grpcurl)  
 jq  
-find
 [yq](https://github.com/mikefarah/yq)  
-podman
+sed  
+find
 
 # WorkFlow
 
