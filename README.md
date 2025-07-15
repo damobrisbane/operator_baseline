@@ -51,7 +51,7 @@ _baseline.sh_ is a convenience script for tagging and pushing an image that will
 
    b) push the <CATALOG_LOCATION>[/<CATALOG_NAME>:<VERSION>] into target registry <sup>1</sup>
 
-<sup>1</sup> Consumption, future [re]baselining of the catalog is out of scope for [operator_baseline](https://github.com/damobrisbane/operator_baseline).
+<sup>1</sup> Consumption, future use of the baselined catalog is out of scope for [operator_baseline](https://github.com/damobrisbane/operator_baseline).
 
 _See also [baseline.sh](./scripts/baseline.sh)_
 
