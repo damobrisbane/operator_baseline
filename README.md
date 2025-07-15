@@ -115,4 +115,100 @@ mirror:
 
 ```      
 
+## Ex. 2) ALL_PKGS, Minimal Spec
+
+Run cut.sh with ALL_PKGS=1. Note the minimal specs with no packages needed.
+
+> cat cutspecs/minimal_specs_20250709/redhat-operator-indexes.json 
+{
+  "catalog_baseline": "reg.dmz.lan/baseline/20250709/redhat-operator-index:v4.16",
+  "packages_cut": []
+}
+{
+  "catalog_baseline": "reg.dmz.lan/baseline/20250709/redhat-operator-index:v4.18",
+  "packages_cut": []
+}
+
+> DEBUG=1 ALL_PKGS=1 GEN_ISC=1 SKIP_POD_RM=1 ./scripts/cut.sh 20250715 reg.dmz.lan/baseline cutspecs/minimal_specs_20250709
+
+(cut.sh) _f_main $_J_CUTSPEC 20250715 reg.dmz.lan/baseline/20250709/redhat-operator-index:v4.16 reg.dmz.lan/baseline/20250715/redhat-operator-index:v4.16-cut
+(cut.sh:f_main) gen_isc _J_PKGS_CUT reg.dmz.lan/baseline/20250709/redhat-operator-index:v4.16 reg.dmz.lan/baseline/20250715/redhat-operator-index:v4.16-cut
+(cut.sh:f_main) _f_output_isc _J_ISC 20250715 redhat-operator-index v4.16-cut
+
+...
+kind: ImageSetConfiguration
+apiVersion: mirror.openshift.io/v2alpha1
+archiveSize: null
+mirror:
+  operators:
+    - catalog: reg.dmz.lan/baseline/20250709/redhat-operator-index:v4.16
+      targetCatalog: reg.dmz.lan/baseline/20250715/redhat-operator-index
+      targetTag: v4.16-cut
+      packages:
+        - name: 3scale-operator
+          channels:
+            - name: threescale-mas
+              minVersion: 0.12.1-mas
+            - name: threescale-2.15
+              minVersion: 0.12.3
+            - name: threescale-2.14
+              minVersion: 0.11.13
+        - name: advanced-cluster-management
+          channels:
+            - name: release-2.12
+              minVersion: 2.12.3
+            - name: release-2.13
+              minVersion: 2.13.3
+            - name: release-2.10
+              minVersion: 2.10.8
+            - name: release-2.11
+              minVersion: 2.11.7
+        - name: amq-broker-rhel8
+          channels:
+            - name: 7.12.x
+...
+
+(cut.sh) _f_main $_J_CUTSPEC 20250715 reg.dmz.lan/baseline/20250709/redhat-operator-index:v4.18 reg.dmz.lan/baseline/20250715/redhat-operator-index:v4.18-cut
+(cut.sh:f_main) gen_isc _J_PKGS_CUT reg.dmz.lan/baseline/20250709/redhat-operator-index:v4.18 reg.dmz.lan/baseline/20250715/redhat-operator-index:v4.18-cut
+(cut.sh:f_main) _f_output_isc _J_ISC 20250715 redhat-operator-index v4.18-cut
+kind: ImageSetConfiguration
+apiVersion: mirror.openshift.io/v2alpha1
+archiveSize: null
+mirror:
+  operators:
+    - catalog: reg.dmz.lan/baseline/20250709/redhat-operator-index:v4.18
+      targetCatalog: reg.dmz.lan/baseline/20250715/redhat-operator-index
+      targetTag: v4.18-cut
+      packages:
+        - name: 3scale-operator
+          channels:
+            - name: threescale-mas
+              minVersion: 0.11.8-mas
+            - name: threescale-2.15
+              minVersion: 0.12.3
+            - name: threescale-2.13
+              minVersion: 0.10.5
+        - name: advanced-cluster-management
+          channels:
+            - name: release-2.12
+              minVersion: 2.12.3
+            - name: release-2.13
+              minVersion: 2.13.3
+        - name: amq-broker-rhel8
+          channels:
+            - name: 7.12.x
+              minVersion: 7.12.4-opr-1+0.1747217191.p
+            - name: 7.10.x
+              minVersion: 7.10.7-opr-1
+            - name: 7.11.x
+              minVersion: 7.11.8-opr-1
+        - name: amq-broker-rhel9
+          channels:
+
+> find baseline -mmin -1
+baseline/20250715
+baseline/20250715/isc-redhat-operator-index-v4.16-cut.yaml
+baseline/20250715/isc-redhat-operator-index-v4.18-cut.yaml
+> 
+```
 
