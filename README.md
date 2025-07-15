@@ -93,7 +93,8 @@ _See also [cut.sh](./scripts/cut.sh)_
 Run cut.sh with TARGET_AS_BASELINE=1. Note _catalog_, _targetName_ and _targetTag_ in the resulting ISC.
 
 ```
- TARGET_AS_BASELINE=1 TEMPLATE=isc-operator-v1.json SKIP_POD_RM=1 GEN_ISC=1 ./scripts/cut.sh 20250715-TARGET_BASELINE reg.dmz.lan/baseline cutspecs/kubevirt_v4.16
+
+TARGET_AS_BASELINE=1 TEMPLATE=isc-operator-v1.json SKIP_POD_RM=1 GEN_ISC=1 ./scripts/cut.sh target_baseline_20250715 reg.dmz.lan/baseline cutspecs/kubevirt_v4.16
 
 ...
 kind: ImageSetConfiguration

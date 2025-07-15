@@ -3,12 +3,12 @@ apiVersion: mirror.openshift.io/v1alpha2
 archiveSize: null
 storageConfig:
   registry:
-    imageURL: reg.dmz.lan/metadata/20250715-TARGET_BASELINE/redhat-operator-index:v4.16-cut
+    imageURL: reg.dmz.lan/metadata/target_baseline_20250715/redhat-operator-index:v4.16-cut
     skipTLS: false
 mirror:
   operators:
-    - catalog: reg.dmz.lan/baseline/20250715-TARGET_BASELINE/redhat-operator-index:v4.16
-      targetName: reg.dmz.lan/baseline/20250715-TARGET_BASELINE/redhat-operator-index
+    - catalog: reg.dmz.lan/baseline/target_baseline_20250715/redhat-operator-index:v4.16
+      targetName: reg.dmz.lan/baseline/target_baseline_20250715/redhat-operator-index
       targetTag: v4.16-cut
       packages:
         - name: advanced-cluster-management
