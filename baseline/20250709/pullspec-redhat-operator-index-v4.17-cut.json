@@ -1,0 +1,4 @@
+{
+  "catalog_baseline": "registry.redhat.io/redhat/redhat-operator-index:v4.17",
+  "packages_cut": []
+}

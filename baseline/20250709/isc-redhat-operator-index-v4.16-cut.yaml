@@ -1,0 +1,33 @@
+kind: ImageSetConfiguration
+apiVersion: mirror.openshift.io/v1alpha2
+archiveSize: null
+storageConfig:
+  registry:
+    imageURL: reg.dmz.lan/metadata/20250709/redhat-operator-index:v4.16-cut
+    skipTLS: false
+mirror:
+  operators:
+    - catalog: reg.dmz.lan/baseline/20250709/redhat-operator-index:v4.16
+      targetName: reg.dmz.lan/baseline/20250709/redhat-operator-index
+      targetTag: v4.16-cut
+      packages:
+        - name: openshift-cert-manager-operator
+          channels:
+            - name: stable-v1
+              minVersion: 1.16.1
+        - name: kubevirt-hyperconverged
+          channels:
+            - name: stable
+              minVersion: 4.16.13
+        - name: local-storage-operator
+          channels:
+            - name: stable
+              minVersion: 4.16.0-202506062300
+        - name: odf-operator
+          channels:
+            - name: stable-4.16
+              minVersion: 4.16.11-rhodf
+        - name: serverless-operator
+          channels:
+            - name: stable
+              minVersion: 1.36.0
