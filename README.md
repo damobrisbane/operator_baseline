@@ -265,5 +265,7 @@ Get rid of gnarly bash _f_grpc_get_packages, _A_FSV_CUT_PKG_CH _L_FSV_CUT_PKG, _
 ## v0.3
 
 Use csvJson for version, anything else
+
 Fix logic for labelling, running index pods, generalise for all operator indexes
+
 Update templating for passthrough on non operator/package fields from cutspec to ISC (ie to allow for platform, extra container image specs)
