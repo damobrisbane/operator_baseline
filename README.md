@@ -260,7 +260,9 @@ baseline/20250715/isc-redhat-operator-index-v4.18-cut.yaml
 
 ## v0.2
 
-Get rid of gnarly bash _f_grpc_get_packages, _A_FSV_CUT_PKG_CH _L_FSV_CUT_PKG, _a_fsv_cut_pkg_ch.
+Get rid of gnarly bash _f_grpc_get_packages, _A_FSV_CUT_PKG_CH _L_FSV_CUT_PKG, _a_fsv_cut_pkg_ch_.
+
+Remove sub-shell variable assignments
 
 ## v0.3
 
