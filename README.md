@@ -37,7 +37,7 @@ Refer examples in the _cutspecs_ folder. Opinionated ndjson, yaml formats. Will 
 
 ## OC Mirror v2
 
-Run _cut.sh_ with an appropriate TEMPLATE=\<v2 template\> global parameter. In the [templates dir](./scripts/template).
+Run _cut.sh_ with an appropriate TEMPLATE=\<v2 template\> global parameter. See examples in the [template dir](./scripts/template).
 
 ## Baseline
 
