@@ -37,7 +37,7 @@ Refer examples in the _cutspecs_ folder. Opinionated ndjson, yaml formats. Will 
 
 ## OC Mirror v2
 
-Run with an appropriate TEMPLATE=<v2 template>. In the [templates dir](./scripts/tempate).
+Run with an appropriate TEMPLATE=\<v2 template\>. In the [templates dir](./scripts/tempate).
 
 ## Baseline
 
