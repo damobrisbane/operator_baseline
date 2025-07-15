@@ -48,7 +48,7 @@ _baseline.sh_ is a convenience script for tagging and pushing an image that will
 
 _See also [baseline.sh](./scripts/baseline.sh)_
 
-## Ex. Cut
+## Cut
 
 ```
 # cut.sh
@@ -89,7 +89,7 @@ mirror:
 _See also [cut.sh](./scripts/cut.sh)_
 
 
-## Ex. Target as Baseline
+## Ex. 1) Target as Baseline.
 
 Run cut.sh with TARGET_AS_BASELINE=1. Note _catalog_, _targetName_ and _targetTag_ in the resulting ISC.
 
