@@ -27,8 +27,7 @@ sed
 jq  
 find
 [yq](https://github.com/mikefarah/yq)  
-podman or docker
-
+podman
 
 # WorkFlow
 
