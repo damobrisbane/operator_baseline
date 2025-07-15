@@ -20,20 +20,6 @@ graph LR
 [![demo2]](https://github.com/user-attachments/assets/2b82e992-4b7f-4f10-b0e5-a5c87a745e05)
 
 
-
-
-_baseline.sh_ is a convenience script for tagging and pushing an image that will serve as a baselined/datestamped copy [TARGET_CATALOG] of some cut generated ImageSetConfiguration.
-
-
-> # cut.sh
->
-> REPORT_LOCATION=baseline
->
-> REPORT_LOCATION=$REPORT_LOCATION POD_RUNNER=/usr/bin/docker GEN_ISC=1 ./scripts/cut.sh $DATESTAMP $CATALOG_LOCATION pullspec/json1
-> ...
-
-_See also [cut.sh](./scripts/cut.sh)_
-
 ## Requires
 
 sed  
@@ -48,6 +34,8 @@ podman or docker
 
 ## Baseline
 
+_baseline.sh_ is a convenience script for tagging and pushing an image that will serve as a baselined/datestamped copy [TARGET_CATALOG] of some cut generated ImageSetConfiguration.
+
  CATALOG_NAMES = redhat certified community
 
  For each CATALOG_NAME in CATALOG_NAMES:
@@ -61,6 +49,45 @@ podman or docker
 _See also [baseline.sh](./scripts/baseline.sh)_
 
 ## Ex. Cut
+
+```
+# cut.sh
+
+REPORT_LOCATION=baseline
+
+TEMPLATE=isc-operator-v1.json SKIP_POD_RM=1 GEN_ISC=1 ./scripts/cut.sh 20250715 reg.dmz.lan/baseline cutspecs/kubevirt_v4.16
+...
+kind: ImageSetConfiguration
+apiVersion: mirror.openshift.io/v1alpha2
+archiveSize: null
+storageConfig:
+  registry:
+    imageURL: reg.dmz.lan/metadata/20250715/redhat-operator-index:v4.16-cut
+    skipTLS: false
+mirror:
+  operators:
+    - catalog: registry.redhat.io/redhat/redhat-operator-index:v4.16
+      targetName: reg.dmz.lan/baseline/20250715/redhat-operator-index
+      targetTag: v4.16-cut
+      packages:
+        - name: advanced-cluster-management
+          channels:
+            - name: release-2.12
+              minVersion: 2.12.3
+            - name: release-2.13
+              minVersion: 2.13.3
+        - name: ansible-automation-platform-operator
+          channels:
+            - name: stable-2.5
+              minVersion: 2.5.0+0.1750901111
+        - name: bare-metal-event-relay
+          channels:
+
+...
+```
+
+_See also [cut.sh](./scripts/cut.sh)_
+
 
 ## Ex. Target as Baseline
 
