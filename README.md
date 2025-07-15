@@ -43,7 +43,7 @@ Run _cut.sh_ with an appropriate TEMPLATE=\<v2 template\> global parameter. See 
 
 _baseline.sh_ is a convenience script for tagging and pushing an image that will serve as a baselined/datestamped copy [TARGET_CATALOG] of some cut generated ImageSetConfiguration.
 
- CATALOG_NAMES = redhat certified community
+ CATALOG_NAMES = whatever is in a cutspec, at lease redhat certified community catalogs
 
  For each CATALOG_NAME in CATALOG_NAMES:
 
