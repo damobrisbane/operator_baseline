@@ -1,0 +1,91 @@
+kind: ImageSetConfiguration
+apiVersion: mirror.openshift.io/v1alpha2
+archiveSize: null
+storageConfig:
+  registry:
+    imageURL: reg.dmz.lan/metadata/20250715-TARGET_BASELINE/redhat-operator-index:v4.16-cut
+    skipTLS: false
+mirror:
+  operators:
+    - catalog: reg.dmz.lan/baseline/20250715-TARGET_BASELINE/redhat-operator-index:v4.16
+      targetName: reg.dmz.lan/baseline/20250715-TARGET_BASELINE/redhat-operator-index
+      targetTag: v4.16-cut
+      packages:
+        - name: advanced-cluster-management
+          channels:
+            - name: release-2.12
+              minVersion: 2.12.3
+            - name: release-2.13
+              minVersion: 2.13.3
+        - name: ansible-automation-platform-operator
+          channels:
+            - name: stable-2.5
+              minVersion: 2.5.0+0.1750901111
+        - name: bare-metal-event-relay
+          channels:
+            - name: stable
+              minVersion: 4.16.1
+        - name: cincinnati-operator
+          channels:
+            - name: v1
+              minVersion: 5.0.3
+        - name: cluster-logging
+          channels:
+            - name: stable-6.2
+              minVersion: 6.2.3
+        - name: cluster-kube-descheduler-operator
+          channels:
+            - name: stable
+              minVersion: 5.0.2
+        - name: compliance-operator
+          channels:
+            - name: stable
+              minVersion: 1.7.0
+        - name: devspaces
+          channels:
+            - name: stable
+              minVersion: 3.21.0
+        - name: devworkspace-operator
+          channels:
+            - name: fast
+              minVersion: 0.34.0
+        - name: kubevirt-hyperconverged
+          channels:
+            - name: stable
+              minVersion: 4.16.13
+        - name: mcg-operator
+          channels:
+            - name: stable-4.16
+              minVersion: 4.16.11-rhodf
+        - name: ocs-operator
+          channels:
+            - name: stable-4.16
+              minVersion: 4.16.11-rhodf
+        - name: odf-multicluster-orchestrator
+          channels:
+            - name: stable-4.16
+              minVersion: 4.16.11-rhodf
+        - name: odf-operator
+          channels:
+            - name: stable-4.16
+              minVersion: 4.16.11-rhodf
+        - name: odr-cluster-operator
+          channels:
+            - name: stable-4.16
+              minVersion: 4.16.11-rhodf
+        - name: odr-hub-operator
+          channels:
+            - name: stable-4.16
+              minVersion: 4.16.11-rhodf
+        - name: openshift-custom-metrics-autoscaler-operator
+          channels:
+            - name: stable
+              minVersion: 2.15.1-6
+        - name: openshift-gitops-operator
+          channels:
+            - name: latest
+              minVersion: 1.16.2
+        - name: opentelemetry-product
+          channels:
+            - name: stable
+              minVersion: 0.127.0-2
