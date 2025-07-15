@@ -62,29 +62,9 @@ podman or docker
 
 _See also [baseline.sh](./scripts/baseline.sh)_
 
-## Cut
+## Ex. Cut
 
-Given an image name:
-
-```
-> podman ps:
-> reg.dmz.lan/cut/20250701/certified-operator-index   v4.16     c85077a313ec   9 hours ago     1.5GB
-```
-
-Run script on PULLSPEC_DIR, which expects _Pre-Work_ to have been completed:
-
-```     
-> DATESTAMP=$(date +%Y%m%d)
-> CATALOG_LOCATION=reg.dmz.lan/cut/$DATESTAMP
-> cls;GEN_ISC=1 ./files/common/cut.sh $DATESTAMP $CATALOG_LOCATION $PULLSPEC_DIR
-```
-where PULLSPEC_DIR is the root folder containing spec files for operator mirroring specs (yaml or json)
-
-Where CATALOG_LOCATION is BOTH a grpc location and a destination registry location
-
-Generate an ISC CatalogName of _reg.dmz.lan/cut/20250704/redat-operator-index:v4.16_
-
-## Ex Target as Baseline
+## Ex. Target as Baseline
 
 Run cut.sh with TARGET_AS_BASELINE=1. Note _catalog_, _targetName_ and _targetTag_ in the resulting ISC.
 
