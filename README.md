@@ -31,6 +31,10 @@ find
 
 # WorkFlow
 
+## CutSpecs
+
+Refer examples in the _cutspecs_ folder. Opinionated ndjson, yaml formats.
+
 ## Baseline
 
 _baseline.sh_ is a convenience script for tagging and pushing an image that will serve as a baselined/datestamped copy [TARGET_CATALOG] of some cut generated ImageSetConfiguration.
