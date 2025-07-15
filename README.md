@@ -94,6 +94,34 @@ Run cut.sh with TARGET_AS_BASELINE=1. Note _catalog_, _targetName_ and _targetTa
 
 ```
 
+> cat cutspecs/kubevirt_v4.16/redhat-operator-index-v4.16.yml
+oc_mirror_operators:
+  - catalog: registry.redhat.io/redhat/redhat-operator-index:v4.16
+    packages:
+      - name: advanced-cluster-management
+        channels:
+          - name: release-2.12
+            minVersion: '2.12.2'
+      - name: ansible-automation-platform-operator
+      - name: bare-metal-event-relay
+      - name: cincinnati-operator
+      - name: cluster-logging
+      - name: cluster-kube-descheduler-operator
+      - name: compliance-operator
+      - name: devspaces
+      - name: devworkspace-operator
+      - name: kubevirt-hyperconverged
+      - name: mcg-operator
+      - name: ocs-operator
+      - name: odf-multicluster-orchestrator
+      - name: odf-operator
+      - name: odr-cluster-operator
+      - name: odr-hub-operator
+      - name: openshift-custom-metrics-autoscaler-operator
+      - name: openshift-gitops-operator
+      - name: opentelemetry-product
+>
+
 TARGET_AS_BASELINE=1 TEMPLATE=isc-operator-v1.json SKIP_POD_RM=1 GEN_ISC=1 ./scripts/cut.sh target_baseline_20250715 reg.dmz.lan/baseline cutspecs/kubevirt_v4.16
 
 ...
