@@ -33,7 +33,7 @@ find
 
 ## CutSpecs
 
-Refer examples in the _cutspecs_ folder. Opinionated ndjson, yaml formats. Will always return the default channel whether specified or not.
+Refer examples in the _cutspecs_ folder. Opinionated ndjson, yaml formats. Will always return the default channel (and _minVersion_) whether specified or not.
 
 ## Baseline
 
