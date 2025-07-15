@@ -84,13 +84,30 @@ Where CATALOG_LOCATION is BOTH a grpc location and a destination registry locati
 
 Generate an ISC CatalogName of _reg.dmz.lan/cut/20250704/redat-operator-index:v4.16_
 
-## Consume
+## Ex Target as Baseline
 
-Consume the cut ImageSetConfiguration, and if baselined prior to cut, the _targetCatalog_ should align with the <CATALOG_LOCATION>[/<CATALOG_NAME>:<VERSION>-cut] tag generated in _baseline.sh_.
+Run cut.sh with TARGET_AS_BASELINE=1. Note _catalog_, _targetName_ and _targetTag_ in the resulting ISC.
+
+```
+ TARGET_AS_BASELINE=1 TEMPLATE=isc-operator-v1.json GEN_ISC=1 ./scripts/cut.sh $D1 reg.dmz.lan/baseline cutspecs/kubevirt_v4.16
+
+...
+kind: ImageSetConfiguration
+apiVersion: mirror.openshift.io/v1alpha2
+archiveSize: null
+storageConfig:
+  registry:
+    imageURL: reg.dmz.lan/metadata/20250715/redhat-operator-index:v4.16-cut
+    skipTLS: false
+mirror:
+  operators:
+    - catalog: reg.dmz.lan/baseline/20250715/redhat-operator-index:v4.16
+      targetName: reg.dmz.lan/baseline/20250715/redhat-operator-index
+      targetTag: v4.16-cut
+      packages:
+        - name: advanced-cluster-management
+          channels:
+
+```      
 
 
-## TBD
-
-Versioning, see comment under _Limitations caveats_, in [cut.sh](./scripts/cut.sh)
-
-Incorporate the _additionalImages_ in a pullspec [and a generated ISC].
