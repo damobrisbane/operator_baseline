@@ -119,6 +119,8 @@ mirror:
 
 Run cut.sh with ALL_PKGS=1. Note the minimal specs with no packages needed.
 
+```
+
 > cat cutspecs/minimal_specs_20250709/redhat-operator-indexes.json 
 {
   "catalog_baseline": "reg.dmz.lan/baseline/20250709/redhat-operator-index:v4.16",
