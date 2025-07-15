@@ -51,7 +51,7 @@ _baseline.sh_ is a convenience script for tagging and pushing an image that will
 
    b) push the \<REG_LOCATION\>/\<DATESTAMP\>/\<NAMETAG\> into target registry <sup>1</sup>
 
-<sup>1</sup> Not to be confused with \<REG_LOCATION\>/\<DATESTAMP\>/\<NAMETAG\>*-cut* - which is a specific catalog image that results from running the oc_mirror process, as per <sup>2</sup> - out of scope.
+<sup>1</sup> Not to be confused with \<REG_LOCATION\>/\<DATESTAMP\>/\<NAMETAG\>**-cut** - which is a specific catalog image that results from running the oc_mirror process, as per <sup>2</sup> - out of scope.
 
 <sup>2</sup> Consumption, future use of the baselined catalog is out of scope for [operator_baseline](https://github.com/damobrisbane/operator_baseline).
 
