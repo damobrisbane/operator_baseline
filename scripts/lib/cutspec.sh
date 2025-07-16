@@ -50,19 +50,18 @@ _f_ndjson_cutspecs() {
       local _EXT=${_FI##*.}
 
       if [[ ( $_EXT == json ) || ( $_EXT == ndjson ) ]]; then
+
         if jq . $_FI >/dev/null 2>&1; then
           _J+=$(jq -c . $_FI)
         else
           echo "Unable to parse pullspec file $_FI"
           break
         fi
-      else          
+
+      elif [[ ( $_EXT == yml ) || ( $_EXT == yaml ) ]]; then
       
         _fsv_pullspec_yaml _J $_FI 
-        #_J+=$(_fsv_pullspec_yaml $_FI _J1)
-        #echo J: ${#_J[@]} ${_J[@]} 1>&2
-        #_J+=$(_fsv_pullspec_yaml $_FI _J1)
-        #_J+=$_J1
+
       fi
     done        
     _NDJSON_CUTSPECS_1999=($(jq -c <<<$_J))
