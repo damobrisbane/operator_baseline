@@ -40,42 +40,6 @@ _f_help_exit() {
   exit
 }
 
-_f_output_isc() {
-
-  # Globals:
-  #
-  # _ISC_FORMATS
-  # _REPORT_LOCATION
-  #
-  #  _f_output_isc _J_ISC $_DATESTAMP $_INDEX_NAME $_TAG
-  #
- 
-  local -n _J_ISC_1999=$1
-  local _DATESTAMP=$2
-  local _INDEX_NAME=$3
-  local _TAG=$4
-
-  local _RPT_LOC=${_REPORT_LOCATION}/${_DATESTAMP}
-
-  [[ ! -d $_RPT_LOC ]] && mkdir -p $_RPT_LOC
-
-  local _L_ISC_FORMATS=( $( tr , ' ' <<<$_ISC_FORMATS) )
-
-  for _FMT in ${_L_ISC_FORMATS[@]}; do
-
-    local _FP_RPT=${_RPT_LOC}/isc-${_INDEX_NAME}-${_TAG}.${_FMT}
-
-    if [[ ( $_FMT == json ) || ( $_FMT == ndjson ) ]]; then
-      yq -o json . <<<$_J_ISC_1999 > ${_FP_RPT}
-      yq -o json . <<<$_J_ISC_1999
-    else
-      yq -p json . <<<$_J_ISC_1999 > ${_FP_RPT}
-      yq -p json . <<<$_J_ISC_1999
-    fi
-
-  done      
-}
-
 _f_output_api() {
 
   # Globals:
@@ -125,6 +89,11 @@ _f_output_pullspec() {
 }
 
 
+f2() {
+  echo f2
+  exit
+}
+
 _f_main() {
   #
   #  _f_main $_J_CUTSPEC $_DATESTAMP $_CATALOG_BASELINE $_CATALOG_TARGET
@@ -151,44 +120,40 @@ _f_main() {
 
   local _GRPC_URL=$_GRPC_HOST:$_GRPC_PORT
 
-  # Run up index image
-  #_log 2 "(cut.sh) _f_run $_CATALOG_BASELINE $_GRPC_URL"
-
   _log 2 "(cut.sh:f_main) if _f_run $_CATALOG_BASELINE $_POD_NAME $_POD_LABEL $_PPROF_PORT $_GRPC_PORT $_GRPC_URL; then"
 
   if _f_run $_CATALOG_BASELINE $_POD_NAME $_POD_LABEL $_PPROF_PORT $_GRPC_PORT $_GRPC_URL; then
 
+     declare -A _A_PKGS_CH
+
     _L_BASELINE_PKGS=( $(_grpc_list_pkgs $_GRPC_URL) )
 
-    _log 3 "(cut.sh:f_main) _L_BASELINE_PKGS: ${_L_BASELINE_PKGS[@]:0:3} ..."
+    if [[ -n $_ALL_PKGS ]]; then
+      _L_PKGS=${_L_BASELINE_PKGS[@]}
+      _L_PKGS_OUTER=()
+      for i in ${_L_BASELINE_PKGS[@]}; do
+        _A_PKGS_CH[$i]=
+      done
+    else
+      _a_fsv_cut_pkg_ch _J_CUTSPEC_1999 _L_PKGS_INITIAL _A_PKGS_CH
+      _intersection _L_PKGS_INITIAL _L_BASELINE_PKGS _L_PKGS _L_PKGS_OUTER
+    fi
 
-    declare -A _A_FSV_CUT_PKG_CH
-    local _L_FSV_CUT_PKG=()
-    local _L_FSV_CUT_PKG_ERROR=()
+    _log 4 "_L_PKGS ${_L_PKGS[@]}"
+    _log 4 "_L_PKGS_OUTER ${_L_PKGS_OUTER[@]}"
 
-    _log 2 "(cut.sh:f_main) _ALL_PKGS=$_ALL_PKGS _a_fsv_cut_pkg_ch _L_BASELINE_PKGS _A_FSV_CUT_PKG_CH _L_FSV_CUT_PKG _L_FSV_CUT_PKG_ERROR \$_J_CUTSPEC_1999"
+    _f_grpc_get_packages $_GRPC_URL _L_PKGS _A_PKGS_CH _J_PKGS_CUT
 
-    _ALL_PKGS=$_ALL_PKGS _a_fsv_cut_pkg_ch _L_BASELINE_PKGS _A_FSV_CUT_PKG_CH _L_FSV_CUT_PKG _L_FSV_CUT_PKG_ERROR $_J_CUTSPEC_1999 
-
-    _log 4 "(cut.sh:f_main) _A_FSV_CUT_PKG_CH: ${#_A_FSV_CUT_PKG_CH[@]}"
-    _log 4 "(cut.sh:f_main) _A_FSV_CUT_PKG_CH: ${!_A_FSV_CUT_PKG_CH[@]}"
-    _log 4 "(cut.sh:f_main) _A_FSV_CUT_PKG_CH: ${_A_FSV_CUT_PKG_CH[@]}"
-
-    _log 3 "(cut.sh:f_main) _L_FSV_CUT_PKG: ${_L_FSV_CUT_PKG[@]}"
-
-    _log 3 "(cut.sh:f_main) _L_FSV_CUT_PKG_ERROR: ${_L_FSV_CUT_PKG_ERROR[@]}"
-
-    _log 2 "(cut.sh:f_main) _J_PKGS_CUT=\$(_BUNDLE=$_BUNDLE _ALL_PKGS=$_ALL_PKGS _f_grpc_get_packages $_GRPC_URL _A_FSV_CUT_PKG_CH _L_FSV_CUT_PKG)"
-
-    _J_PKGS_CUT=$(_BUNDLE=$_BUNDLE _ALL_PKGS=$_ALL_PKGS _f_grpc_get_packages $_GRPC_URL _A_FSV_CUT_PKG_CH _L_FSV_CUT_PKG)
-
-    _log 2 "(cut.sh:f_main) _J_PKGS_CUT: $(jq -c . <<<$_J_PKGS_CUT)"
+    _log 4 "_A_PKGS_CH ${!_A_PKGS_CH[@]}"
+    _log 4 "_A_PKGS_CH ${_A_PKGS_CH[@]}"
+      
+#jq . <<<$_J_PKGS_CUT 1>&2
 
     if [[ -n $_GEN_ISC ]]; then
 
       _log 1 "(cut.sh:f_main) gen_isc _J_PKGS_CUT $_CATALOG_BASELINE $_CATALOG_TARGET"
 
-      local _J_ISC=$(gen_isc _J_PKGS_CUT $_DATESTAMP_1999 $_CATALOG_BASELINE $_CATALOG_TARGET $_TAG)
+      gen_isc _J_PKGS_CUT _J_ISC $_DATESTAMP_1999 $_CATALOG_BASELINE $_CATALOG_TARGET $_TAG
 
       _log 1 "(cut.sh:f_main) _f_output_isc _J_ISC $_DATESTAMP_1999 $_INDEX_NAME $_TAG"
 
