@@ -256,6 +256,13 @@ baseline/20250715/isc-redhat-operator-index-v4.18-cut.yaml
 > 
 ```
 
-## TBD
+# TBD
 
-Templates.
+## v0.1
+
+Fix gnarly code around package/channels
+
+## v0.2
+
+Fix running index labelling, ports for all catalogs
+Update templating to allow passthrough on standard ISC fields (along with allowing thoses fields - platform, additionalimages) to be present in cutspecs.
