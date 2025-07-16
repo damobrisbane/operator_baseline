@@ -76,4 +76,31 @@ _f_output_isc() {
   done      
 }
 
+_f_output_api() {
+
+  # Globals:
+  #
+  # _REPORT_LOCATION
+  #
+  #  _f_output_api _J_PKGS_CUT $_DATESTAMP_1999 $_INDEX_NAME $_TAG
+  #
+ 
+  local -n _J_PKGS_CUT_1999=$1
+  local _DATESTAMP=$2
+  local INDEX_NAME=$3
+  local TARGET_TAG=$4
+
+  local _RPT_LOC=${_REPORT_LOCATION}/${_DATESTAMP}
+
+  local _FP_RPT=${_RPT_LOC}/api-${_INDEX_NAME}-${_TAG}.json
+
+  [[ ! -d $_RPT_LOC ]] && mkdir -p $_RPT_LOC
+
+  #jq -c "{\"catalog_baseline\":\"$_CATALOG_BASELINE\",\"packages_cut\":.}" <<<$_J_PKGS_CUT_1999
+  #jq "{\"catalog_baseline\":\"$_CATALOG_BASELINE\",\"packages_cut\":.}" <<<$_J_PKGS_CUT_1999 > $_FP_RPT
+
+  jq -s ". as \$A|{\"catalog\":\"$_CATALOG_BASELINE\",\"packages\":\$A}" <<<$_J_PKGS_CUT_API
+  jq -s ". as \$A|{\"catalog\":\"$_CATALOG_BASELINE\",\"packages\":\$A}" <<<$_J_PKGS_CUT_API > $_FP_RPT
+}
+
 

@@ -30,18 +30,22 @@ _fsv_pullspec_yaml() {
   # _YQ_BIN
   #
   
-  local _FP_YAML=$1
+  local -n _J1_1999=$1
+  local _FP_YAML=$2
 
-  _log 3 jq -sjc '.[]|.name,"@",(select(.channels != null)|[.channels[]|.name]|join("@"))," "' \<\<\<\$\($_YQ_BIN '.oc_mirror_operators[0].packages[]' $_FP_YAML\)
+  _log 3 jq -sjc '.[]|.name,"@",(select(.channels != null)|[.channels[]|.name]|join("@"))," "' \<\<\<\$\($_YQ_BIN '.oc_mirror_operators[].packages[]' $_FP_YAML\)
 
-  $_YQ_BIN --output-format json '.oc_mirror_operators[0]|{"catalog_baseline":.catalog,"packages_cut":.packages}' $_FP_YAML
+  _J1_1999=$(jq -c <<<$($_YQ_BIN --output-format json '.oc_mirror_operators[]|{"catalog_baseline":.catalog,"packages_cut":.packages}' $_FP_YAML))
 
 }
 
 _f_ndjson_cutspecs() {
-  if [[ -d $1 ]]; then
+  local -n _NDJSON_CUTSPECS_1999=$1
+  local _FP=$2
+
+  if [[ -d $_FP ]]; then
     local _J=
-    for _FI in $(find $1 -type f); do
+    for _FI in $(find $_FP -type f); do
 
       local _EXT=${_FI##*.}
 
@@ -53,12 +57,17 @@ _f_ndjson_cutspecs() {
           break
         fi
       else          
-        _J+=$(_fsv_pullspec_yaml $_FI)
+      
+        _fsv_pullspec_yaml _J $_FI 
+        #_J+=$(_fsv_pullspec_yaml $_FI _J1)
+        #echo J: ${#_J[@]} ${_J[@]} 1>&2
+        #_J+=$(_fsv_pullspec_yaml $_FI _J1)
+        #_J+=$_J1
       fi
     done        
-    jq -c <<<$_J
+    _NDJSON_CUTSPECS_1999=($(jq -c <<<$_J))
   else
-    jq -cj '.," "' <<<$@
+    _NDJSON_CUTSPECS_1999=$(jq -cj '.," "' <<<$@)
   fi
 }
 
@@ -66,24 +75,8 @@ _f_parse_cutspec() {
 
   local _J_SPEC=$1
   local -n _CATALOG_BASELINE_1999=$2
-  local -n _A_PKGS_CUT_1999=$3
-  local -n _L_PKGS_CUT_1999=$4
 
   _CATALOG_BASELINE_1999=$(jq -r '.catalog_baseline' <<<$_J_SPEC)
-
-  oIFS=$IFS IFS=$'\n'
-
-  _log 3 "(cutspec.sh:_f_parse_cutspec) _J_SPEC: $_J_SPEC"
-  _log 3 "(cutspec.sh:_f_parse_cutspec) for k in \$(jq -j '.packages_cut|to_entries[]|.key,\" \",(.value|join(\"@\")),\"\n\"' <<< \$_J_SPEC); do"
-
-  #for k in $(jq -j '.packages_cut|to_entries[]|.key," ",(.value|join("@")),"\n"' <<<$_J_SPEC); do
-  for k in $(jq -j '.packages_cut[]|.name," ",([.channels[]?|.name]|join("@")),"\n"' <<<$_J_SPEC); do
-    IFS=$' ' read _PKG _CHNLS <<<$k
-    _A_PKGS_CUT_1999[$_PKG]=$_CHNLS
-    _L_PKGS_CUT_1999+=( $_PKG )
-  done
-
-  IFS=$oIFS
 
 }
 

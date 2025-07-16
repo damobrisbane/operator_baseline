@@ -40,60 +40,6 @@ _f_help_exit() {
   exit
 }
 
-_f_output_api() {
-
-  # Globals:
-  #
-  # _REPORT_LOCATION
-  #
-  #  _f_output_api _J_PKGS_CUT $_DATESTAMP_1999 $_INDEX_NAME $_TAG
-  #
- 
-  local -n _J_PKGS_CUT_1999=$1
-  local _DATESTAMP=$2
-  local INDEX_NAME=$3
-  local TARGET_TAG=$4
-
-  local _RPT_LOC=${_REPORT_LOCATION}/${_DATESTAMP}
-
-  local _FP_RPT=${_RPT_LOC}/pullspec-${_INDEX_NAME}-${_TAG}.json
-
-  [[ ! -d $_RPT_LOC ]] && mkdir -p $_RPT_LOC
-
-  #yq -o json . <<<$_J_PKGS_CUT_1999
-
-  jq -c "{\"catalog_baseline\":\"$_CATALOG_BASELINE\",\"packages_cut\":.}" <<<$_J_PKGS_CUT_1999
-  jq "{\"catalog_baseline\":\"$_CATALOG_BASELINE\",\"packages_cut\":.}" <<<$_J_PKGS_CUT_1999 > $_FP_RPT
-
-}
-
-_f_output_pullspec() {
-
-  # Globals:
-  #
-  # _REPORT_LOCATION
-  #
-  #  _f_output_api _J_PKGS_CUT $_DATESTAMP $_INDEX_NAME $_TAG
-  #
- 
-  local -n _J_PKGS_CUT_1999=$1
-  local _DATESTAMP=$3
-
-  local _RPT_LOC=${_REPORT_LOCATION}/${_DATESTAMP}
-
-  [[ ! -d $_RPT_LOC ]] && mkdir -p $_RPT_LOC
-
-  #yq -o json . <<<$_J_PKGS_CUT_1999
-  jq -c <<<$_J_PKGS_CUT_1999
-
-}
-
-
-f2() {
-  echo f2
-  exit
-}
-
 _f_main() {
   #
   #  _f_main $_J_CUTSPEC $_DATESTAMP $_CATALOG_BASELINE $_CATALOG_TARGET
@@ -128,6 +74,8 @@ _f_main() {
 
     _L_BASELINE_PKGS=( $(_grpc_list_pkgs $_GRPC_URL) )
 
+    local _L_PKGS=()
+
     if [[ -n $_ALL_PKGS ]]; then
       _L_PKGS=${_L_BASELINE_PKGS[@]}
       _L_PKGS_OUTER=()
@@ -147,8 +95,6 @@ _f_main() {
     _log 4 "_A_PKGS_CH ${!_A_PKGS_CH[@]}"
     _log 4 "_A_PKGS_CH ${_A_PKGS_CH[@]}"
       
-#jq . <<<$_J_PKGS_CUT 1>&2
-
     if [[ -n $_GEN_ISC ]]; then
 
       _log 1 "(cut.sh:f_main) gen_isc _J_PKGS_CUT $_CATALOG_BASELINE $_CATALOG_TARGET"
@@ -159,10 +105,13 @@ _f_main() {
 
       _f_output_isc _J_ISC $_DATESTAMP_1999 $_INDEX_NAME $_TAG
 
-    else      
+    fi
+
+    if [[ -n $_GEN_API ]]; then
 
       _log 2 "(cut.sh:f_main) _f_output_api _J_PKGS_CUT $_DATESTAMP_1999 $_INDEX_NAME $_TAG"
-      _f_output_api _J_PKGS_CUT $_DATESTAMP_1999 $_INDEX_NAME $_TAG
+
+      _f_output_api _J_PKGS_CUT_API $_DATESTAMP_1999 $_INDEX_NAME $_TAG
 
     fi
 
@@ -180,8 +129,10 @@ _f_main() {
 _PODMAN_BIN=${PODMAN_BIN:-/usr/bin/podman}
 _BUNDLE=${BUNDLE:-}
 _ALL_PKGS=${ALL_PKGS:-}
+_ALL_CHNLS=${ALL_CHNLS:-}
+_GRPC_IMAGES=${GRPC_IMAGES:-}
 _GEN_ISC=${GEN_ISC:-}
-_GEN_CUTSPEC=${GEN_CUTSPEC:-}
+_GEN_API=${GEN_API:-}
 _ISC_FORMATS=${ISC_FORMATS:-yaml}
 _TARGET_AS_BASELINE=${TARGET_AS_BASELINE:-}
 _YQ_BIN=${YQ_BIN:-/usr/local/bin/yq}       # https://github.com/mikefarah/yq
@@ -210,7 +161,7 @@ source $(dirname ${BASH_SOURCE})/lib/container.sh
 source $(dirname ${BASH_SOURCE})/lib/cutspec.sh
 source $(dirname ${BASH_SOURCE})/lib/isc.sh
 
-_NDJSON_CUTSPEC=( $(_f_ndjson_cutspecs $_CUTSPEC) )
+_f_ndjson_cutspecs _NDJSON_CUTSPEC $_CUTSPEC
 
 if [[ ${#_NDJSON_CUTSPEC[@]} -eq 0 ]]; then
   echo -ne "\nNo cut specification has been generated, exiting..\n" && _f_help_exit
@@ -223,7 +174,7 @@ for _J_CUTSPEC in ${_NDJSON_CUTSPEC[@]}; do
   declare -A A1
   declare L1
 
-  _f_parse_cutspec $_J_CUTSPEC _CATALOG_BASELINE A1 L1
+  _f_parse_cutspec $_J_CUTSPEC _CATALOG_BASELINE 
 
   # catalog_baseline: registry.redhat.io/redhat/redhat-operator-index:v4.18 
   # baselineCatalog: reg.dmz.lan/baseline/20250709/redhat-operator-index:v4.18
@@ -239,6 +190,7 @@ for _J_CUTSPEC in ${_NDJSON_CUTSPEC[@]}; do
   _log 2 "(cut.sh) _CATALOG_TARGET: $_CATALOG_TARGET"
 
   _log 1 "(cut.sh) _f_main \$_J_CUTSPEC $_DATESTAMP $_CATALOG_BASELINE $_CATALOG_TARGET"
+
   _f_main $_J_CUTSPEC $_DATESTAMP $_CATALOG_BASELINE $_CATALOG_TARGET
 
 done
