@@ -142,7 +142,7 @@ _f_main() {
     _log 4 "_L_PKGS ${_L_PKGS[@]}"
     _log 4 "_L_PKGS_OUTER ${_L_PKGS_OUTER[@]}"
 
-    _f_grpc_get_packages $_GRPC_URL _L_PKGS _A_PKGS_CH _J_PKGS_CUT
+    _f_grpc_get_packages $_GRPC_URL _L_PKGS _A_PKGS_CH _J_PKGS_CUT _J_PKGS_CUT_API
 
     _log 4 "_A_PKGS_CH ${!_A_PKGS_CH[@]}"
     _log 4 "_A_PKGS_CH ${_A_PKGS_CH[@]}"

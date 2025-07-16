@@ -2,13 +2,16 @@
 
 _f_grpc_bundle() {
   #grpcurl -plaintext -d '{"name":"percona-xtradb-cluster-operator-certified","channelName":"stable"}' localhost:50051 api.Registry/GetBundleForChannel | jq .
-  local _GRPC_URL=$1
-  local _OP=$2
-  local _CH=$3
+  local -n _J_BUNDLE_1999=$1
+  local _GRPC_URL=$2
+  local _OP=$3
+  local _CH=$4
 
-  read channelName csvName bundlePath version <<<$(grpcurl -plaintext -d "{\"pkgName\":\"${_OP}\",\"channelName\":\"${_CH}\"}" $_GRPC_URL api.Registry/GetBundleForChannel | jq -rj ".channelName,\" \",.csvName,\" \",.bundlePath,\" \",.version")
+  #read channelName csvName bundlePath version <<<$(grpcurl -plaintext -d "{\"pkgName\":\"${_OP}\",\"channelName\":\"${_CH}\"}" $_GRPC_URL api.Registry/GetBundleForChannel | jq -rj ".channelName,\" \",.csvName,\" \",.bundlePath,\" \",.version")
 
-  printf '%s' "{\"version\":\"${version}\",\"bundlePath\":\"${bundlePath}\"}"
+  #printf '%s' "{\"version\":\"${version}\",\"bundlePath\":\"${bundlePath}\"}"
+
+  _J_BUNDLE_1999=$(jq '{"bundlePath":.bundlePath,"csvJson":(.csvJson|fromjson)}' <<<$(grpcurl -plaintext -d "{\"pkgName\":\"${_OP}\",\"channelName\":\"${_CH}\"}" $_GRPC_URL api.Registry/GetBundleForChannel))
 
 }
 
@@ -48,8 +51,10 @@ _f_grpc_get_packages() {
   local -n _L_PKGS_1999=$2
   local -n _A_PKGS_CH_1999=$3
   local -n _J_PKGS_CUT_1999=$4
+  local -n _J_PKGS_CUT_API_1999=$5
 
   local _J0=
+  local _J0_API=
 
   _log 2 "(grpc.sh:_f_grpc_get_packages)"
 
@@ -98,12 +103,8 @@ _f_grpc_get_packages() {
 
       declare -A _A_IN_SET=()
 
-      if [[ -n $_GEN_ISC ]]; then
-        local _J_PKG="{\"name\":\"$_PKG\",\"channels\":[]}"
-      else
-        local _J_PKG="{\"name\":\"$_PKG\",\"defaultChannelName\":\"$_DEF_CH_NAME\",\"channels\":[]}"
-      fi
-
+      local _J_PKG="{\"name\":\"$_PKG\",\"channels\":[]}"
+      local _J_PKG_API="{\"name\":\"$_PKG\",\"defaultChannelName\":\"$_DEF_CH_NAME\",\"channels\":[]}"
 
       for _STOCK_CH in ${_L_STOCK_CH[@]}; do
 
@@ -129,26 +130,19 @@ _f_grpc_get_packages() {
                 #_J_CH_1999=$(jq ".channels[]|select(.name==\"$_CH\")" <<<$_J_STOCK_PKG)
                 #_J_CH=$(jq -s 'add' <<<"${_J_CH_1999}${_J_BUNDLE}")
 
-                _J_BUNDLE=$(_f_grpc_bundle $_GRPC_URL $_PKG $_CH)
-                local _VERSION=$(jq -r .version <<<$_J_BUNDLE)
 
-                #_J_CH_1999=$(jq ".channels[]|select(.name==\"$_CH\")" <<<$_J_STOCK_PKG)
+                _f_grpc_bundle _J_BUNDLE $_GRPC_URL $_PKG $_CH 
+                local _BUNDLE_PATH=$(jq -r '.bundlePath' <<<$_J_BUNDLE)
+                local _VERSION=$(jq -r '.csvJson.spec.version' <<<$_J_BUNDLE)
+                local _L_RELATED_IMAGES=$( jq -rc '[.csvJson.spec.relatedImages[]|.image]' <<<$_J_BUNDLE)
 
-                #_J_CH=$(jq -s 'add' <<<"${_J_CH_1999}${_J_BUNDLE}")
-
-
-              #else
-
-                _S_CH_CSV=$(jq -rj ".channels[]|(select(.name==\"$_CH\")|.name,\" \",.csvName)" <<<$_J_STOCK_PKG)
-
-                read name csvName <<<$_S_CH_CSV
-
-                #_J_CH="{\"name\":\"$name\",\"minVersion\":\"$(_map_csv_version $csvName)\"}"
-                _J_CH="{\"name\":\"$name\",\"minVersion\":\"${_VERSION}\"}"
+                _J_CH="{\"name\":\"$_CH\",\"minVersion\":\"${_VERSION}\"}"
+                _J_CH_API="{\"name\":\"$_CH\",\"minVersion\":\"${_VERSION}\",\"bundlePath\":\"${_BUNDLE_PATH}\",\"relatedImages\":${_L_RELATED_IMAGES[@]}}"
 
               #fi
 
               _J_PKG=$(jq ".channels += [${_J_CH}]" <<<$_J_PKG)
+              _J_PKG_API=$(jq ".channels += [${_J_CH_API}]" <<<$_J_PKG_API)
               _A_IN_SET[$_CH]=1
 
             fi
@@ -158,9 +152,11 @@ _f_grpc_get_packages() {
       done
 
   _J0+=$_J_PKG
+  _J0_API+=$_J_PKG_API
 
   done
 
   _J_PKGS_CUT_1999=$(jq -s <<<$_J0)
+  _J_PKGS_CUT_API_1999=$(jq -s <<<$_J0_API)
 }
 
