@@ -1,0 +1,203 @@
+> GEN_ISC=1 ALL_CHNLS=1 TEMPLATE=isc-operator-diff.json SKIP_POD_RM=1 ./scripts/cut.sh cross-validation3 reg.dmz.lan/baseline cutspecs/cross_validation3
+
+```
+catalog: registry.redhat.io/redhat/redhat-operator-index:v4.16
+packages:
+  - name: 3scale-operator
+    channels:
+      - name: threescale-2.15
+        minVersion: 0.12.3
+      - name: threescale-mas
+        minVersion: 0.12.1-mas
+      - name: threescale-2.14
+        minVersion: 0.11.13
+  - name: apicast-operator
+    channels:
+      - name: threescale-2.15
+        minVersion: 0.12.3
+      - name: threescale-mas
+        minVersion: 0.12.1-mas
+      - name: threescale-2.14
+        minVersion: 0.8.3
+      - name: threescale-2.13
+        minVersion: 0.7.5
+      - name: threescale-2.12
+        minVersion: 0.6.4
+      - name: threescale-2.11
+        minVersion: 0.5.3
+  - name: costmanagement-metrics-operator
+    channels:
+      - name: stable
+        minVersion: 3.3.2
+  - name: mtc-operator
+    channels:
+      - name: release-v1.8
+        minVersion: 1.8.8
+      - name: release-v1.7
+        minVersion: 1.7.19
+  - name: red-hat-camel-k
+    channels:
+      - name: 1.10.x
+        minVersion: 1.10.10
+      - name: 1.6.x
+        minVersion: 1.6.10
+      - name: 1.4.x
+        minVersion: 1.4.2
+      - name: latest
+        minVersion: 1.10.10
+      - name: stable
+        minVersion: 1.6.10
+      - name: 1.8.x
+        minVersion: 1.8.2+0.1675913507.p
+      - name: candidate
+        minVersion: 1.10.10
+  - name: self-node-remediation
+    channels:
+      - name: stable
+        minVersion: 0.10.2
+      - name: 4.14-eus
+        minVersion: 0.7.1
+      - name: 4.16-eus
+        minVersion: 0.9.1
+      - name: 4.18-eus
+        minVersion: 0.10.2
+      - name: 4.12-eus
+        minVersion: 0.5.1
+catalog: registry.redhat.io/redhat/redhat-operator-index:v4.18
+packages:
+  - name: 3scale-operator
+    channels:
+      - name: threescale-2.15
+        minVersion: 0.12.3
+      - name: threescale-mas
+        minVersion: 0.11.8-mas
+      - name: threescale-2.13
+        minVersion: 0.10.5
+  - name: apicast-operator
+    channels:
+      - name: threescale-2.15
+        minVersion: 0.12.3
+      - name: threescale-mas
+        minVersion: 0.7.9-mas
+      - name: threescale-2.14
+        minVersion: 0.8.1
+      - name: threescale-2.13
+        minVersion: 0.7.5
+      - name: threescale-2.12
+        minVersion: 0.6.4
+      - name: threescale-2.11
+        minVersion: 0.5.3
+  - name: costmanagement-metrics-operator
+    channels:
+      - name: stable
+        minVersion: 3.3.1
+  - name: mtc-operator
+    channels:
+      - name: release-v1.8
+        minVersion: 1.8.8
+      - name: release-v1.7
+        minVersion: 1.7.17
+  - name: red-hat-camel-k
+    channels:
+      - name: 1.10.x
+        minVersion: 1.10.8+0.1733993735.p
+      - name: 1.6.x
+        minVersion: 1.6.10
+      - name: 1.4.x
+        minVersion: 1.4.2
+      - name: latest
+        minVersion: 1.10.8+0.1733993735.p
+      - name: stable
+        minVersion: 1.6.10
+      - name: 1.8.x
+        minVersion: 1.8.2+0.1675913507.p
+      - name: candidate
+        minVersion: 1.10.8+0.1733993735.p
+  - name: self-node-remediation
+    channels:
+      - name: stable
+        minVersion: 0.10.2
+      - name: 4.14-eus
+        minVersion: 0.7.1
+      - name: 4.16-eus
+        minVersion: 0.9.0
+      - name: 4.18-eus
+        minVersion: 0.10.2
+      - name: 4.12-eus
+        minVersion: 0.5.1
+catalog: registry.redhat.io/redhat/redhat-operator-index:v4.19
+packages:
+  - name: 3scale-operator
+    channels:
+      - name: threescale-2.13
+        minVersion: 0.10.5
+      - name: threescale-mas
+        minVersion: 0.11.8-mas
+  - name: apicast-operator
+    channels:
+      - name: threescale-2.14
+        minVersion: 0.8.1
+      - name: threescale-mas
+        minVersion: 0.7.9-mas
+      - name: threescale-2.13
+        minVersion: 0.7.5
+      - name: threescale-2.12
+        minVersion: 0.6.4
+      - name: threescale-2.11
+        minVersion: 0.5.3
+  - name: costmanagement-metrics-operator
+    channels:
+      - name: stable
+        minVersion: 3.3.1
+  - name: mtc-operator
+    channels:
+      - name: release-v1.8
+        minVersion: 1.8.8
+      - name: release-v1.7
+        minVersion: 1.7.17
+  - name: red-hat-camel-k
+    channels:
+      - name: 1.10.x
+        minVersion: 1.10.8+0.1733993735.p
+      - name: 1.6.x
+        minVersion: 1.6.10
+      - name: 1.4.x
+        minVersion: 1.4.2
+      - name: latest
+        minVersion: 1.10.8+0.1733993735.p
+      - name: stable
+        minVersion: 1.6.10
+      - name: 1.8.x
+        minVersion: 1.8.2+0.1675913507.p
+      - name: candidate
+        minVersion: 1.10.8+0.1733993735.p
+  - name: self-node-remediation
+    channels:
+      - name: stable
+        minVersion: 0.10.2
+      - name: 4.14-eus
+        minVersion: 0.7.1
+      - name: 4.16-eus
+        minVersion: 0.9.0
+      - name: 4.18-eus
+        minVersion: 0.10.2
+      - name: 4.12-eus
+        minVersion: 0.5.1
+
+```
+
+> find baseline -mmin -1
+
+```
+baseline
+baseline/cross-validation3
+baseline/cross-validation3/isc-redhat-operator-index-v4.16-cut.yaml
+```
+baseline/cross-validation3/isc-redhat-operator-index-v4.18-cut.yaml
+baseline/cross-validation3/isc-redhat-operator-index-v4.19-cut.yaml
+
+# ie diff
+
+vim -O -d baseline/cross-valdation3/*
+
+![vimdiff](./cut-cross-validation3.png)
