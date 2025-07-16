@@ -135,20 +135,26 @@ _map_csv_version() {
   sed -E 's/^[v](.*)/\1/' <<<$(cut -d. -f2- <<<$1)
 }
 
-_right_join() {
-  # not currently used
-  local -n L1=$1
-  local -n L2=$2
+_intersection() {
+  local -n S1=$1
+  local -n S2=$2
+  local -n _S_INTERSECT=$3
+  local -n _S_OUTER=$4
 
-  local _L_JOIN=()
-
-  for _m in ${L2[@]}; do
-    for _n in ${L1[@]}; do
-      [[ $_m == $_n ]] && _L_JOIN+=( $_m )
-    done
+  declare -A _OUTER_SET=()
+  for i1 in ${S1[@]}; do
+    _OUTER_SET[$i1]=1
   done
 
-  echo -ne ${L2[@]}
+  for i1 in ${S1[@]}; do
+    for i2 in ${S2[@]}; do
+      if [[ $i1 == $i2 ]]; then 
+        _S_INTERSECT+=( $i1 )
+        unset _OUTER_SET[$i1]
+      fi
+    done
+  done
+  _S_OUTER=${!_OUTER_SET[@]}
 }
 
 _demo_prompt() {

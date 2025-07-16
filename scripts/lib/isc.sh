@@ -20,10 +20,11 @@ gen_isc() {
   #
 
   local -n _J_PKGS_CUT_1998=$1
-  local _DATESTAMP=$2
-  export CATALOG=$3
-  local _TARGET_CATALOG=$4
-  export TARGET_TAG=$5      # ISC v1 only
+  local -n _J_ISC_1998=$2
+  local _DATESTAMP=$3
+  export CATALOG=$4
+  local _TARGET_CATALOG=$5
+  export TARGET_TAG=$6      # ISC v1 only
 
   read _INDEX_LOCATION _INDEX_NAME _TAG <<<$(_f_indexname_tag $_TARGET_CATALOG)
   export TARGET_CATALOG=${_INDEX_LOCATION}
@@ -35,6 +36,44 @@ gen_isc() {
 
   export PKG_CHANNELS=$(jq -c . <<<$_J_PKGS_CUT_1998)
 
-  jq -c . <<<$(envsubst <<<$(cat $_FP_TMPL))
+  _J_ISC_1998=$(jq -c . <<<$(envsubst <<<$(cat $_FP_TMPL)))
 
 }
+
+_f_output_isc() {
+
+  # Globals:
+  #
+  # _ISC_FORMATS
+  # _REPORT_LOCATION
+  #
+  #  _f_output_isc _J_ISC $_DATESTAMP $_INDEX_NAME $_TAG
+  #
+ 
+  local -n _J_ISC_1999=$1
+  local _DATESTAMP=$2
+  local _INDEX_NAME=$3
+  local _TAG=$4
+
+  local _RPT_LOC=${_REPORT_LOCATION}/${_DATESTAMP}
+
+  [[ ! -d $_RPT_LOC ]] && mkdir -p $_RPT_LOC
+
+  local _L_ISC_FORMATS=( $( tr , ' ' <<<$_ISC_FORMATS) )
+
+  for _FMT in ${_L_ISC_FORMATS[@]}; do
+
+    local _FP_RPT=${_RPT_LOC}/isc-${_INDEX_NAME}-${_TAG}.${_FMT}
+
+    if [[ ( $_FMT == json ) || ( $_FMT == ndjson ) ]]; then
+      yq -o json . <<<$_J_ISC_1999 > ${_FP_RPT}
+      yq -o json . <<<$_J_ISC_1999
+    else
+      yq -p json . <<<$_J_ISC_1999 > ${_FP_RPT}
+      yq -p json . <<<$_J_ISC_1999
+    fi
+
+  done      
+}
+
+

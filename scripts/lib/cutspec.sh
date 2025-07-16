@@ -156,38 +156,24 @@ _fsv_validate() {
 
 _a_fsv_cut_pkg_ch() {
 
-  # _ALL_PKGS=$_ALL_PKGS _a_fsv_cut_pkg_ch _L_BASELINE_PKGS _A_FSV_CUT_PKG_CH _L_FSV_CUT_PKG _L_FSV_CUT_PKG_ERROR $_J_CUTSPEC_1999 
-  #
+  local -n _J_CUTSPEC_1998=$1
+  local -n _L_PKGS_1998=$2
+  local -n _A_PKGS_CH_1998=$3
 
-  local -n _L_BASELINE_PKGS_1999=$1
-  local -n _A_FSV_CUT_PKG_CH_1999=$2
-  local -n _L_FSV_CUT_PKG_1999=$3
-  local -n _L_FSV_CUT_PKG_ERROR_1999=$4
-  local _J_CUTSPEC_1999=$5
+  _log 2 "(grpc.sh:_f_grpc_get_packages)"
 
-  _log 2 "(cutspec.sh:_a_fsv_cut_pkg_ch)"
+  _L_PKGS_1998=( $( jq -r '.packages_cut[].name' <<<$_J_CUTSPEC_1998 ) )
 
-  if [[ -n $_ALL_PKGS ]]; then
-    _L_FSV_CUT_PKG_CH_1999=( ${_L_BASELINE_PKGS_1999[@]} )
-  else
-    _L_FSV_CUT_PKG_CH_1999=$(_fsv_cut_json $_J_CUTSPEC_1999)
-  fi
-
-  _fsv_validate _L_BASELINE_PKGS_1999 _L_FSV_CUT_PKG_CH_1999 _L_FSV_CUT_PKG_1999 _L_FSV_CUT_PKG_ERROR_1999
-
-  for _CUT_PKG_CH in ${_L_FSV_CUT_PKG_CH_1999[@]}; do
-    # mcg-operator@stable-4.16@stable-4.15@stable-4.16
+  for _PKG in ${_L_PKGS_1998[@]}; do
     
-    IFS=$'@' read _PKG _L_CH <<<$_CUT_PKG_CH
+    _J_PKG=$(jq ".packages_cut[]|select(.name==\"$_PKG\")" <<<$_J_CUTSPEC_1998)
 
-    if _in_set $_PKG _L_BASELINE_PKGS_1999; then
-      _A_FSV_CUT_PKG_CH_1999[$_PKG]=$_L_CH
-    else
-      _L_CUT_PKG_ERROR_1999+=( $_PKG )
-    fi        
+    _S_CH=$(jq -r 'if has("channels") then ([.channels[]|.name]|join("@")) else "" end' <<<$_J_PKG)
+
+    _A_PKGS_CH_1998[$_PKG]=$_S_CH
+
   done
 
-  _log 3 "(cutspec.sh:_a_fsv_cut_pkg_ch) _A_FSV_CUT_PKG_CH_1999: ${!_A_FSV_CUT_PKG_CH_1999[@]}"
 }
 
 _fsv_pullspec_yaml() {

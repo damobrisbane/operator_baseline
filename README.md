@@ -266,4 +266,3 @@ Fix gnarly code around package/channels
 
 Fix running index labelling, ports for all catalogs
 Update templating to allow passthrough on standard ISC fields (along with allowing thoses fields - platform, additionalimages) to be present in cutspecs.
-Templates.

@@ -43,32 +43,22 @@ _grpc_list_pkgs() {
 }
 
 _f_grpc_get_packages() {
-  #
-  # _J_PKGS_CUT=$(_BUNDLE=$_BUNDLE _ALL_PKGS=$_ALL_PKGS _f_grpc_get_packages $_GRPC_URL _A_FSV_CUT_PKG_CH _L_FSV_CUT_PKG)
-  #
-  # Globals:
-  #
-  # _BUNDLE
-  # _ALL_PKGS
-  # _GEN_ISC [when NOT set, include defaultChannelName in output]
-  #
- 
-  # _L_FSV only required for preserving order on associatve array, _A_FSV
-  #
 
   local _GRPC_URL=$1
-  local -n _A_FSV_CUT_PKG_CH_1999=$2
-  local -n _L_FSV_CUT_PKG_1999=$3
-  
-  local _J0
+  local -n _L_PKGS_1999=$2
+  local -n _A_PKGS_CH_1999=$3
+  local -n _J_PKGS_CUT_1999=$4
+
+  local _J0=
 
   _log 2 "(grpc.sh:_f_grpc_get_packages)"
 
-  for _PKG in ${_L_FSV_CUT_PKG_1999[@]}; do
+  for _PKG in ${_L_PKGS_1999[@]}; do
 
-      _L_CHNLS_PULLSPEC=( $(tr @ ' ' <<<${_A_FSV_CUT_PKG_CH_1999[$_PKG]}))
 
-      _log 4 "(grpc.sh:_f_grpc_get_packages) _PKG: $_PKG _DEF_CH: $_DEF_CH _L_CHNLS_PULLSPEC: ${#_L_CHNLS_PULLSPEC[@]} ${_L_CHNLS_PULLSPEC[@]}"
+      _L_CHNLS_PULLSPEC=( $(tr @ ' ' <<<${_A_PKGS_CH_1999[$_PKG]}))
+
+      _log 4 "$_PKG: _L_CHNLS_PULLSPEC: ${_L_CHNLS_PULLSPEC[@]}"
 
       _J_STOCK_PKG=$(grpcurl -plaintext -d "{\"name\":\"$_PKG\"}" $_GRPC_URL api.Registry/GetPackage)
 
@@ -104,7 +94,6 @@ _f_grpc_get_packages() {
 
       _log 4 "(grpc.sh:_f_grpc_get_packages) _A_STOCK_CH_CSV ${!_A_STOCK_CH_CSV[@]} ${_A_STOCK_CH_CSV[@]}"
       _log 3 "(grpc.sh:_f_grpc_get_packages) _L_STOCK_CH ${#_L_STOCK_CH[@]} ${_L_STOCK_CH[@]}"
-      _log 3 "(grpc.sh:_f_grpc_get_packages) _L_CHNLS_PULLSPEC ${#_L_CHNLS_PULLSPEC[@]} ${_L_CHNLS_PULLSPEC[@]}"
       _log 3 "(grpc.sh:_f_grpc_get_packages) _DEF_CH_NAME ${_DEF_CH_NAME}"
 
       declare -A _A_IN_SET=()
@@ -115,7 +104,6 @@ _f_grpc_get_packages() {
         local _J_PKG="{\"name\":\"$_PKG\",\"defaultChannelName\":\"$_DEF_CH_NAME\",\"channels\":[]}"
       fi
 
-      _log 4 "(grpc.sh:_f_grpc_get_packages) _L_CHNLS: ${_L_CHNLS[@]}"
 
       for _STOCK_CH in ${_L_STOCK_CH[@]}; do
 
@@ -126,6 +114,8 @@ _f_grpc_get_packages() {
           _L_CHNLS=${_L_CHNLS_PULLSPEC[@]}
           _L_CHNLS+=( $_DEF_CH_NAME )
         fi
+
+        _log 4 "(grpc.sh:_f_grpc_get_packages) _L_CHNLS: ${_L_CHNLS[@]}"
 
         for _CH in ${_L_CHNLS[@]}; do
 
@@ -149,10 +139,10 @@ _f_grpc_get_packages() {
 
               #else
 
-                _S_CH_CSV=$(jq -rj ".channels[]|(select(.name==\"$_CH\")|.name,\" \",.csvName)" <<<$_J_STOCK_PKG)                
+                _S_CH_CSV=$(jq -rj ".channels[]|(select(.name==\"$_CH\")|.name,\" \",.csvName)" <<<$_J_STOCK_PKG)
 
                 read name csvName <<<$_S_CH_CSV
-                
+
                 #_J_CH="{\"name\":\"$name\",\"minVersion\":\"$(_map_csv_version $csvName)\"}"
                 _J_CH="{\"name\":\"$name\",\"minVersion\":\"${_VERSION}\"}"
 
@@ -171,6 +161,6 @@ _f_grpc_get_packages() {
 
   done
 
-  jq -sc . <<<$_J0
+  _J_PKGS_CUT_1999=$(jq -s <<<$_J0)
 }
 
