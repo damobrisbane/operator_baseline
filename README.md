@@ -258,16 +258,12 @@ baseline/20250715/isc-redhat-operator-index-v4.18-cut.yaml
 
 # TBD
 
+## v0.1
+
+Fix gnarly code around package/channels
+
 ## v0.2
 
-Get rid of gnarly bash _f_grpc_get_packages, _A_FSV_CUT_PKG_CH _L_FSV_CUT_PKG, _a_fsv_cut_pkg_ch_.
-
-Remove sub-shell variable assignments
-
-## v0.3
-
-Use csvJson for version, anything else
-
-Fix logic for labelling, running index pods, generalise for all operator indexes
-
-Update templating for passthrough on non operator/package fields from cutspec to ISC (ie to allow for platform, extra container image specs)
+Fix running index labelling, ports for all catalogs
+Update templating to allow passthrough on standard ISC fields (along with allowing thoses fields - platform, additionalimages) to be present in cutspecs.
+Templates.
