@@ -36,6 +36,11 @@ _f_pod_rm() {
 
 _f_get_image() {
 
+  # Globals:
+  #
+  # _SKIP_IMAGE_RM
+  #
+
   local _INDEX_LOCATION=$1
   local _TAG=$2
   local _IMG=$3
