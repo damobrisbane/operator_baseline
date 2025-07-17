@@ -46,7 +46,13 @@ _grpc_list_pkgs() {
 }
 
 _f_grpc_get_packages() {
-
+  #
+  # Globals:
+  #
+  # _ALL_PKGS
+  # _ALL_CHNLS
+  #
+ 
   local _GRPC_URL=$1
   local -n _L_PKGS_1999=$2
   local -n _A_PKGS_CH_1999=$3
@@ -57,9 +63,8 @@ _f_grpc_get_packages() {
   local _J0_API=
 
   _log 2 "(grpc.sh:_f_grpc_get_packages)"
-
+  
   for _PKG in ${_L_PKGS_1999[@]}; do
-
 
       _L_CHNLS_PULLSPEC=( $(tr @ ' ' <<<${_A_PKGS_CH_1999[$_PKG]}))
 
@@ -114,6 +119,9 @@ _f_grpc_get_packages() {
         else
           _L_CHNLS=${_L_CHNLS_PULLSPEC[@]}
           _L_CHNLS+=( $_DEF_CH_NAME )
+          if [[ -n $_ALL_CHNLS ]]; then
+            _L_CHNLS+=( $_STOCK_CH )
+          fi
         fi
 
         _log 4 "(grpc.sh:_f_grpc_get_packages) _L_CHNLS: ${_L_CHNLS[@]}"
@@ -124,22 +132,17 @@ _f_grpc_get_packages() {
 
             if [[ ( $_CH == $_STOCK_CH || $_CH == $_DEF_CH_NAME ) && -z ${_A_IN_SET[$_CH]} ]]; then
 
-              #if [[ -n $_BUNDLE ]]; then
+              _f_grpc_bundle _J_BUNDLE $_GRPC_URL $_PKG $_CH 
+              local _VERSION=$(jq -r '.csvJson.spec.version' <<<$_J_BUNDLE)
+              local _BUNDLE_PATH=$(jq -r '.bundlePath' <<<$_J_BUNDLE)
+              local _L_RELATED_IMAGES=$( jq -rc '[.csvJson.spec.relatedImages[]|.image]' <<<$_J_BUNDLE)
 
-                #_J_BUNDLE=$(_f_grpc_bundle $_GRPC_URL $_PKG $_CH)
-                #_J_CH_1999=$(jq ".channels[]|select(.name==\"$_CH\")" <<<$_J_STOCK_PKG)
-                #_J_CH=$(jq -s 'add' <<<"${_J_CH_1999}${_J_BUNDLE}")
-
-
-                _f_grpc_bundle _J_BUNDLE $_GRPC_URL $_PKG $_CH 
-                local _BUNDLE_PATH=$(jq -r '.bundlePath' <<<$_J_BUNDLE)
-                local _VERSION=$(jq -r '.csvJson.spec.version' <<<$_J_BUNDLE)
-                local _L_RELATED_IMAGES=$( jq -rc '[.csvJson.spec.relatedImages[]|.image]' <<<$_J_BUNDLE)
-
-                _J_CH="{\"name\":\"$_CH\",\"minVersion\":\"${_VERSION}\"}"
+              _J_CH="{\"name\":\"$_CH\",\"minVersion\":\"${_VERSION}\"}"
+              if [[ -n $_GRPC_IMAGES ]]; then
                 _J_CH_API="{\"name\":\"$_CH\",\"minVersion\":\"${_VERSION}\",\"bundlePath\":\"${_BUNDLE_PATH}\",\"relatedImages\":${_L_RELATED_IMAGES[@]}}"
-
-              #fi
+              else                    
+                _J_CH_API="{\"name\":\"$_CH\",\"minVersion\":\"${_VERSION}\"}"
+              fi
 
               _J_PKG=$(jq ".channels += [${_J_CH}]" <<<$_J_PKG)
               _J_PKG_API=$(jq ".channels += [${_J_CH_API}]" <<<$_J_PKG_API)
@@ -157,6 +160,6 @@ _f_grpc_get_packages() {
   done
 
   _J_PKGS_CUT_1999=$(jq -s <<<$_J0)
-  _J_PKGS_CUT_API_1999=$(jq -s <<<$_J0_API)
+  _J_PKGS_CUT_API_1999=$(jq <<<$_J0_API)
 }
 

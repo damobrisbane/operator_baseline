@@ -1,0 +1,4 @@
+{
+  "catalog": "${CATALOG}",
+  "packages": ${PKG_CHANNELS}
+}

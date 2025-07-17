@@ -1,0 +1,7 @@
+oc_mirror_operators:
+  - catalog: registry.redhat.io/redhat/redhat-operator-index:v4.16
+    packages:
+      - name: self-node-remediation
+  - catalog: registry.redhat.io/redhat/redhat-operator-index:v4.18
+    packages:
+      - name: self-node-remediation

@@ -1,0 +1,25 @@
+oc_mirror_operators:
+  - catalog: registry.redhat.io/redhat/redhat-operator-index:v4.16
+    packages:
+      - name: 3scale-operator
+      - name: apicast-operator
+      - name: costmanagement-metrics-operator
+      - name: mtc-operator
+      - name: red-hat-camel-k
+      - name: self-node-remediation
+  - catalog: registry.redhat.io/redhat/redhat-operator-index:v4.18
+    packages:
+      - name: 3scale-operator
+      - name: apicast-operator
+      - name: costmanagement-metrics-operator
+      - name: mtc-operator
+      - name: red-hat-camel-k
+      - name: self-node-remediation
+  - catalog: registry.redhat.io/redhat/redhat-operator-index:v4.19
+    packages:
+      - name: 3scale-operator
+      - name: apicast-operator
+      - name: costmanagement-metrics-operator
+      - name: mtc-operator
+      - name: red-hat-camel-k
+      - name: self-node-remediation

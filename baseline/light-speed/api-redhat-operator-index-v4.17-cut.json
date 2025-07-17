@@ -1,0 +1,22 @@
+{
+  "catalog": "registry.redhat.io/redhat/redhat-operator-index:v4.17",
+  "packages": [
+    {
+      "name": "lightspeed-operator",
+      "defaultChannelName": "stable",
+      "channels": [
+        {
+          "name": "stable",
+          "minVersion": "1.0.1",
+          "bundlePath": "registry.redhat.io/openshift-lightspeed/lightspeed-operator-bundle@sha256:6d8f277d735816b0263202ea7213869a724d2e7400c82807927ddcefb236a72c",
+          "relatedImages": [
+            "registry.redhat.io/openshift-lightspeed/lightspeed-service-api-rhel9@sha256:2b9c0462a2453f85b3cc03339135a6dc77ceb417d89b7f671d1aac18582058ca",
+            "registry.redhat.io/openshift-lightspeed/lightspeed-console-plugin-rhel9@sha256:854ce0b95b52f39fa396ece7304bc20c6427bcf9da89d14686e5eda578d14741",
+            "registry.redhat.io/openshift-lightspeed/lightspeed-rhel9-operator@sha256:965d739b00a1f9b11163c5826228ca916e6e8dba228a39f03809437d88bf267e",
+            "registry.redhat.io/openshift-lightspeed/lightspeed-operator-bundle@sha256:6d8f277d735816b0263202ea7213869a724d2e7400c82807927ddcefb236a72c"
+          ]
+        }
+      ]
+    }
+  ]
+}

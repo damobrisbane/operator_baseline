@@ -1,0 +1,6 @@
+oc_mirror_operators:
+  - catalog: registry.redhat.io/redhat/redhat-operator-index:v4.17
+    packages:
+      - name: lightspeed-operator
+        channels:
+          - name: stable
