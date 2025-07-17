@@ -115,7 +115,11 @@ _f_grpc_get_packages() {
 
         unset _L_CHNLS
         if [[ -n $_ALL_PKGS ]]; then
-          _L_CHNLS=( $_STOCK_CH )
+          if [[ -n $_ALL_CHNLS ]]; then
+            _L_CHNLS=( $_STOCK_CH )
+          else
+            _L_CHNLS=( $_DEF_CH_NAME )
+          fi
         else
           _L_CHNLS=${_L_CHNLS_PULLSPEC[@]}
           _L_CHNLS+=( $_DEF_CH_NAME )
