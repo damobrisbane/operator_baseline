@@ -234,7 +234,7 @@ baseline/cross-validation3/isc-redhat-operator-index-v4.19-cut.yaml
 
 vim -O -d baseline/cross-valdation3/*
 
-![vimdiff](./cut-cross-validation3.png)
+![vimdiff](./cross-validation3/cut-cross-validation3.png)
 
 # Light-speed
 
@@ -305,4 +305,22 @@ baseline/20250709/api-redhat-operator-index-v4.17-cut.json
 ```
 
 
-![ref](./cut-operator_baseline.png)
+![ref](./light-speed/cut-operator_baseline.png)
+
+
+# Simple Related Images
+
+Run GEN_API=1, related images on self-node-remediation operator. Two runs, first defaults to stable channel, next all channels.
+
+```
+
+$ D2=simple_relatedimages
+
+$ SKIP_POD_RM=1 TEMPLATE=simple_relatedimages.json GRPC_IMAGES=1 GEN_API=1 ./scripts/cut.sh $D2 reg.dmz.lan/baseline cutspecs/simple_relatedimages
+
+$ ALL_CHNLS=1 SKIP_POD_RM=1 TEMPLATE=simple_relatedimages.json GRPC_IMAGES=1 GEN_API=1 ./scripts/cut.sh $D2 reg.dmz.lan/baseline cutspecs/simple_relatedimages
+
+```
+
+
+![related](./simple_related_images/operator_baseline-related.png)
