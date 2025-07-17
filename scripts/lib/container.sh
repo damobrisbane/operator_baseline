@@ -42,7 +42,7 @@ _f_get_image() {
 
   local _RESP=$($_PODMAN_BIN images --noheading | grep "${_INDEX_LOCATION}.*${_TAG}" | wc -l )
 
-  if [[ $_RESP -eq 1 && -n $_SKIP_POD_RM ]]; then
+  if [[ $_RESP -eq 1 && -n $_SKIP_IMAGE_RM ]]; then
     echo "Image $_IMG already exists, not downloading again.."
   else
     echo "Downloading $_IMG.."
