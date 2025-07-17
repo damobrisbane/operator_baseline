@@ -35,7 +35,7 @@ _fsv_pullspec_yaml() {
 
   _log 3 jq -sjc '.[]|.name,"@",(select(.channels != null)|[.channels[]|.name]|join("@"))," "' \<\<\<\$\($_YQ_BIN '.oc_mirror_operators[].packages[]' $_FP_YAML\)
 
-  _J1_1999=$(jq -c <<<$($_YQ_BIN --output-format json '.oc_mirror_operators[]|{"catalog_baseline":.catalog,"packages_cut":.packages}' $_FP_YAML))
+  _J1_1999+=$(jq -c <<<$($_YQ_BIN --output-format json '.oc_mirror_operators[]|{"catalog_baseline":.catalog,"packages_cut":.packages}' $_FP_YAML))
 
 }
 
