@@ -1,4 +1,8 @@
 {
+  "catalog_baseline": "registry.redhat.io/redhat/certified-operator-index:v4.16",
+  "packages_cut": []
+}
+{
   "catalog_baseline": "registry.redhat.io/redhat/redhat-operator-index:v4.16",
   "packages_cut": []
 }

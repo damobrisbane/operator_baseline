@@ -261,6 +261,8 @@ baseline/20250715/isc-redhat-operator-index-v4.18-cut.yaml
 > 
 ```
 
+[Cutspecs Examples](./cutspecs/README.md)
+
 # TBD
 
 ## v0.1
