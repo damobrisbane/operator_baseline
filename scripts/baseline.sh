@@ -59,7 +59,7 @@ source $(dirname ${BASH_SOURCE})/lib/utility.sh
 source $(dirname ${BASH_SOURCE})/lib/container.sh
 source $(dirname ${BASH_SOURCE})/lib/cutspec.sh
 
-_NDJSON_CUTSPEC=( $(_f_ndjson_cutspecs $_CUTSPEC) )
+_f_ndjson_cutspecs _NDJSON_CUTSPEC $_CUTSPEC
 
 if [[ ${#_NDJSON_CUTSPEC[@]} -eq 0 ]]; then
   echo -ne "\nNo cut specification has been generated, exiting..\n" && _f_help_exit
