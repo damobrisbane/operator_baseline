@@ -14,7 +14,7 @@ _f_pod_exists() {
   
   local _POD_LABEL=$1
 
-  local _L=( $($_PODMAN_BIN ps -q --filter label=$_POD_LABEL 2>/dev/null ))
+  local _L=( $($_PODMAN_BIN ps -a -q --filter label=$_POD_LABEL 2>/dev/null ))
 
   if [[ ${#_L[@]} -eq 0 ]]; then
     return 1
@@ -26,10 +26,11 @@ _f_pod_exists() {
 _f_pod_rm() {
 
   local _POD_LABEL=$1
+  local _POD_NAME=$2
 
   if _f_pod_exists $_POD_LABEL; then
-    _log 2 "(container.sh:_f_pod_rm) $_PODMAN_BIN rm -f --filter label=$_POD_LABEL"
-    $_PODMAN_BIN rm -f --filter label=$_POD_LABEL >/dev/null 2>&1
+    _log 2 "(container.sh:_f_pod_rm) $_PODMAN_BIN rm -f $_POD_NAME"
+    $_PODMAN_BIN rm -f $_POD_NAME 
   fi
   sleep 2
 }
@@ -102,7 +103,7 @@ _f_run() {
   IFS=$' ' read _IMG _POD_NAME _POD_LABEL _PPROF_PORT _GRPC_PORT _GRPC_URL <<<$@
 
   if [[ -z $_SKIP_POD_RM ]]; then
-    _f_pod_rm $_POD_LABEL
+    _f_pod_rm $_POD_LABEL $_POD_NAME
     _f_pod_run $_IMG $_POD_NAME $_POD_LABEL $_PPROF_PORT $_GRPC_PORT
   else
     if ! _f_pod_exists $_POD_LABEL; then

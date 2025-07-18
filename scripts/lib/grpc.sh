@@ -139,7 +139,7 @@ _f_grpc_get_packages() {
               _f_grpc_bundle _J_BUNDLE $_GRPC_URL $_PKG $_CH 
               local _VERSION=$(jq -r '.csvJson.spec.version' <<<$_J_BUNDLE)
               local _BUNDLE_PATH=$(jq -r '.bundlePath' <<<$_J_BUNDLE)
-              local _L_RELATED_IMAGES=$( jq -rc '[.csvJson.spec.relatedImages[]|.image]' <<<$_J_BUNDLE)
+              local _L_RELATED_IMAGES=$( jq -rc '[.csvJson.spec.relatedImages[]|.image]' <<<$_J_BUNDLE 2>/dev/null)
 
               _J_CH="{\"name\":\"$_CH\",\"minVersion\":\"${_VERSION}\"}"
               if [[ -n $_GRPC_IMAGES ]]; then

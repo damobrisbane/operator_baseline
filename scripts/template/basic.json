@@ -1,0 +1,10 @@
+{
+  "operators": [
+    {
+      "catalog": "${CATALOG}",
+      "targetName": "${TARGET_CATALOG}",
+      "targetTag": "${TARGET_TAG}",
+      "packages": ${PKG_CHANNELS}
+    }
+  ]
+}
