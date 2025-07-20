@@ -1,4 +1,19 @@
 {
   "catalog_baseline": "reg.dmz.lan/baseline/20250717/certified-operator-index:v4.16",
-  "packages_cut": []
+  "packages_cut": [],
+  "platform": {
+    "channels": [
+      {
+        "name": "stable-4.11",
+        "type": "ocp"
+      }
+    ],
+    "graph": true
+  },
+  "additionalImages": [
+    {
+      "name": "registry.redhat.io/ubi8/ubi:latest"
+    }
+  ],
+  "helm": {}
 }

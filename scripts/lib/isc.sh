@@ -10,21 +10,23 @@ _FP_TMPL=$_DP_SCRIPT/../template/isc-operator.json
 
 gen_isc() {
   #
-  # gen_isc _J_PKGS_CUT $_CATALOG_BASELINE $_CATALOG_TARGET $_TARGET_TAG 1>&2
-  #
-  # gen_isc _J_PKGS_CUT reg.dmz.lan/baseline/20250705/original/certified-operator-index:v4.16 reg.dmz.lan/baseline/20250705/certified-operator-index:v4.16-cut v4:16-cut
-  #
+  # gen_isc _J_ISC _J_PKGS_CUT _J_PLATFORM_PASSTHROUGH _J_ADDITIONAL_IMG_PASSTHROUGH _J_HELM_PASSTHROUGH $_DATESTAMP_1999 $_CATALOG_BASELINE $_CATALOG_TARGET $_TAG
+  # ie,
+  # gen_isc _J_PKGS_CUT _J_PLATFORM_PASSTHROUGH _J_ADDITIONAL_IMG_PASSTHROUGH _J_HELM_PASSTHROUGH reg.dmz.lan/baseline/20250705/original/certified-operator-index:v4.16 reg.dmz.lan/baseline/20250705/certified-operator-index:v4.16-cut v4:16-cut
   # Globals:
   #
   # _TEMPLATE
   #
 
-  local -n _J_PKGS_CUT_1998=$1
-  local -n _J_ISC_1998=$2
-  local _DATESTAMP=$3
-  export CATALOG=$4
-  local _TARGET_CATALOG=$5
-  export TARGET_TAG=$6      # ISC v1 only
+  local -n _J_ISC_1998=$1
+  local -n _J_PKGS_CUT_1998=$2
+  local -n _J_PLATFORM_PASSTHROUGH_1999=$3
+  local -n _J_ADDITIONAL_IMG_PASSTHROUGH_1999=$4
+  local -n _J_HELM_PASSTHROUGH_1999=$5
+  local _DATESTAMP=$6
+  export CATALOG=$7
+  local _TARGET_CATALOG=$8
+  export TARGET_TAG=$9      # ISC v1 only
 
   read _INDEX_LOCATION _INDEX_NAME _TAG <<<$(_f_indexname_tag $_TARGET_CATALOG)
   export TARGET_CATALOG=${_INDEX_LOCATION}
@@ -33,8 +35,10 @@ gen_isc() {
 
   local _DP_SCRIPT=$(dirname ${BASH_SOURCE[0]})
   local _FP_TMPL=$_DP_SCRIPT/../template/${_TEMPLATE}
-
+  export PLATFORM_PASSTHROUGH=$(jq -c . <<<$_J_PLATFORM_PASSTHROUGH_1999)
   export PKG_CHANNELS=$(jq -c . <<<$_J_PKGS_CUT_1998)
+  export ADDITIONAL_IMG_PASSTHROUGH=$(jq -c . <<<$_J_ADDITIONAL_IMG_PASSTHROUGH_1999)
+  export HELM_PASSTHROUGH=$(jq -c . <<<$_J_HELM_PASSTHROUGH_1999)
 
   _J_ISC_1998=$(jq -c . <<<$(envsubst <<<$(cat $_FP_TMPL)))
 
@@ -47,7 +51,7 @@ _f_output_isc() {
   # _ISC_FORMATS
   # _REPORT_LOCATION
   #
-  #  _f_output_isc _J_ISC $_DATESTAMP $_INDEX_NAME $_TAG
+  #  _f_output_isc _J_ISC _J_PLATFORM_PASSTHROUGH_1999 _J_ADDITIONAL_IMG_PASSTHROUGH _J_HELM_PASSTHROUGH $_DATESTAMP_1999 $_INDEX_NAME $_TAG
   #
  
   local -n _J_ISC_1999=$1

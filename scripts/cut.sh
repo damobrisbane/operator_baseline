@@ -83,8 +83,11 @@ _f_main() {
         _A_PKGS_CH[$i]=
       done
     else
-      _a_fsv_cut_pkg_ch _J_CUTSPEC_1999 _L_PKGS_INITIAL _A_PKGS_CH
+
+      _f_parse_cutspec _J_CUTSPEC_1999 _L_PKGS_INITIAL _A_PKGS_CH
       _intersection _L_PKGS_INITIAL _L_BASELINE_PKGS _L_PKGS _L_PKGS_OUTER
+      
+      _f_passthrough _J_CUTSPEC_1999 _J_PLATFORM_PASSTHROUGH _J_ADDITIONAL_IMG_PASSTHROUGH _J_HELM_PASSTHROUGH
     fi
 
     _log 4 "_L_PKGS ${_L_PKGS[@]}"
@@ -99,11 +102,21 @@ _f_main() {
 
       _log 1 "(cut.sh:f_main) gen_isc _J_PKGS_CUT $_CATALOG_BASELINE $_CATALOG_TARGET"
 
-      gen_isc _J_PKGS_CUT _J_ISC $_DATESTAMP_1999 $_CATALOG_BASELINE $_CATALOG_TARGET $_TAG
+      #  local -n _J_ISC_1998=$1
+      #  local -n _J_PKGS_CUT_1998=$2
+      #  local -n _J_PLATFORM_PASSTHROUGH=$3
+      #  local -n _J_ADDITIONAL_IMG_PASSTHROUGH=$4
+      #  local -n _J_HELM_PASSTHROUGH=$5
+      #  local _DATESTAMP=$6
+      #  export CATALOG=$7
+      #  local _TARGET_CATALOG=$8
+      #  export TARGET_TAG=$9      # ISC v1 only
+
+      gen_isc _J_ISC _J_PKGS_CUT _J_PLATFORM_PASSTHROUGH _J_ADDITIONAL_IMG_PASSTHROUGH _J_HELM_PASSTHROUGH $_DATESTAMP_1999 $_CATALOG_BASELINE $_CATALOG_TARGET $_TAG
 
       _log 1 "(cut.sh:f_main) _f_output_isc _J_ISC $_DATESTAMP_1999 $_INDEX_NAME $_TAG"
 
-      _f_output_isc _J_ISC $_DATESTAMP_1999 $_INDEX_NAME $_TAG
+      _f_output_isc _J_ISC _J_PLATFORM_PASSTHROUGH _J_ADDITIONAL_IMG_PASSTHROUGH _J_HELM_PASSTHROUGH $_DATESTAMP_1999 $_INDEX_NAME $_TAG
 
     fi
 
@@ -175,7 +188,7 @@ for _J_CUTSPEC in ${_NDJSON_CUTSPEC[@]}; do
   declare -A A1
   declare L1
 
-  _f_parse_cutspec $_J_CUTSPEC _CATALOG_BASELINE 
+  _f_catalog_baseline $_J_CUTSPEC _CATALOG_BASELINE 
 
   # catalog_baseline: registry.redhat.io/redhat/redhat-operator-index:v4.18 
   # baselineCatalog: reg.dmz.lan/baseline/20250709/redhat-operator-index:v4.18

@@ -1,6 +1,6 @@
 #!/bin/bash
 
-_a_fsv_cut_pkg_ch() {
+_f_parse_cutspec() {
 
   local -n _J_CUTSPEC_1998=$1
   local -n _L_PKGS_1998=$2
@@ -19,6 +19,19 @@ _a_fsv_cut_pkg_ch() {
     _A_PKGS_CH_1998[$_PKG]=$_S_CH
 
   done
+
+}
+
+_f_passthrough() {
+
+  local -n _J_CUTSPEC_1998=$1
+  local -n _J_PLATFORM_PASSTHROUGH_1999=$2
+  local -n _J_ADDITIONAL_IMG_PASSTHROUGH_1999=$3
+  local -n _J_HELM_PASSTHROUGH_1999=$4
+ 
+  _J_PLATFORM_PASSTHROUGH_1999=$(jq -cr 'if has("platform") then (.platform) else {} end' <<<$_J_CUTSPEC_1998)
+  _J_ADDITIONAL_IMG_PASSTHROUGH_1999=$(jq -cr 'if has("additionalImages") then (.platform) else {} end' <<<$_J_CUTSPEC_1998)
+  _J_HELM_PASSTHROUGH_1999=$(jq -cr 'if has("platform") then (.helm) else {} end' <<<$_J_CUTSPEC_1998)
 
 }
 
@@ -70,7 +83,7 @@ _f_ndjson_cutspecs() {
   fi
 }
 
-_f_parse_cutspec() {
+_f_catalog_baseline() {
 
   local _J_SPEC=$1
   local -n _CATALOG_BASELINE_1999=$2

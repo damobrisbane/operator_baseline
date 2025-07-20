@@ -9,6 +9,7 @@
     }
   },
   "mirror": {
+    "platform": ${PLATFORM_PASSTHROUGH},
     "operators": [
       {
         "catalog": "${CATALOG}",
@@ -17,5 +18,7 @@
         "packages": ${PKG_CHANNELS}
       }
     ]
-  }
+  },
+  "additionalImages": ${ADDITIONAL_IMG_PASSTHROUGH},
+  "helm": ${HELM_PASSTHROUGH}
 }
