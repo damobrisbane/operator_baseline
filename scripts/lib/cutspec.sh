@@ -85,10 +85,10 @@ _f_ndjson_cutspecs() {
 
 _f_catalog_baseline() {
 
-  local _J_SPEC=$1
+  local -n _J_SPEC_1999=$1
   local -n _CATALOG_BASELINE_1999=$2
 
-  _CATALOG_BASELINE_1999=$(jq -r '.catalog_baseline' <<<$_J_SPEC)
+  _CATALOG_BASELINE_1999=$(jq -r '.catalog_baseline' <<<$_J_SPEC_1999)
 
 }
 

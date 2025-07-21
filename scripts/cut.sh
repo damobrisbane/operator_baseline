@@ -188,7 +188,7 @@ for _J_CUTSPEC in ${_NDJSON_CUTSPEC[@]}; do
   declare -A A1
   declare L1
 
-  _f_catalog_baseline $_J_CUTSPEC _CATALOG_BASELINE 
+  _f_catalog_baseline _J_CUTSPEC _CATALOG_BASELINE 
 
   # catalog_baseline: registry.redhat.io/redhat/redhat-operator-index:v4.18 
   # baselineCatalog: reg.dmz.lan/baseline/20250709/redhat-operator-index:v4.18
