@@ -7,6 +7,7 @@ Shell script focused tooling for front-end loading of Openshift index catalogs a
 
 A challenge with the operator mirroring process and ImageSetConfigurations (ISC) generally, is that an ISC is a static artifact which can contain references to specific operator channels and versions, but if the catalog that it is defined against points to somewhere like _registry.redhat.io_, then it can be a constantly moving target. So a specific operator/channel/version may be accurate at the time creation, but becomes inaccurate - and breaks - when running oc-mirror on that same ISC a day later. The concept of a baseline is a point-in-time reference to an operator catalog, all operators, channels and versions are fixed against this baseline. A _cut_ is a specific subset of the baseline, eg. maybe only specifying four or five operators to mirror. The difference being, any specific operator/channel/versions defined in an ISC will remain consistent on subsequent [cut] runs of oc-mirror against that _baseline catalog_. 
 
+On versions, _cut.sh_ always includes a _minVersion_ field in ie a generated operator-channel definition. _minVersion_ corresponds to the actual high version of any particular operator bundle. This is essentially saying, "give me the only latest version of the operator in this channel and no other versions".
 
 ```mermaid
 graph LR
