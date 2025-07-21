@@ -156,7 +156,8 @@ _REG_LOCATION=$2
 _CUTSPEC=${3:-}
 
 if [[ $1 == -h ]]; then
-  f_help && exit
+  f_help
+  exit
 elif [[ ! -f $_YQ_BIN ]]; then
   echo "No yq found ($_YQ_BIN), exiting.."
   exit
