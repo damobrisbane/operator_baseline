@@ -102,16 +102,6 @@ _f_main() {
 
       _log 1 "(cut.sh:f_main) gen_isc _J_PKGS_CUT $_CATALOG_BASELINE $_CATALOG_TARGET"
 
-      #  local -n _J_ISC_1998=$1
-      #  local -n _J_PKGS_CUT_1998=$2
-      #  local -n _J_PLATFORM_PASSTHROUGH=$3
-      #  local -n _J_ADDITIONAL_IMG_PASSTHROUGH=$4
-      #  local -n _J_HELM_PASSTHROUGH=$5
-      #  local _DATESTAMP=$6
-      #  export CATALOG=$7
-      #  local _TARGET_CATALOG=$8
-      #  export TARGET_TAG=$9      # ISC v1 only
-
       gen_isc _J_ISC _J_PKGS_CUT _J_PLATFORM_PASSTHROUGH _J_ADDITIONAL_IMG_PASSTHROUGH _J_HELM_PASSTHROUGH $_DATESTAMP_1999 $_CATALOG_BASELINE $_CATALOG_TARGET $_TAG
 
       _log 1 "(cut.sh:f_main) _f_output_isc _J_ISC $_DATESTAMP_1999 $_INDEX_NAME $_TAG"
@@ -167,6 +157,12 @@ _CUTSPEC=${3:-}
 
 if [[ $1 == -h ]]; then
   f_help && exit
+elif [[ ! -f $_YQ_BIN ]]; then
+  echo "No yq found ($_YQ_BIN), exiting.."
+  exit
+elif [[ ! -f $_PODMAN_BIN ]]; then
+  echo "No podman found ($_PODMAN_BIN), exiting.."
+  exit
 fi
 
 source $(dirname ${BASH_SOURCE})/lib/utility.sh
