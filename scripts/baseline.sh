@@ -47,6 +47,12 @@ if [[ ${#_ARGS[@]} -ne 3 ]]; then
   echo -ne "./bashline.sh <DATESTAMP> <REG_LOCATION> <PULLSPEC>\n\n"
   echo -ne "<PULLSPEC> can be a folder or stdin\n\n"
   exit
+elif [[ ! -f $_YQ_BIN ]]; then
+  echo "No yq found ($_YQ_BIN), exiting.."
+  exit
+elif [[ ! -f $_PODMAN_BIN ]]
+  echo "No podman found ($_PODMAN_BIN), exiting.."
+  exit
 fi
 
 _DATESTAMP=${_ARGS[0]}

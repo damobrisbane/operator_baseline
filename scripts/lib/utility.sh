@@ -6,25 +6,25 @@ _log() {
 
   case $_LVL in
       0)
-          echo $@ 1>&2
+          echo $@
       ;;
       1)
-          [[ $DEBUG -gt 0 ]] && echo $@ 1>&2
+          [[ $DEBUG -gt 0 ]] && echo $@
       ;;
       2)
-          [[ $DEBUG -gt 1 ]] && echo $@ 1>&2
+          [[ $DEBUG -gt 1 ]] && echo $@
       ;;
       3)
-          [[ $DEBUG -gt 2 ]] && echo $@ 1>&2
+          [[ $DEBUG -gt 2 ]] && echo $@
       ;;
       4)
-          [[ $DEBUG -gt 3 ]] && echo $@ 1>&2
+          [[ $DEBUG -gt 3 ]] && echo $@
       ;;
       5)
-          [[ $DEBUG -gt 3 ]] && echo $@ 1>&2
+          [[ $DEBUG -gt 3 ]] && echo $@
       ;;
       6)
-          [[ $DEBUG -gt 3 ]] && echo $@ 1>&2
+          [[ $DEBUG -gt 3 ]] && echo $@
       ;;
       *)
           :
