@@ -85,13 +85,12 @@ for _J_CUTSPEC in ${_NDJSON_CUTSPEC[@]}; do
  
   _CATALOG_BASELINE=$_REG_LOCATION/$_DATESTAMP/${_NAMETAG}
 
-  _log 2 "(baseline.sh) _CATALOG_BASELINE $_CATALOG_BASELINE"
   _log 2 "(baseline.sh) _CATALOG_BASELINE: $_CATALOG_BASELINE"
 
-  _log 1 "(baseline.sh) _f_get_image $_INDEX_LOCATION $_TAG $_CATALOG_BASELINE"
-  _f_get_image $_INDEX_LOCATION $_TAG $_CATALOG_BASELINE
+  _log 1 "(baseline.sh) _f_get_image $_INDEX_LOCATION $_TAG $_CATALOG_UPSTREAM"
+  _f_get_image $_INDEX_LOCATION $_TAG $_CATALOG_UPSTREAM
 
-  _f_pod_tag $_CATALOG_BASELINE $_CATALOG_BASELINE
+  _f_pod_tag $_CATALOG_UPSTREAM $_CATALOG_BASELINE
 
   [[ -z $_SKIP_PUSH ]] && _f_pod_push $_CATALOG_BASELINE
 
