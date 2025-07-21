@@ -6,11 +6,11 @@
 Run baseline.sh on pre-existing images, dont pull down, dont push.
 
 D1=20250717
-SKIP_PUSH=1 SKIP_IMAGE_RM=1 ./scripts/baseline.sh $D1 reg.dmz.lan/baseline cutspecs/minimal_specs_baseline/
+SKIP_PUSH=1 SKIP_IMAGE_PULL=1 ./scripts/baseline.sh $D1 reg.dmz.lan/baseline cutspecs/minimal_specs_baseline/
 
 ```
 
-$ SKIP_PUSH=1 SKIP_IMAGE_RM=1 ./scripts/baseline.sh $D1 reg.dmz.lan/baseline cutspecs/minimal_specs_baseline/
+$ SKIP_PUSH=1 SKIP_IMAGE_PULL=1 ./scripts/baseline.sh $D1 reg.dmz.lan/baseline cutspecs/minimal_specs_baseline/
 
 Image reg.dmz.lan/baseline/20250717/certified-operator-index:v4.16 already exists, not downloading again..
 Tagging reg.dmz.lan/baseline/20250717/certified-operator-index:v4.16 reg.dmz.lan/baseline/20250717/certified-operator-index:v4.16

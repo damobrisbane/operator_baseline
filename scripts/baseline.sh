@@ -33,7 +33,7 @@ _f_help_exit() {
 # GLOBAL PARAMETERS
 #
 _PODMAN_BIN=${PODMAN_BIN:-/usr/bin/podman}
-_SKIP_IMAGE_RM=${SKIP_IMAGE_RM:-}
+_SKIP_IMAGE_PULL=${SKIP_IMAGE_PULL:-}
 _SKIP_PUSH=${SKIP_PUSH:-}
 _AUTHFILE=${AUTHFILE:-}
 _YQ_BIN=${YQ_BIN:-/usr/local/bin/yq}       # https://github.com/mikefarah/yq
