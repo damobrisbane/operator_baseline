@@ -116,7 +116,7 @@ _f_main() {
 
       _log 1 "(cut.sh:f_main) _f_output_isc _J_ISC $_DATESTAMP_1999 $_INDEX_NAME $_TAG"
 
-      _f_output_isc _J_ISC _J_PLATFORM_PASSTHROUGH _J_ADDITIONAL_IMG_PASSTHROUGH _J_HELM_PASSTHROUGH $_DATESTAMP_1999 $_INDEX_NAME $_TAG
+      _f_output_isc _J_ISC $_DATESTAMP_1999 $_INDEX_NAME $_TAG
 
     fi
 
