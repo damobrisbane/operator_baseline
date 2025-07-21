@@ -73,15 +73,15 @@ for _J_CUTSPEC in ${_NDJSON_CUTSPEC[@]}; do
   declare -A A1
   declare L1
 
-  _f_catalog_baseline _J_CUTSPEC _CATALOG_BASELINE 
+  _f_catalog_baseline _J_CUTSPEC _CATALOG_UPSTREAM 
 
   # catalog_baseline: registry.redhat.io/redhat/redhat-operator-index:v4.18 
   # targetCatalog: reg.dmz.lan/baseline/20250709/redhat-operator-index:v4.18
 
-  _NAMETAG=$(basename $_CATALOG_BASELINE)
+  _NAMETAG=$(basename $_CATALOG_UPSTREAM)
   _CATALOG_TARGET=$_REG_LOCATION/$_DATESTAMP/${_NAMETAG}
 
-  read _INDEX_LOCATION _INDEX_NAME _TAG <<<$(_f_indexname_tag $_CATALOG_BASELINE)
+  read _INDEX_LOCATION _INDEX_NAME _TAG <<<$(_f_indexname_tag $_CATALOG_UPSTREAM)
  
   _CATALOG_BASELINE=$_REG_LOCATION/$_DATESTAMP/${_NAMETAG}
 
