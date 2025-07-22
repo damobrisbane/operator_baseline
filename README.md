@@ -274,3 +274,7 @@ Fix gnarly code around package/channels
 
 Fix running index labelling, ports for all catalogs
 Update templating to allow passthrough on standard ISC fields (along with allowing thoses fields - platform, additionalimages) to be present in cutspecs.
+
+## v0.3
+
+Change "minVersion" default behaviour. If specified in a cutspec, pass the minVersion through. If dynamic "highest channel version" required, then **must not** specify any minVersion value (previous behaviour was to ignore minversion in the cutspec).
