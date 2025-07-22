@@ -50,7 +50,7 @@ if [[ ${#_ARGS[@]} -ne 3 ]]; then
 elif [[ ! -f $_YQ_BIN ]]; then
   echo "No yq found ($_YQ_BIN), exiting.."
   exit
-elif [[ ! -f $_PODMAN_BIN ]]
+elif [[ ! -f $_PODMAN_BIN ]]; then
   echo "No podman found ($_PODMAN_BIN), exiting.."
   exit
 fi
