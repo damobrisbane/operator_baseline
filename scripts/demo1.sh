@@ -16,7 +16,7 @@ _NOREAD=1 _demo_prompt '# Use baseline.sh to tag a long-lived baseline index, ba
 
 _demo_prompt 'cat cutspecs/select_rh_operators/*'
 
-_demo_prompt 'SKIP_PUSH=1 ./scripts/baseline.sh demo-20250715 reg.dmz.lan/baseline cutspecs/select_rh_operators'
+_demo_prompt 'SKIP_IMAGE_PUSH=1 ./scripts/baseline.sh demo-20250715 reg.dmz.lan/baseline cutspecs/select_rh_operators'
 
 _NOREAD=1 _demo_prompt '# Run podman ps again, note the (DATESTAMP/REGISTRY LOCATION) tagged "baseline" indexes'
 

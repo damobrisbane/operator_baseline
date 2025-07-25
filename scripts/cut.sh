@@ -4,13 +4,13 @@
 #
 # DATESTAMP=$(date +%Y%m%d)
 #
-# REG_LOCATION=reg.dmz.lan/baseline/$DATESTAMP
+# TARGET_REG=reg.dmz.lan/baseline/$DATESTAMP
 #
-# cls;GEN_ISC=1 ./files/common/baseline.sh $DATESTAMP $REG_LOCATION $CUTSPEC_DIR
+# cls;GEN_ISC=1 ./files/common/baseline.sh $DATESTAMP $TARGET_REG $CUTSPEC_DIR
 #
 # where CUTSPEC_DIR is the root folder containing spec files for operator mirroring specs (yaml or json)
 #
-# REG_LOCATION does not include date part. ie actual catalog location becomes <REG_LOCATION>/<DATESTAMP>. This full catalog location becomes the first part of the image url used for the index container (for local gprc queries) and also makes up part of the _CatalogName_ of an ImageSetConfiguration.
+# TARGET_REG does not include date part. ie actual catalog location becomes <TARGET_REG>/<DATESTAMP>. This full catalog location becomes the first part of the image url used for the index container (for local gprc queries) and also makes up part of the _CatalogName_ of an ImageSetConfiguration.
 #
 #  <parameter>[default]
 #
@@ -36,7 +36,7 @@
 ######################################################################################################
 
 _f_help_exit() {
-  echo -ne "\n[DEBUG=<level>] [BUNDLE=] [ALL_PKGS=] [GEN_ISC=] [ISC_FORMATS=] [REPORT_LOCATION=] ./scripts/cut.sh <DATESTAMP> <REG_LOCATION> <CUTSPEC FOLDER>||<STDIN>\n\n"
+  echo -ne "\n[DEBUG=<level>] [BUNDLE=] [ALL_PKGS=] [GEN_ISC=] [ISC_FORMATS=] [REPORT_LOCATION=] ./scripts/cut.sh <DATESTAMP> <TARGET_REG> <CUTSPEC FOLDER>||<STDIN>\n\n"
   exit
 }
 
@@ -51,24 +51,33 @@ _f_main() {
   # Globals:
   #
   # _ALL_PKGS
-  #
+  # _TARGET_LOCATION
   #
 
-  local _J_CUTSPEC_1999=$1
-  local _DATESTAMP_1999=$2
-  local _CATALOG_BASELINE=$3
-  local _CATALOG_TARGET=$4
+  local -n _L_TARGET_REGS_1999=$1
+  local -n _J_CUTSPEC_1999=$2
+  local _DATESTAMP_1999=$3
 
-  read _INDEX_LOCATION _INDEX_NAME _TAG <<<$(_f_indexname_tag $_CATALOG_TARGET)
-  read _POD_LABEL _POD_NAME _PPROF_PORT _GRPC_PORT <<<$(_f_run_metadata $_CATALOG_TARGET)
+  _f_catalog_baseline _J_CUTSPEC_1999 _CUTSPEC_CATALOG 
+  echo "C: $_CUTSPEC_CATALOG"
+  read -p ..
+
+  # catalog_baseline: registry.redhat.io/redhat/redhat-operator-index:v4.18 
+  # baselineCatalog: reg.dmz.lan/baseline/20250709/redhat-operator-index:v4.18
+  # targetCatalog: reg.dmz.lan/baseline/20250709/redhat-operator-index:v4.18-cut
+
+  _NAMETAG=$(basename $_CUTSPEC_CATALOG)
+
+  read _INDEX_LOCATION _INDEX_NAME _TAG <<<$(_f_indexname_tag $_CUTSPEC_CATALOG)
+  read _POD_LABEL _POD_NAME _PPROF_PORT _GRPC_PORT <<<$(_f_run_metadata $CUTSPEC_CATALOG)
 
   [[ -n $_GEN_ISC ]] && unset _BUNDLE
 
   local _GRPC_URL=$_GRPC_HOST:$_GRPC_PORT
 
-  _log 2 "(cut.sh:f_main) if _f_run $_CATALOG_BASELINE $_POD_NAME $_POD_LABEL $_PPROF_PORT $_GRPC_PORT $_GRPC_URL; then"
+  _log 2 "(cut.sh:f_main) if _f_run $_CUTSPEC_CATALOG $_POD_NAME $_POD_LABEL $_PPROF_PORT $_GRPC_PORT $_GRPC_URL; then"
 
-  if _f_run $_CATALOG_BASELINE $_POD_NAME $_POD_LABEL $_PPROF_PORT $_GRPC_PORT $_GRPC_URL; then
+  if _f_run $_CUTSPEC_CATALOG $_POD_NAME $_POD_LABEL $_PPROF_PORT $_GRPC_PORT $_GRPC_URL; then
 
      declare -A _A_PKGS_CH
 
@@ -100,13 +109,29 @@ _f_main() {
       
     if [[ -n $_GEN_ISC ]]; then
 
-      _log 1 "(cut.sh:f_main) gen_isc _J_PKGS_CUT $_CATALOG_BASELINE $_CATALOG_TARGET"
+      echo "_L: ${_L_TARGET_REGS[@]}"
 
-      gen_isc _J_ISC _J_PKGS_CUT _J_PLATFORM_PASSTHROUGH _J_ADDITIONAL_IMG_PASSTHROUGH _J_HELM_PASSTHROUGH $_DATESTAMP_1999 $_CATALOG_BASELINE $_CATALOG_TARGET $_TAG
+    elif [[ -n $XXXX ]]; then
 
-      _log 1 "(cut.sh:f_main) _f_output_isc _J_ISC $_DATESTAMP_1999 $_INDEX_NAME $_TAG"
+      for _TARGET_REG in ${_L_TARGET_REGS[0]}; do
 
-      _f_output_isc _J_ISC $_DATESTAMP_1999 $_INDEX_NAME $_TAG
+        [[ -n $_TARGET_AS_BASELINE ]] && _CUTSPEC_CATALOG=$_TARGET_REG/$_DATESTAMP/${_NAMETAG}
+
+        _CATALOG_TARGET=$_TARGET_REG/$_DATESTAMP/${_NAMETAG}-cut
+
+        _log 2 "(cut.sh) _CUTSPEC_CATALOG: $_CUTSPEC_CATALOG"
+        _log 2 "(cut.sh) _CATALOG_TARGET: $_CATALOG_TARGET"
+
+        read -p ..
+
+        _log 1 "(cut.sh:f_main) gen_isc _J_PKGS_CUT $_CATALOG_BASELINE $_CATALOG_TARGET"
+
+        gen_isc _J_ISC _J_PKGS_CUT _J_PLATFORM_PASSTHROUGH _J_ADDITIONAL_IMG_PASSTHROUGH _J_HELM_PASSTHROUGH $_DATESTAMP_1999 $_CATALOG_BASELINE $_CATALOG_TARGET $_TAG
+
+        _log 1 "(cut.sh:f_main) _f_output_isc _J_ISC $_DATESTAMP_1999 $_INDEX_NAME $_TAG"
+
+        _f_output_isc _J_ISC $_DATESTAMP_1999 $_INDEX_NAME $_TAG
+      done
 
     fi
 
@@ -138,6 +163,7 @@ _GEN_ISC=${GEN_ISC:-}
 _GEN_API=${GEN_API:-}
 _ISC_FORMATS=${ISC_FORMATS:-yaml}
 _TARGET_AS_BASELINE=${TARGET_AS_BASELINE:-}
+_TARGET_LOCATION=${TARGET_LOCATION:-baseline}
 _YQ_BIN=${YQ_BIN:-/usr/local/bin/yq}       # https://github.com/mikefarah/yq
 _TEMPLATE=${TEMPLATE:-isc-operator-v2.json}
 _SKIP_POD_RM=${SKIP_POD_RM:-}
@@ -152,7 +178,7 @@ DEBUG=${DEBUG:-0}
 # LOCAL PARAMETERS
 
 _DATESTAMP=$1
-_REG_LOCATION=$2
+_TARGET_REGS=$2
 _CUTSPEC=${3:-}
 
 if [[ $1 == -h ]]; then
@@ -182,26 +208,10 @@ _log 3 "(cut.sh) _NDJSON_CUTSPEC: (${#_NDJSON_CUTSPEC[@]}) ${_NDJSON_CUTSPEC[@]}
 
 for _J_CUTSPEC in ${_NDJSON_CUTSPEC[@]}; do
 
-  declare -A A1
-  declare L1
+  _L_TARGET_REGS=($( tr , ' ' <<<$_TARGET_REGS))
 
-  _f_catalog_baseline _J_CUTSPEC _CATALOG_BASELINE 
+  _log 1 "(cut.sh) _f_main \$_J_CUTSPEC $_DATESTAMP"
 
-  # catalog_baseline: registry.redhat.io/redhat/redhat-operator-index:v4.18 
-  # baselineCatalog: reg.dmz.lan/baseline/20250709/redhat-operator-index:v4.18
-  # targetCatalog: reg.dmz.lan/baseline/20250709/redhat-operator-index:v4.18-cut
-
-  _NAMETAG=$(basename $_CATALOG_BASELINE)
-
-  [[ -n $_TARGET_AS_BASELINE ]] && _CATALOG_BASELINE=$_REG_LOCATION/$_DATESTAMP/${_NAMETAG}
-
-  _CATALOG_TARGET=$_REG_LOCATION/$_DATESTAMP/${_NAMETAG}-cut
-
-  _log 2 "(cut.sh) _CATALOG_BASELINE: $_CATALOG_BASELINE"
-  _log 2 "(cut.sh) _CATALOG_TARGET: $_CATALOG_TARGET"
-
-  _log 1 "(cut.sh) _f_main \$_J_CUTSPEC $_DATESTAMP $_CATALOG_BASELINE $_CATALOG_TARGET"
-
-  _f_main $_J_CUTSPEC $_DATESTAMP $_CATALOG_BASELINE $_CATALOG_TARGET
+  _f_main _L_TARGET_REGS _J_CUTSPEC $_DATESTAMP
 
 done

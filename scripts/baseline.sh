@@ -21,10 +21,38 @@
 ######################################################################################################
 
 _f_help_exit() {
-  echo -ne "\n[DEBUG=<level>] ./scripts/baseline.sh <DATESTAMP> <REG_LOCATION> <CUTSPEC FOLDER>||<STDIN>\n\n"
+  echo -ne "\n[DEBUG=<level>] ./scripts/baseline.sh <DATESTAMP> <TARGET_REG> <CUTSPEC FOLDER>||<STDIN>\n\n"
   exit
 }
 
+_f_main() {
+
+  local -n _L_TARGET_REGS_1999=$1
+  local -n _J_CUTSPEC_1999=$2
+  local _DATESTAMP_1999=$3
+
+  _f_catalog_baseline _J_CUTSPEC_1999 _CUTSPEC_CATALOG 
+
+  # catalog_baseline: registry.redhat.io/redhat/redhat-operator-index:v4.18 
+  # targetCatalog: reg.dmz.lan/baseline/20250709/redhat-operator-index:v4.18
+
+  _NAMETAG=$(basename $_CUTSPEC_CATALOG)
+  _CATALOG_TARGET=$_TARGET_REG/$_DATESTAMP/${_NAMETAG}
+
+  read _INDEX_LOCATION _INDEX_NAME _TAG <<<$(_f_indexname_tag $_CUTSPEC_CATALOG)
+ 
+  _log 1 "(baseline.sh) _f_get_image $_INDEX_LOCATION $_TAG $_CUTSPEC_CATALOG"
+  echo _f_get_image $_INDEX_LOCATION $_TAG $_CUTSPEC_CATALOG
+
+  #_CATALOG_BASELINE=$_TARGET_REG/$_DATESTAMP/${_NAMETAG}
+
+  #_log 2 "(baseline.sh) _CATALOG_BASELINE: $_CATALOG_BASELINE"
+
+  #_f_pod_tag $_CUTSPEC_CATALOG $_CATALOG_BASELINE
+
+  #[[ -z $_SKIP_IMAGE_PUSH ]] && _f_pod_push $_CATALOG_BASELINE
+
+}
 
 ######################################################################################################
 ### CODE
@@ -34,7 +62,7 @@ _f_help_exit() {
 #
 _PODMAN_BIN=${PODMAN_BIN:-/usr/bin/podman}
 _SKIP_IMAGE_PULL=${SKIP_IMAGE_PULL:-}
-_SKIP_PUSH=${SKIP_PUSH:-}
+_SKIP_IMAGE_PUSH=${SKIP_IMAGE_PUSH:-}
 _AUTHFILE=${AUTHFILE:-}
 _YQ_BIN=${YQ_BIN:-/usr/local/bin/yq}       # https://github.com/mikefarah/yq
 
@@ -44,7 +72,7 @@ _ARGS=($@)
 
 if [[ ${#_ARGS[@]} -ne 3 ]]; then
   echo -ne "\nIncorrect arguments, exiting. Need:\n\n"
-  echo -ne "./bashline.sh <DATESTAMP> <REG_LOCATION> <PULLSPEC>\n\n"
+  echo -ne "./bashline.sh <DATESTAMP> <TARGET_REG> <PULLSPEC>\n\n"
   echo -ne "<PULLSPEC> can be a folder or stdin\n\n"
   exit
 elif [[ ! -f $_YQ_BIN ]]; then
@@ -56,9 +84,8 @@ elif [[ ! -f $_PODMAN_BIN ]]; then
 fi
 
 _DATESTAMP=${_ARGS[0]}
-_REG_LOCATION=${_ARGS[1]}
+_TARGET_REGS=${_ARGS[1]}
 _CUTSPEC=${_ARGS[2]:-}
-
 
 DEBUGID=$(dirname ${BASH_SOURCE})
 
@@ -76,29 +103,11 @@ _log 3 "(baseline.sh) _NDJSON_CUTSPEC: (${#_NDJSON_CUTSPEC[@]}) ${_NDJSON_CUTSPE
 
 for _J_CUTSPEC in ${_NDJSON_CUTSPEC[@]}; do
 
-  declare -A A1
-  declare L1
+  _L_TARGET_REGS=($( tr , ' ' <<<$_TARGET_REGS))
 
-  _f_catalog_baseline _J_CUTSPEC _CATALOG_UPSTREAM 
+  _log 1 "(cut.sh) _f_main \$_J_CUTSPEC $_DATESTAMP"
 
-  # catalog_baseline: registry.redhat.io/redhat/redhat-operator-index:v4.18 
-  # targetCatalog: reg.dmz.lan/baseline/20250709/redhat-operator-index:v4.18
-
-  _NAMETAG=$(basename $_CATALOG_UPSTREAM)
-  _CATALOG_TARGET=$_REG_LOCATION/$_DATESTAMP/${_NAMETAG}
-
-  read _INDEX_LOCATION _INDEX_NAME _TAG <<<$(_f_indexname_tag $_CATALOG_UPSTREAM)
- 
-  _CATALOG_BASELINE=$_REG_LOCATION/$_DATESTAMP/${_NAMETAG}
-
-  _log 2 "(baseline.sh) _CATALOG_BASELINE: $_CATALOG_BASELINE"
-
-  _log 1 "(baseline.sh) _f_get_image $_INDEX_LOCATION $_TAG $_CATALOG_UPSTREAM"
-  _f_get_image $_INDEX_LOCATION $_TAG $_CATALOG_UPSTREAM
-
-  _f_pod_tag $_CATALOG_UPSTREAM $_CATALOG_BASELINE
-
-  [[ -z $_SKIP_PUSH ]] && _f_pod_push $_CATALOG_BASELINE
+  _f_main _L_TARGET_REGS _J_CUTSPEC $_DATESTAMP
 
 done
 
